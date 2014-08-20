@@ -35,12 +35,12 @@ string toJSONString(bool pretty_print = false, Input)(Input input)
     return dst.data;
 }
 /// ditto
-string toJSONString(bool pretty_print = false, Input)(Input input)
+string toJSONString(Input)(Input input)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    input.writeAsString!pretty_print(dst);
+    input.writeAsString(dst);
     return dst.data;
 }
 
@@ -68,6 +68,15 @@ unittest {
     assert(a.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 }
 
+unittest {
+    auto tokens = lexJSON(`{"a": [], "b": [1, {}]}`);
+    assert(tokens.toJSONString() == `{"a":[],"b":[1,{}]}`);
+
+    auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
+    assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
+    assert(nodes.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+}
+
 
 
 /**
@@ -76,6 +85,11 @@ unittest {
 void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
+    void indent(size_t depth) {
+        output.put('\n');
+        foreach (tab; 0 .. depth) output.put('\t');
+    }
+
     if (value.peek!(typeof(null))) output.put("null");
     else if (auto pv = value.peek!bool) output.put(*pv ? "true" : "false");
     else if (auto pv = value.peek!double) output.writeNumber(*pv);
@@ -86,38 +100,25 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
         foreach (string k, ref e; *pv) {
             if (!first) output.put(',');
             else first = false;
-
-            static if (pretty_print) {
-                output.put('\n');
-                foreach (tab; 0 .. nesting_level+1) output.put('\t');
-            }
+            static if (pretty_print) indent(nesting_level+1);
             output.put('\"');
             output.escapeString(k);
             output.put(pretty_print ? `": ` : `":`);
             e.writeAsString!pretty_print(output, nesting_level+1);
         }
         static if (pretty_print) {
-            if (!first) {
-                output.put('\n');
-                foreach (tab; 0 .. nesting_level) output.put('\t');
-            }
+            if (!first) indent(nesting_level);
         }
         output.put('}');
     } else if (auto pv = value.peek!(JSONValue[])) {
         output.put('[');
         foreach (i, ref e; *pv) {
             if (i > 0) output.put(",");
-            static if (pretty_print) {
-                output.put('\n');
-                foreach (tab; 0 .. nesting_level+1) output.put('\t');
-            }
+            static if (pretty_print) indent(nesting_level+1);
             e.writeAsString!pretty_print(output, nesting_level+1);
         }
         static if (pretty_print) {
-            if (pv.length > 0) {
-                output.put('\n');
-                foreach (tab; 0 .. nesting_level) output.put('\t');
-            }
+            if (pv.length > 0) indent(nesting_level);
         }
         output.put(']');
     } else assert(false);
@@ -128,51 +129,79 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input input, ref Ou
 {
     size_t nesting = 0;
     bool first = false;
+    bool is_object_field = false;
+
+    void indent(size_t depth) {
+        output.put('\n');
+        foreach (tab; 0 .. depth) output.put('\t');
+    }
+
+    void preValue()
+    {
+        if (!is_object_field) {
+            if (nesting > 0 && !first) output.put(',');
+            else first = false;
+            static if (pretty_print) {
+                if (nesting > 0) indent(nesting);
+            }
+        } else is_object_field = false;
+    }
 
     while (!input.empty) {
         final switch (input.front.kind) with (JSONParserNode.Kind) {
             case invalid: assert(false);
             case key:
-                if (nesting > 0 && !first) dst.put(',');
+                if (nesting > 0 && !first) output.put(',');
                 else first = false;
-                dst.put('"');
-                dst.escapeString(input.front.key);
-                dst.put('"');
-                dst.put(':');
+                is_object_field = true;
+                static if (pretty_print) indent(nesting);
+                output.put('"');
+                output.escapeString(input.front.key);
+                output.put(pretty_print ? `": ` : `":`);
                 break;
             case value:
-                if (nesting > 0 && !first) dst.put(',');
-                else first = false;
-                dst.writeAsString(input.value);
+                preValue();
+                input.front.value.writeAsString(output);
                 break;
             case objectStart:
-                dst.put('{');
+                preValue();
+                output.put('{');
                 nesting++;
                 first = true;
                 break;
             case objectEnd:
                 nesting--;
-                dst.put('}');
+                static if (pretty_print) {
+                    if (!first) indent(nesting);
+                }
+                first = false;
+                output.put('}');
                 break;
             case arrayStart:
-                dst.put('[');
+                preValue();
+                output.put('[');
                 nesting++;
                 first = true;
+                is_object_field = false;
                 break;
             case arrayEnd:
                 nesting--;
-                dst.put(']');
+                static if (pretty_print) {
+                    if (!first) indent(nesting);
+                }
+                first = false;
+                output.put(']');
                 break;
         }
+        input.popFront();
     }
-    assert(false);
 }
 /// ditto
 void writeAsString(Output, Input)(Input input, ref Output output)
-    if (isOutputRange!(Output, char) && isJSONTokenInputRange!Inout)
+    if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
 {
     while (!input.empty) {
-        dst.writeAsString(input.front);
+        input.front.writeAsString(output);
         input.popFront();
     }
 }
@@ -182,16 +211,16 @@ void writeAsString(Output)(in ref JSONToken token, ref Output output)
 {
     final switch (token.kind) with (JSONToken.Kind) {
         case invalid: assert(false);
-        case null_: dst.put("null"); break;
-        case boolean: dst.put(token.boolean ? "true" : "false"); break;
-        case number: dst.writeNumber(token.number); break;
-        case string: dst.put('"'); dst.escapeString(token.string); dst.put('"'); break;
-        case objectStart: dst.put('{'); break;
-        case objectEnd: dst.put('}'); break;
-        case arrayStart: dst.put('['); break;
-        case arrayEnd: dst.put(']'); break;
-        case colon: dst.put(':'); break;
-        case comma: dst.put(','); break;
+        case null_: output.put("null"); break;
+        case boolean: output.put(token.boolean ? "true" : "false"); break;
+        case number: output.writeNumber(token.number); break;
+        case string: output.put('"'); output.escapeString(token.string); output.put('"'); break;
+        case objectStart: output.put('{'); break;
+        case objectEnd: output.put('}'); break;
+        case arrayStart: output.put('['); break;
+        case arrayEnd: output.put(']'); break;
+        case colon: output.put(':'); break;
+        case comma: output.put(','); break;
     }
 }
 

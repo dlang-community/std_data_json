@@ -170,14 +170,16 @@ unittest {
  * with the nesting level of the JSON document, but independent of the number
  * of values.
  */
-JSONParserStream!(Input, track_location) parseJSONStream(bool track_location = true, Input)(Input input, string filename = null)
+JSONParserRange!(JSONLexerRange!(Input, track_location)) parseJSONStream(bool track_location = true, Input)(Input input, string filename = null)
+    if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     return parseJSONStream(lexJSON(input, filename));
 }
 /// ditto
-JSONParserStream!(Input, track_location) parseJSONStream(bool track_location = true, Input)(JSONLexerRange!(Input, track_location) tokens)
+JSONParserRange!Input parseJSONStream(Input)(Input tokens)
+    if (isJSONTokenInputRange!Input)
 {
-    return JSONParserStream!(Input, track_location)(tokens);
+    return JSONParserRange!Input(tokens);
 }
 
 ///
@@ -251,11 +253,13 @@ unittest {
 /**
  *
  */
-struct JSONParserStream(Input, bool track_location = true) {
+struct JSONParserRange(Input)
+    if (isJSONTokenInputRange!Input)
+{
     import stdx.data.json.exception;
 
     private {
-        JSONLexerRange!(Input, track_location) _input;
+        Input _input;
         JSONToken.Kind[] _containerStack;
         JSONParserNode.Kind _prevKind;
         JSONParserNode _node;
@@ -264,7 +268,7 @@ struct JSONParserStream(Input, bool track_location = true) {
     /**
      *
      */
-    this(JSONLexerRange!(Input, track_location) input)
+    this(Input input)
     {
         _input = input;
     }
@@ -408,7 +412,7 @@ struct JSONParserStream(Input, bool track_location = true) {
 /**
  * Represents a single node of a JSON parse tree.
  *
- * See $(D parseJSONStream) and $(D JSONParserStream) more information.
+ * See $(D parseJSONStream) and $(D JSONParserRange) more information.
  */
 struct JSONParserNode {
     import std.algorithm : among;
@@ -475,6 +479,10 @@ struct JSONParserNode {
 enum isJSONTokenInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONToken);
 
 static assert(isJSONTokenInputRange!(JSONLexerRange!(string, true)));
+
+enum isJSONParserNodeInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONParserNode);
+
+static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!(string, true))));
 
 
 unittest

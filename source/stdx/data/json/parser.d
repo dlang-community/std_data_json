@@ -187,14 +187,13 @@ unittest {
     assertThrown(parseJSON(`{"a": 1 "b": 2}`));
 }
 
-
 /**
  * Parses a JSON document using a lazy parser node range.
  *
- * This mode parsing mode is similar to a StAX XML parser. It can be used to
- * parse JSON documents of unlimited size. The memory consumption is linear
- * with the nesting level of the JSON document, but independent of the number
- * of values.
+ * This mode parsing mode is similar to a streaming XML (StAX) parser. It can
+ * be used to parse JSON documents of unlimited size. The memory consumption
+ * grows linearly with the nesting level (about 4 bytes per level), but is
+ * independent of the number of values in the JSON document.
  *
  * The resulting range of nodes is guaranteed to be ordered according to the
  * following grammar, where uppercase terminals correspond to the node kind

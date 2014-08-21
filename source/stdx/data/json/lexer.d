@@ -3,13 +3,30 @@
  *
  * Synopsis:
  * ---
- * ...
+ * // Lex a JSON string into a lazy range of tokens
+ * auto tokens = lexJSON(`{"name": "Peter", "age": 42}`);
+ *
+ * with (JSONToken.Kind) {
+ *     assert(tokens.map!(t => t.kind).equal(
+ *         [objectStart, string, colon, string, comma,
+ *         string, colon, number, objectEnd]));
+ * }
+ *
+ * // Get detailed information
+ * tokens.popFront(); // skip the '{'
+ * assert(tokens.front.string == "name");
+ * tokens.popFront(); // skip "name"
+ * tokens.popFront(); // skip the ':'
+ * assert(tokens.front.string == "Peter");
+ * assert(tokens.front.location.line == 0);
+ * assert(tokens.front.location.column == 9);
  * ---
  *
  * Credits:
  *   Support for escaped UTF-16 surrogates was contributed to the original
- *   vibe.d JSON module by Etienne Cimon. The number parsing code is an
- *   adjusted version of Andrei Alexandrescu's draft for a JSON module.
+ *   vibe.d JSON module by Etienne Cimon. The number parsing code is based
+ *   on the version contained in Andrei Alexandrescu's "std.jgrandson"
+ *   module draft.
  *
  * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).

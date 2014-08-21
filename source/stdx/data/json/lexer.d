@@ -70,10 +70,13 @@ unittest {
 
 ///
 unittest {
-    auto rng = lexJSON("true\n   false\r\n  1.0\r \"test\"");
+    auto rng = lexJSON("true\n   false null\r\n  1.0\r \"test\"");
     rng.popFront();
     assert(rng.front.boolean == false);
     assert(rng.front.location.line == 1 && rng.front.location.column == 3);
+    rng.popFront();
+    assert(rng.front.kind == JSONToken.Kind.null_);
+    assert(rng.front.location.line == 1 && rng.front.location.column == 9);
     rng.popFront();
     assert(rng.front.number == 1.0);
     assert(rng.front.location.line == 2 && rng.front.location.column == 2);
@@ -174,6 +177,12 @@ struct JSONLexerRange(Input, bool track_location = true)
     {
         import std.algorithm : skipOver;
 
+        void skipNonWSChar()
+        {
+            _input.popFront();
+            static if (track_location) _loc.column++;
+        }
+
         skipWhitespace();
 
         assert(!_input.empty, "Reading JSON token from empty input stream.");
@@ -186,14 +195,17 @@ struct JSONLexerRange(Input, bool track_location = true)
                 throw new JSONException(`Malformed token: `~to!string(cast(Input)_input), _loc);
             case 'f':
                 enforceJson(_input.skipOver("false"), `Malformed token, expected "false"`, _loc);
+                static if (track_location) _loc.column += 5;
                 _front.boolean = false;
                 break;
             case 't':
                 enforceJson(_input.skipOver("true"), `Malformed token, expected "true"`, _loc);
+                static if (track_location) _loc.column += 4;
                 _front.boolean = true;
                 break;
             case 'n':
                 enforceJson(_input.skipOver("null"), `Malformed token, expected "null"`, _loc);
+                static if (track_location) _loc.column += 4;
                 _front.kind = JSONToken.Kind.null_;
                 break;
             case '"': _front.string = _input.parseString!track_location(_loc); break;
@@ -207,12 +219,6 @@ struct JSONLexerRange(Input, bool track_location = true)
         }
 
         skipWhitespace();
-    }
-
-    private void skipNonWSChar()
-    {
-        _input.popFront();
-        static if (track_location) _loc.column++;
     }
 
     private void skipWhitespace()

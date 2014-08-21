@@ -279,6 +279,20 @@ private void writeNumber(R)(ref R dst, double num)
     dst.formattedWrite("%.16g", num);
 }
 
+unittest {
+    import std.math;
+    import std.string;
+
+    auto num = parseJSON("-67.199307");
+    auto exp = -67.199307;
+    assert(num.get!double.approxEqual(exp));
+
+    auto snum = appender!string;
+    snum.writeNumber(num.get!double);
+    auto pnum = parseJSON(snum.data);
+    assert(pnum.get!double.approxEqual(num.get!double));
+}
+
 private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
 {
     import std.format;

@@ -115,6 +115,9 @@ struct JSONLexerRange(Input, bool track_location = true)
         Location _loc;
     }
 
+    /**
+     * Constructs a new token stream.
+     */
     this(Input input, string filename = null)
     {
         _input = input.representation;
@@ -127,7 +130,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     @property Location location() const { return _loc; }
 
     /**
-     *
+     * Determines if the token stream has been exhausted.
      */
     @property bool empty()
     {
@@ -138,7 +141,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     }
 
     /**
-     *
+     * Returns the current token in the stream.
      */
     @property ref const(JSONToken) front()
     {
@@ -151,7 +154,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     }
 
     /**
-     *
+     * Skips to the next token.
      */
     void popFront()
     {
@@ -329,6 +332,44 @@ struct JSONToken {
         _kind = Kind.string;
         _string = value;
         return value;
+    }
+
+    /**
+     * Enables equality comparisons.
+     *
+     * Note that the location is considered token meta data and thus does not
+     * affect the comparison.
+     */
+    bool opEquals(in ref JSONToken other)
+    const {
+        if (this.kind != other.kind) return false;
+
+        switch (this.kind) {
+            default: return true;
+            case Kind.boolean: return this.boolean == other.boolean;
+            case Kind.number: return this.number == other.number;
+            case Kind.string: return this.string == other.string;
+        }
+    }
+    /// ditto
+    bool opEquals(JSONToken other) const { return opEquals(other); }
+
+    /**
+     * Converts the token to a string representation.
+     *
+     * Note that this representation is NOT the JSON representation, but rather
+     * a representation suitable for printing out a token including its
+     * location.
+     */
+    .string toString()
+    const {
+        import std.string;
+        switch (this.kind) {
+            default: return format("[%s %s]", location, this.kind);
+            case Kind.boolean: return format("[%s %s]", location, this.boolean);
+            case Kind.number: return format("[%s %s]", location, this.number);
+            case Kind.string: return format("[%s \"%s\"]", location, this.string);
+        }
     }
 }
 

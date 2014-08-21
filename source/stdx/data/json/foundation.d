@@ -18,11 +18,18 @@ import stdx.data.json.lexer;
  */
 struct Location {
     /// Optional file name.
-    .string file;
+    string file;
     /// The zero based line of the input file.
     size_t line = 0;
     /// The zero based code unit index of the referenced line.
     size_t column = 0;
+
+    /// Returns a string representation of the location.
+    string toString()
+    const {
+        import std.string;
+        return format("%s(%s:%s)", this.file, this.line, this.column);
+    }
 }
 
 

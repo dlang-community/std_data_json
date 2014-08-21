@@ -1,9 +1,15 @@
 /**
- * Defines a generic JSON value type.
+ * Defines a generic value type for builing and holding JSON documents in memory.
  *
  * Synopsis:
  * ---
- * ...
+ * // build a simple JSON document
+ * auto aa = ["a": JSONValue("hello"), "b": JSONValue(true)];
+ * auto obj = JSONValue(aa);
+ *
+ * // Algebraic currently doesn't allow the desired syntax: obj["a"]
+ * assert(obj.get!(JSONValue[string])["a"] == "hello");
+ * assert(obj.get!(JSONValue[string])["b"] == true);
  * ---
  *
  * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
@@ -30,6 +36,10 @@ struct JSONValue {
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
 
+    /**
+     * Alias for a $(D std.variant.Algebraic) able to hold all possible JSON
+     * value types.
+     */
     alias Payload = Algebraic!(
         typeof(null),
         bool,
@@ -39,7 +49,20 @@ struct JSONValue {
         JSONValue[string]
     );
 
+    /**
+     * Holds the data contained in this value.
+     *
+     * Note that this is available using $(D alias this), so there is usually no
+     * need to access this field directly.
+     */
     Payload payload;
+
+    /**
+     * Optional location of the corresponding token in the source document.
+     *
+     * This field will be automatically populated by the JSON parser if location
+     * tracking is enabled.
+     */
     Location location;
 
     alias payload this;

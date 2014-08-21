@@ -547,7 +547,12 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 
         // integer part of the number
         enforceJson(!input.empty && input.front.isDigit(), "Invalid number, expected digit", loc);
-        do {
+        if (input.front == '0') {
+            input.popFront();
+            loc.column++;
+            if (input.empty) return neg ? -result : result;
+            enforceJson(!input.front.isDigit, "Invalid number, 0 must not be followed by another digit", loc);
+        } else do {
             result = result * 10 + (input.front - '0');
             input.popFront();
             static if (track_location) loc.column++;
@@ -558,6 +563,7 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
         assert(!input.empty);
         if (input.front == '.') {
             input.popFront();
+            enforceJson(!input.empty, "Missing fractional number part", loc);
             static if (track_location) loc.column++;
             double mul = 0.1;
             while (true) {
@@ -625,8 +631,8 @@ unittest {
     test("-0e+10 ", 0.0, " ");
     test("123", 123.0, "");
     test("123 ", 123.0, " ");
-    test("123.", 123.0, "");
-    test("123. ", 123.0, " ");
+    test("123.0", 123.0, "");
+    test("123.0 ", 123.0, " ");
     test("123.456", 123.456, "");
     test("123.456 ", 123.456, " ");
     test("123.456e1", 1234.56, "");
@@ -645,6 +651,9 @@ unittest {
     assertThrown(parseNumber(s = "+", loc));
     assertThrown(parseNumber(s = "-", loc));
     assertThrown(parseNumber(s = "+1", loc));
+    assertThrown(parseNumber(s = "1.", loc));
+    assertThrown(parseNumber(s = ".1", loc));
+    assertThrown(parseNumber(s = "01", loc));
     assertThrown(parseNumber(s = "1e", loc));
     assertThrown(parseNumber(s = "1e+", loc));
     assertThrown(parseNumber(s = "1e-", loc));

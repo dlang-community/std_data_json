@@ -1,6 +1,7 @@
 /**
  * Provides JSON lexing facilities.
-*/
+ *
+ */
 module stdx.data.json.lexer;
 
 import std.range;
@@ -12,12 +13,12 @@ import stdx.data.json.exception;
  * Returns a lazy range of tokens corresponding to the given JSON input string.
  *
  * The input must be a valid JSON string, given as an input range of either
- * character types, or of integral types. In case of integral types, the input
+ * characters, or of integral values. In case of integral types, the input
  * ecoding is assumed to be a superset of ASCII that is parsed unit by unit.
  *
- * For inputs of type $(D string), string type tokens not containing any escape
- * sequences will be slices into the original string. JSON documents containing
- * no escape sequences will result in completely allocation-free operation of
+ * For inputs of type $(D string), string literals not containing any escape
+ * sequences will be returned as slices into the original string. JSON documents
+ * containing no escape sequences will result in allocation-free operation o
  * the lexer.
 */
 JSONLexerRange!(Input, track_location) lexJSON(bool track_location = true, Input)(Input input, string filename = null)
@@ -50,7 +51,6 @@ struct JSONLexerRange(Input, bool track_location = true)
     {
         _input = input.representation;
         _front.location.file = filename;
-        skipWhitespace();
     }
 
     /**
@@ -58,8 +58,20 @@ struct JSONLexerRange(Input, bool track_location = true)
      */
     @property JSONToken.Location location() const { return _loc; }
 
-    @property bool empty() { return _front.kind == JSONToken.Kind.invalid && _input.empty; }
+    /**
+     *
+     */
+    @property bool empty()
+    {
+        if (_front.kind != JSONToken.Kind.invalid) return false;
+        if (_input.empty) return true;
+        skipWhitespace();
+        return _input.empty;
+    }
 
+    /**
+     *
+     */
     @property ref const(JSONToken) front()
     {
         assert(!empty, "Calling front on an empty JSONTokenRange.");
@@ -70,6 +82,9 @@ struct JSONLexerRange(Input, bool track_location = true)
         return _front;
     }
 
+    /**
+     *
+     */
     void popFront()
     {
         if (_front.kind == JSONToken.Kind.invalid) {
@@ -82,6 +97,8 @@ struct JSONLexerRange(Input, bool track_location = true)
     private void readToken()
     {
         import std.algorithm : skipOver;
+
+        skipWhitespace();
 
         assert(!_input.empty, "Reading JSON token from empty input stream.");
 

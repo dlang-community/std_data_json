@@ -3,6 +3,29 @@
  *
  * This module contains two different JSON parser implementations. The first
  * implementation takes either an input string or range, or a range of
+ *
+ * Synopsis:
+ * ---
+ * // Parse a JSON string to a single value
+ * JSONValue value = parseJSON(`{"name": "D", "kind": "language"}`);
+ *
+ * // Parse a JSON string to a node stream
+ * auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
+ * with (JSONParserNode.Kind) {
+ *     assert(nodes.map!(n => n.kind).equal(
+ *         [objectStart, key, value, key, value, objectEnd]));
+ * }
+ *
+ * // Parse a list of tokens instead of a string
+ * auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
+ * JSONValue value2 = parseJson(tokens);
+ * assert(value == value2);
+ * ---
+ *
+ * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
+ * Authors:   Sönke Ludwig
+ * Source:    $(PHOBOSSRC std/data/json/parser.d)
  */
 module stdx.data.json.parser;
 
@@ -169,6 +192,17 @@ unittest {
  * parse JSON documents of unlimited size. The memory consumption is linear
  * with the nesting level of the JSON document, but independent of the number
  * of values.
+ *
+ * The order of nodes is guaranteed to be ordered according to the following
+ * grammar, where uppercase elements correspond to the node kind (See
+ * $(D JSONParserNode.Kind)).
+ *
+ * $(UL
+ *   $(LI list → value*)
+ *   $(LI value → LITERAL | array | object)
+ *   $(LI array → ARRAYSTART (value)* ARRAYEND)
+ *   $(LI object → OBJECTSTART (KEY value)* OBJECTEND)
+ * )
  */
 JSONParserRange!(JSONLexerRange!(Input, track_location)) parseJSONStream(bool track_location = true, Input)(Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)

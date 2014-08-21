@@ -1,5 +1,10 @@
 /**
  * Exception definitions specific to the JSON processing functions.
+ *
+ * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
+ * Authors:   Sönke Ludwig
+ * Source:    $(PHOBOSSRC std/data/json/exception.d)
  */
 module stdx.data.json.exception;
 

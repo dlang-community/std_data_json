@@ -1,5 +1,15 @@
 /**
  * Contains routines for converting JSON values to their string represencation.
+ *
+ * Synopsis:
+ * ---
+ * ...
+ * ---
+ *
+ * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
+ * Authors:   Sönke Ludwig
+ * Source:    $(PHOBOSSRC std/data/json/generator.d)
  */
 module stdx.data.json.generator;
 

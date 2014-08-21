@@ -1,6 +1,20 @@
 /**
  * Provides JSON lexing facilities.
  *
+ * Synopsis:
+ * ---
+ * ...
+ * ---
+ *
+ * Credits:
+ *   Support for escaped UTF-16 surrogates was contributed to the original
+ *   vibe.d JSON module by Etienne Cimon. The number parsing code is an
+ *   adjusted version of Andrei Alexandrescu's draft for a JSON module.
+ *
+ * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
+ * Authors:   Sönke Ludwig
+ * Source:    $(PHOBOSSRC std/data/json/lexer.d)
  */
 module stdx.data.json.lexer;
 
@@ -26,6 +40,43 @@ JSONLexerRange!(Input, track_location) lexJSON(bool track_location = true, Input
 {
     return JSONLexerRange!(Input, track_location)(input, filename);
 }
+
+///
+unittest {
+    auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
+    with (JSONToken.Kind) {
+        assert(rng.map!(t => t.kind).equal(
+            [objectStart, string, colon, number, comma, string, colon,
+            arrayStart, number, comma, boolean, comma, null_, arrayEnd, objectEnd]));
+    }
+}
+
+///
+unittest {
+    auto rng = lexJSON("true\n   false\r\n  1.0\r \"test\"");
+    rng.popFront();
+    assert(rng.front.boolean == false);
+    assert(rng.front.location.line == 1 && rng.front.location.column == 3);
+    rng.popFront();
+    assert(rng.front.number == 1.0);
+    assert(rng.front.location.line == 2 && rng.front.location.column == 2);
+    rng.popFront();
+    assert(rng.front.string == "test");
+    assert(rng.front.location.line == 3 && rng.front.location.column == 1);
+    rng.popFront();
+    assert(rng.empty);
+}
+
+unittest {
+    import std.exception;
+    assertThrown(lexJSON(`trui`).array); // invalid token
+    assertThrown(lexJSON(`fal`).array); // invalid token
+    assertThrown(lexJSON(`falsi`).array); // invalid token
+    assertThrown(lexJSON(`nul`).array); // invalid token
+    assertThrown(lexJSON(`nulX`).array); // invalid token
+    assertThrown(lexJSON(`0.e`).array); // invalid number
+    assertThrown(lexJSON(`xyz`).array); // invalid token
+ }
 
 
 /**
@@ -173,43 +224,6 @@ struct JSONLexerRange(Input, bool track_location = true)
         }
     }
 }
-
-///
-unittest {
-    auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
-    with (JSONToken.Kind) {
-        assert(rng.map!(t => t.kind).equal(
-            [objectStart, string, colon, number, comma, string, colon,
-            arrayStart, number, comma, boolean, comma, null_, arrayEnd, objectEnd]));
-    }
-}
-
-///
-unittest {
-    auto rng = lexJSON("true\n   false\r\n  1.0\r \"test\"");
-    rng.popFront();
-    assert(rng.front.boolean == false);
-    assert(rng.front.location.line == 1 && rng.front.location.column == 3);
-    rng.popFront();
-    assert(rng.front.number == 1.0);
-    assert(rng.front.location.line == 2 && rng.front.location.column == 2);
-    rng.popFront();
-    assert(rng.front.string == "test");
-    assert(rng.front.location.line == 3 && rng.front.location.column == 1);
-    rng.popFront();
-    assert(rng.empty);
-}
-
-unittest {
-    import std.exception;
-    assertThrown(lexJSON(`trui`).array); // invalid token
-    assertThrown(lexJSON(`fal`).array); // invalid token
-    assertThrown(lexJSON(`falsi`).array); // invalid token
-    assertThrown(lexJSON(`nul`).array); // invalid token
-    assertThrown(lexJSON(`nulX`).array); // invalid token
-    assertThrown(lexJSON(`0.e`).array); // invalid number
-    assertThrown(lexJSON(`xyz`).array); // invalid token
- }
 
 
 /**

@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Function toJSONString</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class="selected module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+				<script type="text/javascript" src="../../../../scripts/mousetrap.js"></script>
+				<script type="text/javascript">
+$(document).ready(function() {
+	Mousetrap.bind('s', function(e) {
+		$("#symbolSearch").focus();
+		return false;
+	});
+});
+				</script>
+		</nav>
+		<div id="main-contents">
+			<h1>Function toJSONString</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<p> Converts the given JSON document(s) to a string representation.
+</p>
+<section>
+<p> The input can be a JSONValue, or an input range of either JSONToken
+ or JSONParserNode elements. When converting a JSONValue or a range
+ of JSONParserNode elements, the resulting JSON string can optionally be
+ pretty printed. Pretty printed strings are indented multi-line strings
+ suitable for human consumption.
+</p>
+</section>
+
+					<section>
+						<h3>Prototypes</h3>
+						<pre class="code prettyprint lang-d prototype">
+string toJSONString(bool pretty_print)(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value
+);
+
+string toJSONString(bool pretty_print, Input)(
+&nbsp;&nbsp;Input nodes
+);
+
+string toJSONString(Input)(
+&nbsp;&nbsp;Input tokens
+);
+
+string toJSONString()(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a> token
+);</pre>
+					</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="pretty_print">pretty_print</td><td> Option to enable indented output, suitable for human
+     consumption</td></tr>
+<tr><td id="value">value</td><td> A single JSON document</td></tr>
+<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser <a href="../../../../stdx/data/json/generator/toJSONString.html#nodes"><code class="prettyprint lang-d">nodes</code></a>. The <a href="../../../../stdx/data/json/generator/toJSONString.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
+     must be in valid document order, or the parser result will be undefined.</td></tr>
+<tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/toJSONString.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/toJSONString.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
+     occur in any order and are simply appended in order to the final string.</td></tr>
+<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/toJSONString.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
+</table>
+</section>
+<section><h3>Returns</h3>
+<p>   Returns a JSON formatted string.
+</p>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

@@ -13,7 +13,7 @@
  * auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
  * with (JSONParserNode.Kind) {
  *     assert(nodes.map!(n => n.kind).equal(
- *         [objectStart, key, value, key, value, objectEnd]));
+ *         [objectStart, key, literal, key, literal, objectEnd]));
  * }
  *
  * // Parse a list of tokens instead of a string
@@ -223,14 +223,14 @@ unittest {
     auto rng1 = parseJSONStream(`{ "a": 1, "b": [null] }`);
     with (JSONParserNode.Kind) {
         assert(rng1.map!(n => n.kind).equal(
-            [objectStart, key, value, key, arrayStart, value, arrayEnd,
+            [objectStart, key, literal, key, arrayStart, literal, arrayEnd,
             objectEnd]));
     }
 
     auto rng2 = parseJSONStream(`1 {"a": 2} null`);
     with (JSONParserNode.Kind) {
         assert(rng2.map!(n => n.kind).equal(
-            [value, objectStart, key, value, objectEnd, value]));
+            [literal, objectStart, key, literal, objectEnd, literal]));
     }
 }
 
@@ -239,11 +239,11 @@ unittest {
     with (JSONParserNode.Kind) {
         rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "a"); rng.popFront();
-        assert(rng.front.kind == value && rng.front.value.number == 1.0); rng.popFront();
+        assert(rng.front.kind == literal && rng.front.literal.number == 1.0); rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "b"); rng.popFront();
         assert(rng.front.kind == arrayStart); rng.popFront();
-        assert(rng.front.kind == value && rng.front.value.kind == JSONToken.Kind.null_); rng.popFront();
-        assert(rng.front.kind == value && rng.front.value.boolean == true); rng.popFront();
+        assert(rng.front.kind == literal && rng.front.literal.kind == JSONToken.Kind.null_); rng.popFront();
+        assert(rng.front.kind == literal && rng.front.literal.boolean == true); rng.popFront();
         assert(rng.front.kind == arrayEnd); rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "c"); rng.popFront();
         assert(rng.front.kind == objectStart); rng.popFront();
@@ -370,7 +370,7 @@ struct JSONParserRange(Input)
                 _input.popFront();
                 readNextValue();
                 break;
-            case JSONParserNode.Kind.value, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
+            case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
                 if (_input.front.kind == JSONToken.Kind.objectEnd) {
                     _node.kind = JSONParserNode.Kind.objectEnd;
                     _containerStack.length--;
@@ -401,7 +401,7 @@ struct JSONParserRange(Input)
                     readNextValue();
                 }
                 break;
-            case JSONParserNode.Kind.value, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
+            case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
                 if (_input.front.kind == JSONToken.Kind.arrayEnd) {
                     _node.kind = JSONParserNode.Kind.arrayEnd;
                     _containerStack.length--;
@@ -425,7 +425,7 @@ struct JSONParserRange(Input)
             case JSONToken.Kind.invalid: assert(false);
             case JSONToken.Kind.null_, JSONToken.Kind.boolean,
                     JSONToken.Kind.number, JSONToken.Kind.string:
-                _node.value = _input.front;
+                _node.literal = _input.front;
                 _input.popFront();
                 break;
             case JSONToken.Kind.objectStart:
@@ -454,7 +454,7 @@ struct JSONParserNode {
     enum Kind {
         invalid,
         key,
-        value,
+        literal,
         objectStart,
         objectEnd,
         arrayStart,
@@ -465,7 +465,7 @@ struct JSONParserNode {
         Kind _kind = Kind.invalid;
         union {
             string _key;
-            JSONToken _value;
+            JSONToken _literal;
         }
     }
 
@@ -475,7 +475,7 @@ struct JSONParserNode {
     @property Kind kind() const { return _kind; }
     /// ditto
     @property Kind kind(Kind value)
-        in { assert(!value.among(Kind.key, Kind.value)); }
+        in { assert(!value.among(Kind.key, Kind.literal)); }
         body { return _kind = value; }
 
     /**
@@ -496,16 +496,16 @@ struct JSONParserNode {
     /**
      *
      */
-    @property ref inout(JSONToken) value()
+    @property ref inout(JSONToken) literal()
     inout {
-        assert(_kind == Kind.value);
-        return _value;
+        assert(_kind == Kind.literal);
+        return _literal;
     }
     /// ditto
-    @property ref JSONToken value(JSONToken value)
+    @property ref JSONToken literal(JSONToken literal)
     {
-        _kind = Kind.value;
-        return _value = value;
+        _kind = Kind.literal;
+        return _literal = literal;
     }
 }
 

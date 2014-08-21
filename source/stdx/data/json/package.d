@@ -35,7 +35,7 @@
  * auto nodes = parseJSONStream(tokens);
  * with (JSONParserNode.Kind) {
  *     assert(nodes.map!(n => n.kind).equal(
- *         [objectStart, key, value, key, value, objectEnd]));
+ *         [objectStart, key, literal, key, literal, objectEnd]));
  * }
  * ---
  *

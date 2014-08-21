@@ -207,9 +207,9 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
                 output.escapeString(nodes.front.key);
                 output.put(pretty_print ? `": ` : `":`);
                 break;
-            case value:
+            case literal:
                 preValue();
-                nodes.front.value.writeAsString(output);
+                nodes.front.literal.writeAsString(output);
                 break;
             case objectStart:
                 preValue();

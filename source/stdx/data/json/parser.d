@@ -14,7 +14,7 @@ import std.range : isInputRange;
 /**
  * Parses a JSON string and returns the result as a $(D JSONValue).
  *
- * The input string must be a valid JSON document. In particular, it may not
+ * The input string must be a valid JSON document. In particular, it must not
  * contain any additional text other than whitespace after the end of the
  * JSON document.
 */
@@ -57,7 +57,7 @@ unittest {
  *
  * All tokens belonging to the document will be consumed from the input range.
  * Any tokens after the end of the first JSON document will be left in the
- * input token range for later consumption.
+ * input token range for possible later consumption.
 */
 JSONValue parseJSON(Input)(ref Input tokens)
     if (isJSONTokenInputRange!Input)

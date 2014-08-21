@@ -6,11 +6,19 @@ module stdx.data.json.exception;
 import stdx.data.json.lexer;
 
 
+/**
+ * JSON specific exception.
+ *
+ * This exception is thrown during the lexing and parsing stages.
+*/
 class JSONException : Exception {
-
+    /// The bare error message
     string message;
+
+    /// The location where the error occured
     JSONToken.Location location;
 
+    /// Constructs a new exception from the given message and location
     this(string message, JSONToken.Location loc, string file = __FILE__, size_t line = __LINE__)
     {
         import std.string;

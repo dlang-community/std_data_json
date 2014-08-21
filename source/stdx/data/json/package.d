@@ -1,5 +1,5 @@
 /**
- * Package import for std.data.json.
+ * Package import for the whole std.data.json package.
  */
 module stdx.data.json;
 

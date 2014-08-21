@@ -17,6 +17,18 @@ import std.range;
  * of $(D JSONParserNode) elements, the resulting JSON string can optionally be
  * pretty printed. Pretty printed strings are indented multi-line strings
  * suitable for human consumption.
+ *
+ * Params:
+ *   pretty_print = Option to enable indented output, suitable for human
+ *     consumption
+ *   value = A single JSON document
+ *   nodes = A set of JSON documents encoded as single parser nodes. The nodes
+ *     must be in valid document order, or the parser result will be undefined.
+ *   tokens = List of JSON tokens to be converted to strings. The tokens may
+ *     occur in any order and are simply appended in order to the final string.
+ *
+ * Returns:
+ *   Returns a JSON formatted string.
  */
 string toJSONString(bool pretty_print = false)(JSONValue value)
 {
@@ -26,21 +38,21 @@ string toJSONString(bool pretty_print = false)(JSONValue value)
     return dst.data;
 }
 /// ditto
-string toJSONString(bool pretty_print = false, Input)(Input input)
+string toJSONString(bool pretty_print = false, Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    input.writeAsString!pretty_print(dst);
+    nodes.writeAsString!pretty_print(dst);
     return dst.data;
 }
 /// ditto
-string toJSONString(Input)(Input input)
+string toJSONString(Input)(Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    input.writeAsString(dst);
+    tokens.writeAsString(dst);
     return dst.data;
 }
 
@@ -69,8 +81,8 @@ unittest {
 }
 
 unittest {
-    auto tokens = lexJSON(`{"a": [], "b": [1, {}]}`);
-    assert(tokens.toJSONString() == `{"a":[],"b":[1,{}]}`);
+    auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
+    assert(tokens.toJSONString() == `{"a":[],"b":[1,{},null,true,false]}`);
 
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
     assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
@@ -80,7 +92,19 @@ unittest {
 
 
 /**
+ * Writes then given JSON formatted document(s) to an output range.
  *
+ * See $(D toJSONString) for more information.
+ *
+ * Params:
+ *   pretty_print = Option to enable indented output, suitable for human
+ *     consumption
+ *   output = The output range to take the result string in UTF-8 encoding.
+ *   value = A single JSON document
+ *   nodes = A set of JSON documents encoded as single parser nodes. The nodes
+ *     must be in valid document order, or the parser result will be undefined.
+ *   tokens = List of JSON tokens to be converted to strings. The tokens may
+ *     occur in any order and are simply appended in order to the final string.
  */
 void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
@@ -124,7 +148,7 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
     } else assert(false);
 }
 /// ditto
-void writeAsString(bool pretty_print = false, Output, Input)(Input input, ref Output output)
+void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     size_t nesting = 0;
@@ -147,8 +171,8 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input input, ref Ou
         } else is_object_field = false;
     }
 
-    while (!input.empty) {
-        final switch (input.front.kind) with (JSONParserNode.Kind) {
+    while (!nodes.empty) {
+        final switch (nodes.front.kind) with (JSONParserNode.Kind) {
             case invalid: assert(false);
             case key:
                 if (nesting > 0 && !first) output.put(',');
@@ -156,12 +180,12 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input input, ref Ou
                 is_object_field = true;
                 static if (pretty_print) indent(nesting);
                 output.put('"');
-                output.escapeString(input.front.key);
+                output.escapeString(nodes.front.key);
                 output.put(pretty_print ? `": ` : `":`);
                 break;
             case value:
                 preValue();
-                input.front.value.writeAsString(output);
+                nodes.front.value.writeAsString(output);
                 break;
             case objectStart:
                 preValue();
@@ -193,16 +217,16 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input input, ref Ou
                 output.put(']');
                 break;
         }
-        input.popFront();
+        nodes.popFront();
     }
 }
 /// ditto
-void writeAsString(Output, Input)(Input input, ref Output output)
+void writeAsString(Output, Input)(Input tokens, ref Output output)
     if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
 {
-    while (!input.empty) {
-        input.front.writeAsString(output);
-        input.popFront();
+    while (!tokens.empty) {
+        tokens.front.writeAsString(output);
+        tokens.popFront();
     }
 }
 /// ditto
@@ -231,7 +255,7 @@ private void writeNumber(R)(ref R dst, double num)
     dst.formattedWrite("%.16g", num);
 }
 
-private void escapeString(R)(ref R dst, string s)
+private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
 {
     import std.format;
     import std.utf : decode;
@@ -248,23 +272,28 @@ private void escapeString(R)(ref R dst, string s)
             case '\t': dst.put(`\t`); break;
             case '\"': dst.put(`\"`); break;
             default:
-                if (ch >= 0x20 && ch < 0x80) {
-                    dst.put(ch);
-                    break;
-                }
+                static if (use_surrogates) {
+                    if (ch >= 0x20 && ch < 0x80) {
+                        dst.put(ch);
+                        break;
+                    }
 
-                dchar cp = decode(s, pos);
-                pos--; // account for the next loop increment
+                    dchar cp = decode(s, pos);
+                    pos--; // account for the next loop increment
 
-                // encode as one or two UTF-16 code points
-                if (cp < 0x10000) { // in BMP -> 1 CP
-                    formattedWrite(dst, "\\u%04X", cp);
-                } else { // not in BMP -> surrogate pair
-                    int first, last;
-                    cp -= 0x10000;
-                    first = 0xD800 | ((cp & 0xffc00) >> 10);
-                    last = 0xDC00 | (cp & 0x003ff);
-                    formattedWrite(dst, "\\u%04X\\u%04X", first, last);
+                    // encode as one or two UTF-16 code points
+                    if (cp < 0x10000) { // in BMP -> 1 CP
+                        formattedWrite(dst, "\\u%04X", cp);
+                    } else { // not in BMP -> surrogate pair
+                        int first, last;
+                        cp -= 0x10000;
+                        first = 0xD800 | ((cp & 0xffc00) >> 10);
+                        last = 0xDC00 | (cp & 0x003ff);
+                        formattedWrite(dst, "\\u%04X\\u%04X", first, last);
+                    }
+                } else {
+                    if (ch < 0x20) formattedWrite(dst, "\\u%04X", ch);
+                    else dst.put(ch);
                 }
                 break;
         }
@@ -272,5 +301,21 @@ private void escapeString(R)(ref R dst, string s)
 }
 
 unittest {
-    // ...
+    static void test(bool surrog)(string str, string expected)
+    {
+        auto res = appender!string;
+        res.escapeString!surrog(str);
+        assert(res.data == expected, res.data);
+    }
+
+    test!false("hello", "hello");
+    test!false("hällo", "hällo");
+    test!false("a\U00010000b", "a\U00010000b");
+    test!false("a\u1234b", "a\u1234b");
+    test!false("\r\n\b\f\t\\\"", `\r\n\b\f\t\\\"`);
+    test!true("hello", "hello");
+    test!true("hällo", `h\u00E4llo`);
+    test!true("a\U00010000b", `a\uD800\uDC00b`);
+    test!true("a\u1234b", `a\u1234b`);
+    test!true("\r\n\b\f\t\\\"", `\r\n\b\f\t\\\"`);
 }

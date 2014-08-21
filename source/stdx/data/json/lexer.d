@@ -37,7 +37,7 @@ module stdx.data.json.lexer;
 
 import std.range;
 import std.traits : isSomeChar, isIntegral;
-import stdx.data.json.exception;
+import stdx.data.json.foundation;
 
 
 /**
@@ -112,7 +112,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     private {
         typeof(Input.init.representation) _input;
         JSONToken _front;
-        JSONToken.Location _loc;
+        Location _loc;
     }
 
     this(Input input, string filename = null)
@@ -124,7 +124,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     /**
      * The current location of the lexer.
      */
-    @property JSONToken.Location location() const { return _loc; }
+    @property Location location() const { return _loc; }
 
     /**
      *
@@ -266,21 +266,6 @@ struct JSONToken {
         comma         /// The "," token
     }
 
-    /**
-     * Represents a location in the input range.
-     *
-     * The indices are zero based and the column is represented in code units of
-     * the input (i.e. in bytes in case of a UTF-8 input string).
-     */
-    struct Location {
-        /// Optional file name.
-        .string file;
-        /// The zero based line of the input file.
-        size_t line = 0;
-        /// The zero based code unit index of the referenced line.
-        size_t column = 0;
-    }
-
     private {
         union {
             .string _string;
@@ -381,7 +366,7 @@ unittest {
 }
 
 
-private string parseString(bool track_location = true, Input)(ref Input input, ref JSONToken.Location loc)
+private string parseString(bool track_location = true, Input)(ref Input input, ref Location loc)
 {
     import std.algorithm : skipOver;
     import std.array;
@@ -493,7 +478,7 @@ unittest {
 
     void testResult(string str, string expected, string remaining, bool slice_expected = false) {
         { // test with string (possibly sliced result)
-            JSONToken.Location loc;
+            Location loc;
             string scopy = str;
             auto ret = parseString(scopy, loc);
             assert(ret == expected, ret);
@@ -504,7 +489,7 @@ unittest {
         }
 
         { // test with string representation (possibly sliced result)
-            JSONToken.Location loc;
+            Location loc;
             immutable(ubyte)[] scopy = str.representation;
             auto ret = parseString(scopy, loc);
             assert(ret == expected, ret);
@@ -515,7 +500,7 @@ unittest {
         }
 
         { // test with dstring (fully duplicated result)
-            JSONToken.Location loc;
+            Location loc;
             dstring scopy = str.to!dstring;
             auto ret = parseString(scopy, loc);
             assert(ret == expected);
@@ -535,7 +520,7 @@ unittest {
     testResult(`"\u1234"`, "\u1234", "");
     testResult(`"\uD800\udc00"`, "\U00010000", "");
 
-    JSONToken.Location loc;
+    Location loc;
     string s;
     assertThrown(parseString(s = `"`, loc)); // unterminated string
     assertThrown(parseString(s = `"test\"`, loc)); // unterminated string
@@ -550,7 +535,7 @@ unittest {
     assertThrown(parseString(s = `"\uD800\u1234"`, loc)); // invalid surrogate pair
 }
 
-private double parseNumber(bool track_location = true, Input)(ref Input input, ref JSONToken.Location loc)
+private double parseNumber(bool track_location = true, Input)(ref Input input, ref Location loc)
 {
     import std.algorithm : among;
     import std.ascii;
@@ -648,7 +633,7 @@ unittest {
     import std.string : format;
 
     void test(string str, double expected, string remainder) {
-        JSONToken.Location loc;
+        Location loc;
         auto strcopy = str;
         auto res = parseNumber(strcopy, loc);
         assert(approxEqual(res, expected), format("%s vs %s %s", res, expected, res-expected));
@@ -677,7 +662,7 @@ unittest {
     test("0.123e-12", 0.123e-12, "");
     test("0.123e-12 ", 0.123e-12, " ");
 
-    JSONToken.Location loc;
+    Location loc;
     string s;
     assertThrown(parseNumber(s = "+", loc));
     assertThrown(parseNumber(s = "-", loc));

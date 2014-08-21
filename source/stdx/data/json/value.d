@@ -13,6 +13,8 @@
  */
 module stdx.data.json.value;
 
+import stdx.data.json.foundation;
+
 
 /**
  * Represents a generic JSON value.
@@ -27,7 +29,6 @@ module stdx.data.json.value;
 struct JSONValue {
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
-    alias Location = JSONToken.Location;
 
     alias Payload = Algebraic!(
         typeof(null),

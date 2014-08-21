@@ -4,11 +4,26 @@
  * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
- * Source:    $(PHOBOSSRC std/data/json/exception.d)
+ * Source:    $(PHOBOSSRC std/data/json/foundation.d)
  */
-module stdx.data.json.exception;
+module stdx.data.json.foundation;
 
 import stdx.data.json.lexer;
+
+/**
+ * Represents a location in an input range/file.
+ *
+ * The indices are zero based and the column is represented in code units of
+ * the input (i.e. in bytes in case of a UTF-8 input string).
+ */
+struct Location {
+    /// Optional file name.
+    .string file;
+    /// The zero based line of the input file.
+    size_t line = 0;
+    /// The zero based code unit index of the referenced line.
+    size_t column = 0;
+}
 
 
 /**
@@ -21,10 +36,10 @@ class JSONException : Exception {
     string message;
 
     /// The location where the error occured
-    JSONToken.Location location;
+    Location location;
 
     /// Constructs a new exception from the given message and location
-    this(string message, JSONToken.Location loc, string file = __FILE__, size_t line = __LINE__)
+    this(string message, Location loc, string file = __FILE__, size_t line = __LINE__)
     {
         import std.string;
         this.message = message;
@@ -33,7 +48,7 @@ class JSONException : Exception {
     }
 }
 
-package void enforceJson(string file = __FILE__, size_t line = __LINE__)(bool cond, lazy string message, lazy JSONToken.Location loc)
+package void enforceJson(string file = __FILE__, size_t line = __LINE__)(bool cond, lazy string message, lazy Location loc)
 {
     if (!cond) throw new JSONException(message, loc, file, line);
 }

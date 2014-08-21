@@ -47,7 +47,7 @@ import std.range : isInputRange;
 JSONValue parseJSON(bool track_location = true, Input)(Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    import stdx.data.json.exception;
+    import stdx.data.json.foundation;
 
     auto tokens = lexJSON!track_location(input, filename);
     auto ret = parseJSON(tokens);
@@ -89,7 +89,7 @@ JSONValue parseJSON(Input)(ref Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
-    import stdx.data.json.exception;
+    import stdx.data.json.foundation;
 
     enforceJson(!tokens.empty, "Missing JSON value before EOF", tokens.location);
 
@@ -292,7 +292,7 @@ unittest {
 struct JSONParserRange(Input)
     if (isJSONTokenInputRange!Input)
 {
-    import stdx.data.json.exception;
+    import stdx.data.json.foundation;
 
     private {
         Input _input;

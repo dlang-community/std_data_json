@@ -26,6 +26,7 @@ import std.range;
  *     must be in valid document order, or the parser result will be undefined.
  *   tokens = List of JSON tokens to be converted to strings. The tokens may
  *     occur in any order and are simply appended in order to the final string.
+ *   token = A single token to convert to a string
  *
  * Returns:
  *   Returns a JSON formatted string.
@@ -55,6 +56,14 @@ string toJSONString(Input)(Input tokens)
     tokens.writeAsString(dst);
     return dst.data;
 }
+/// ditto
+string toJSONString()(JSONToken token)
+{
+    import std.array;
+    auto dst = appender!string();
+    token.writeAsString(dst);
+    return dst.data;
+}
 
 ///
 unittest {
@@ -81,12 +90,16 @@ unittest {
 }
 
 unittest {
-    auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
-    assert(tokens.toJSONString() == `{"a":[],"b":[1,{},null,true,false]}`);
-
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
     assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
     assert(nodes.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+
+    auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
+    assert(tokens.toJSONString() == `{"a":[],"b":[1,{},null,true,false]}`);
+
+    JSONToken tok;
+    tok.string = "Hello World";
+    assert(tok.toJSONString() == `"Hello World"`);
 }
 
 
@@ -105,6 +118,7 @@ unittest {
  *     must be in valid document order, or the parser result will be undefined.
  *   tokens = List of JSON tokens to be converted to strings. The tokens may
  *     occur in any order and are simply appended in order to the final string.
+ *   token = A single token to convert to a string
  */
 void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))

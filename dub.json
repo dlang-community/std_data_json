@@ -4,4 +4,5 @@
 	"copyright": "Copyright © 2014, Sönke Ludwig",
 	"license": "BSL-1.0",
 	"authors": ["Sönke Ludwig"],
+	"-ddoxFilterArgs": ["--unittest-examples", "--min-protection=Protected", "--only-documented"]
 }

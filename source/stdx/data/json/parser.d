@@ -1,8 +1,11 @@
 /**
  * Provides various means for parsing JSON documents.
  *
- * This module contains two different JSON parser implementations. The first
- * implementation takes either an input string or range, or a range of
+ * This module contains two different parser implementations. The first
+ * implementation returns a single JSON document in the form of a
+ * $(D JSONValue), while the second implementation returns a stream
+ * of nodes. The stream based parser is particularly useful for
+ * deserializing with few allocations or for processing large documents.
  *
  * Synopsis:
  * ---
@@ -193,9 +196,9 @@ unittest {
  * with the nesting level of the JSON document, but independent of the number
  * of values.
  *
- * The order of nodes is guaranteed to be ordered according to the following
- * grammar, where uppercase elements correspond to the node kind (See
- * $(D JSONParserNode.Kind)).
+ * The resulting range of nodes is guaranteed to be ordered according to the
+ * following grammar, where uppercase terminals correspond to the node kind
+ * (See $(D JSONParserNode.Kind)).
  *
  * $(UL
  *   $(LI list → value*)

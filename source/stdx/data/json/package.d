@@ -939,7 +939,7 @@ unittest {
 
     static void test(string txt)
     {
-        auto val = parseJSON(txt);
+        auto val = toJSONValue(txt);
         // Note: order is undefined due to AA use in JSONValue
         //assert(val.toJSONString() == val.toJSONString().parseJSON().toJSONString());
 

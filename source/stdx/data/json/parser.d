@@ -10,7 +10,7 @@
  * Synopsis:
  * ---
  * // Parse a JSON string to a single value
- * JSONValue value = parseJSON(`{"name": "D", "kind": "language"}`);
+ * JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
  *
  * // Parse a JSON string to a node stream
  * auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
@@ -38,43 +38,97 @@ import std.range : isInputRange;
 
 
 /**
- * Parses a JSON string and returns the result as a $(D JSONValue).
+ * Parses a JSON string or token range and returns the result as a
+ * $(D JSONValue).
  *
  * The input string must be a valid JSON document. In particular, it must not
  * contain any additional text other than whitespace after the end of the
  * JSON document.
-*/
-JSONValue parseJSON(bool track_location = true, Input)(Input input, string filename = "")
+ *
+ * See_also: $(D parseJSONValue)
+ */
+JSONValue toJSONValue(bool track_location = true, Input)(Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    import stdx.data.json.foundation;
-
     auto tokens = lexJSON!track_location(input, filename);
-    auto ret = parseJSON(tokens);
-    enforceJson(tokens.empty, "Unexpected tokens following JSON value", tokens.front.location);
+    return toJSONValue(tokens);
+}
+/// ditto
+JSONValue toJSONValue(Input)(Input tokens)
+    if (isJSONTokenInputRange!Input)
+{
+    import stdx.data.json.foundation;
+    auto ret = parseJSONValue(tokens);
+    enforceJson(tokens.empty, "Unexpected characters following JSON", tokens.location);
     return ret;
 }
 
 ///
 unittest {
     // parse a simple number
-    JSONValue a = parseJSON(`1.0`);
+    JSONValue a = toJSONValue(`1.0`);
     assert(a == 1.0);
 
     // parse an object
-    JSONValue b = parseJSON(`{"a": true, "b": "test"}`);
+    JSONValue b = toJSONValue(`{"a": true, "b": "test"}`);
     auto bdoc = b.get!(JSONValue[string]);
     assert(bdoc.length == 2);
     assert(bdoc["a"] == true);
     assert(bdoc["b"] == "test");
 
     // parse an array
-    JSONValue c = parseJSON(`[1, 2, null]`);
+    JSONValue c = toJSONValue(`[1, 2, null]`);
     auto cdoc = c.get!(JSONValue[]);
     assert(cdoc.length == 3);
     assert(cdoc[0] == 1.0);
     assert(cdoc[1] == 2.0);
     assert(cdoc[2] == null);
+}
+
+unittest {
+    import std.exception;
+    assertNotThrown(toJSONValue("{} \t\r\n"));
+    assertThrown(toJSONValue(`{} {}`));
+}
+
+
+/**
+ * Parses a JSON string and returns the result as a $(D JSONValue).
+ *
+ * The input string must start with a valid JSON document. Any characters
+ * occurring after this document will be left in the input range.
+ */
+JSONValue parseJSONValue(bool track_location = true, Input)(ref Input input, string filename = "")
+    if (isStringInputRange!Input || isIntegralInputRange!Input)
+{
+    import stdx.data.json.foundation;
+
+    auto tokens = lexJSON!track_location(input, filename);
+    auto ret = parseJSONValue(tokens);
+    input = tokens.input;
+    return ret;
+}
+
+/// Parse an object
+unittest {
+    // parse an object
+    string str = `{"a": true, "b": "test"}`;
+    JSONValue v = parseJSONValue(str);
+    assert(!str.length); // the input has been consumed
+
+    auto obj = v.get!(JSONValue[string]);
+    assert(obj.length == 2);
+    assert(obj["a"] == true);
+    assert(obj["b"] == "test");
+}
+
+/// Parse multiple consecutive values
+unittest {
+    string str = `1.0 2.0`;
+    JSONValue v1 = parseJSONValue(str);
+    assert(v1 == 1.0);
+    JSONValue v2 = parseJSONValue(str);
+    assert(v2 == 2.0);
 }
 
 
@@ -85,7 +139,7 @@ unittest {
  * Any tokens after the end of the first JSON document will be left in the
  * input token range for possible later consumption.
 */
-JSONValue parseJSON(Input)(ref Input tokens)
+JSONValue parseJSONValue(Input)(ref Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
@@ -122,7 +176,7 @@ JSONValue parseJSON(Input)(ref Input tokens)
                 enforceJson(!tokens.empty && tokens.front.kind == colon, "Expected ':'",
                     tokens.empty ? tokens.location : tokens.front.location);
                 tokens.popFront();
-                obj[key] = parseJSON(tokens);
+                obj[key] = parseJSONValue(tokens);
             }
             ret = JSONValue(obj, loc);
             break;
@@ -140,7 +194,7 @@ JSONValue parseJSON(Input)(ref Input tokens)
                     tokens.popFront();
                 } else first = false;
 
-                array ~= parseJSON(tokens);
+                array ~= parseJSONValue(tokens);
             }
             ret = JSONValue(array.data, loc);
             break;
@@ -159,7 +213,7 @@ unittest {
     auto tokens = lexJSON(`[1, 2, 3]`);
 
     // parse
-    auto doc = parseJSON(tokens);
+    auto doc = parseJSONValue(tokens);
 
     auto arr = doc.get!(JSONValue[]);
     assert(arr.length == 3);
@@ -171,20 +225,20 @@ unittest {
 unittest {
     import std.exception;
 
-    assertThrown(parseJSON(`]`));
-    assertThrown(parseJSON(`}`));
-    assertThrown(parseJSON(`,`));
-    assertThrown(parseJSON(`:`));
-    assertThrown(parseJSON(`{`));
-    assertThrown(parseJSON(`[`));
-    assertThrown(parseJSON(`[1,]`));
-    assertThrown(parseJSON(`[1,,]`));
-    assertThrown(parseJSON(`[1,`));
-    assertThrown(parseJSON(`[1 2]`));
-    assertThrown(parseJSON(`{1: 1}`));
-    assertThrown(parseJSON(`{"a": 1,}`));
-    assertThrown(parseJSON(`{"a" 1}`));
-    assertThrown(parseJSON(`{"a": 1 "b": 2}`));
+    assertThrown(toJSONValue(`]`));
+    assertThrown(toJSONValue(`}`));
+    assertThrown(toJSONValue(`,`));
+    assertThrown(toJSONValue(`:`));
+    assertThrown(toJSONValue(`{`));
+    assertThrown(toJSONValue(`[`));
+    assertThrown(toJSONValue(`[1,]`));
+    assertThrown(toJSONValue(`[1,,]`));
+    assertThrown(toJSONValue(`[1,`));
+    assertThrown(toJSONValue(`[1 2]`));
+    assertThrown(toJSONValue(`{1: 1}`));
+    assertThrown(toJSONValue(`{"a": 1,}`));
+    assertThrown(toJSONValue(`{"a" 1}`));
+    assertThrown(toJSONValue(`{"a": 1 "b": 2}`));
 }
 
 /**

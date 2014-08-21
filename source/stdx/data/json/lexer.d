@@ -125,6 +125,11 @@ struct JSONLexerRange(Input, bool track_location = true)
     }
 
     /**
+     * Returns a copy of the underlying input range.
+     */
+    @property Input input() { return cast(Input)_input; }
+
+    /**
      * The current location of the lexer.
      */
     @property Location location() const { return _loc; }

@@ -83,7 +83,7 @@ unittest {
 
 ///
 unittest {
-    auto a = parseJSON(`{"a": [], "b": [1, {}]}`);
+    auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
     // write compact JSON
     assert(a.toJSONString!false() == `{"a":[],"b":[1,{}]}`);
@@ -283,13 +283,13 @@ unittest {
     import std.math;
     import std.string;
 
-    auto num = parseJSON("-67.199307");
+    auto num = toJSONValue("-67.199307");
     auto exp = -67.199307;
     assert(num.get!double.approxEqual(exp));
 
     auto snum = appender!string;
     snum.writeNumber(num.get!double);
-    auto pnum = parseJSON(snum.data);
+    auto pnum = toJSONValue(snum.data);
     assert(pnum.get!double.approxEqual(num.get!double));
 }
 

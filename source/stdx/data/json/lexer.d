@@ -177,7 +177,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     {
         import std.algorithm : skipOver;
 
-        void skipNonWSChar()
+        void skipChar()
         {
             _input.popFront();
             static if (track_location) _loc.column++;
@@ -210,12 +210,12 @@ struct JSONLexerRange(Input, bool track_location = true)
                 break;
             case '"': _front.string = _input.parseString!track_location(_loc); break;
             case '0': .. case '9': case '-': _front.number = _input.parseNumber!track_location(_loc); break;
-            case '[': skipNonWSChar(); _front.kind = JSONToken.Kind.arrayStart; break;
-            case ']': skipNonWSChar(); _front.kind = JSONToken.Kind.arrayEnd; break;
-            case '{': skipNonWSChar(); _front.kind = JSONToken.Kind.objectStart; break;
-            case '}': skipNonWSChar(); _front.kind = JSONToken.Kind.objectEnd; break;
-            case ':': skipNonWSChar(); _front.kind = JSONToken.Kind.colon; break;
-            case ',': skipNonWSChar(); _front.kind = JSONToken.Kind.comma; break;
+            case '[': skipChar(); _front.kind = JSONToken.Kind.arrayStart; break;
+            case ']': skipChar(); _front.kind = JSONToken.Kind.arrayEnd; break;
+            case '{': skipChar(); _front.kind = JSONToken.Kind.objectStart; break;
+            case '}': skipChar(); _front.kind = JSONToken.Kind.objectEnd; break;
+            case ':': skipChar(); _front.kind = JSONToken.Kind.colon; break;
+            case ',': skipChar(); _front.kind = JSONToken.Kind.comma; break;
         }
 
         skipWhitespace();

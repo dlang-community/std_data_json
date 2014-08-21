@@ -353,6 +353,7 @@ struct JSONParserRange(Input)
     private {
         Input _input;
         JSONToken.Kind[] _containerStack;
+        size_t _containerStackFill = 0;
         JSONParserNode.Kind _prevKind;
         JSONParserNode _node;
     }
@@ -368,7 +369,7 @@ struct JSONParserRange(Input)
     /**
      * Determines of the range has been exhausted.
      */
-    @property bool empty() { return _containerStack.length == 0 && _input.empty; }
+    @property bool empty() { return _containerStackFill == 0 && _input.empty; }
 
     /**
      * Returns the current node from the stream.
@@ -399,8 +400,8 @@ struct JSONParserRange(Input)
 
     private void readNext()
     {
-        if (_containerStack.length) {
-            if (_containerStack[$-1] == JSONToken.Kind.objectStart)
+        if (_containerStackFill) {
+            if (_containerStack[_containerStackFill-1] == JSONToken.Kind.objectStart)
                 readNextInObject();
             else readNextInArray();
         } else readNextValue();
@@ -414,7 +415,7 @@ struct JSONParserRange(Input)
             case JSONParserNode.Kind.objectStart:
                 if (_input.front.kind == JSONToken.Kind.objectEnd) {
                     _node.kind = JSONParserNode.Kind.objectEnd;
-                    _containerStack.length--;
+                    _containerStackFill--;
                 } else {
                     enforceJson(_input.front.kind == JSONToken.Kind.string,
                         "Expected field name", _input.front.location);
@@ -431,7 +432,7 @@ struct JSONParserRange(Input)
             case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
                 if (_input.front.kind == JSONToken.Kind.objectEnd) {
                     _node.kind = JSONParserNode.Kind.objectEnd;
-                    _containerStack.length--;
+                    _containerStackFill--;
                 } else {
                     enforceJson(_input.front.kind == JSONToken.Kind.comma,
                         "Expected ',' or '}'", _input.front.location);
@@ -453,7 +454,7 @@ struct JSONParserRange(Input)
             case JSONParserNode.Kind.arrayStart:
                 if (_input.front.kind == JSONToken.Kind.arrayEnd) {
                     _node.kind = JSONParserNode.Kind.arrayEnd;
-                    _containerStack.length--;
+                    _containerStackFill--;
                     _input.popFront();
                 } else {
                     readNextValue();
@@ -462,7 +463,7 @@ struct JSONParserRange(Input)
             case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
                 if (_input.front.kind == JSONToken.Kind.arrayEnd) {
                     _node.kind = JSONParserNode.Kind.arrayEnd;
-                    _containerStack.length--;
+                    _containerStackFill--;
                     _input.popFront();
                 } else {
                     enforceJson(_input.front.kind == JSONToken.Kind.comma,
@@ -477,6 +478,12 @@ struct JSONParserRange(Input)
 
     void readNextValue()
     {
+        void pushContainer(JSONToken.Kind kind) {
+            if (_containerStackFill >= _containerStack.length)
+                _containerStack.length++;
+            _containerStack[_containerStackFill++] = kind;
+        }
+
         switch (_input.front.kind) {
             default:
                 throw new JSONException("Expected JSON value", _input.location);
@@ -488,12 +495,12 @@ struct JSONParserRange(Input)
                 break;
             case JSONToken.Kind.objectStart:
                 _node.kind = JSONParserNode.Kind.objectStart;
-                _containerStack ~= JSONToken.Kind.objectStart;
+                pushContainer(JSONToken.Kind.objectStart);
                 _input.popFront();
                 break;
             case JSONToken.Kind.arrayStart:
                 _node.kind = JSONParserNode.Kind.arrayStart;
-                _containerStack ~= JSONToken.Kind.arrayStart;
+                pushContainer(JSONToken.Kind.arrayStart);
                 _input.popFront();
                 break;
         }

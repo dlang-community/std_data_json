@@ -4,7 +4,7 @@
  * Synopsis:
  * ---
  * // Parse a JSON string
- * JSONValue value = parseJSON(`{"name": "D", "kind": "language"}`);
+ * JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
  * auto fields = value.get!(JSONValue[string]);
  * assert(fields["name"] == "D");
  * assert(fields["kind"] == "language");
@@ -28,7 +28,7 @@
  * }
  *
  * // Parse the tokens to a value
- * JSONValue value2 = parseJSON(tokens);
+ * JSONValue value2 = parseJSONValue(tokens);
  * assert(value2 == value);
  *
  * // Parse the tokens to a JSON node stream
@@ -941,7 +941,7 @@ unittest {
     {
         auto val = toJSONValue(txt);
         // Note: order is undefined due to AA use in JSONValue
-        //assert(val.toJSONString() == val.toJSONString().parseJSON().toJSONString());
+        //assert(val.toJSONString() == val.toJSONString().parseJSONValue().toJSONString());
 
         static bool ncmp(JSONParserNode a, JSONParserNode b)
         {

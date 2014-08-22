@@ -21,7 +21,7 @@
  *
  * // Parse a list of tokens instead of a string
  * auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
- * JSONValue value2 = parseJson(tokens);
+ * JSONValue value2 = parseJSONValue(tokens);
  * assert(value == value2);
  * ---
  *

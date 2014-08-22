@@ -12,6 +12,7 @@
  * Source:    $(PHOBOSSRC std/data/json/generator.d)
  */
 module stdx.data.json.generator;
+@safe:
 
 import stdx.data.json.lexer;
 import stdx.data.json.parser;
@@ -276,7 +277,7 @@ void writeAsString(Output)(in ref JSONToken token, ref Output output)
 private void writeNumber(R)(ref R dst, double num)
 {
     import std.format;
-    dst.formattedWrite("%.16g", num);
+    () @trusted { dst.formattedWrite("%.16g", num); }();
 }
 
 unittest {

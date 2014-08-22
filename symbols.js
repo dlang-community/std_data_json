@@ -12,6 +12,8 @@ var symbols = [
 {name: "stdx.data.json.foundation.Location.toString", kind: "functiondeclaration", path: "./stdx/data/json/foundation/Location.toString.html", attributes: ["safe", "const"]},
 {name: "stdx.data.json.generator", kind: "module", path: "./stdx/data/json/generator.html", attributes: []},
 {name: "stdx.data.json.generator.toJSONString", kind: "functiondeclaration", path: "./stdx/data/json/generator/toJSONString.html", attributes: []},
+{name: "stdx.data.json.generator.toPrettyJSONString", kind: "functiondeclaration", path: "./stdx/data/json/generator/toPrettyJSONString.html", attributes: []},
+{name: "stdx.data.json.generator.writeAsPrettyString", kind: "functiondeclaration", path: "./stdx/data/json/generator/writeAsPrettyString.html", attributes: []},
 {name: "stdx.data.json.generator.writeAsString", kind: "functiondeclaration", path: "./stdx/data/json/generator/writeAsString.html", attributes: []},
 {name: "stdx.data.json.lexer", kind: "module", path: "./stdx/data/json/lexer.html", attributes: []},
 {name: "stdx.data.json.lexer.JSONLexerRange", kind: "structdeclaration", path: "./stdx/data/json/lexer/JSONLexerRange.html", attributes: []},

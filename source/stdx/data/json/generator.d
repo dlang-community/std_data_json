@@ -26,9 +26,9 @@ import std.range;
  * Pretty printed strings are indented multi-line strings suitable for human
  * consumption.
  *
- * See_also: $(D writePrettyJSONString), $(D toJSONString)
+ * See_also: $(D writeAsPrettyString), $(D toString)
  */
-string toPrettyJSONString()(JSONValue value)
+string toPrettyString()(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
@@ -36,7 +36,7 @@ string toPrettyJSONString()(JSONValue value)
     return dst.data;
 }
 /// ditto
-string toPrettyJSONString(Input)(Input nodes)
+string toPrettyString(Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
@@ -63,9 +63,9 @@ string toPrettyJSONString(Input)(Input nodes)
  * Returns:
  *   Returns a JSON formatted string.
  *
- * See_also: $(D writeJSONString), $(D toPrettyJSONString)
+ * See_also: $(D writeAsString), $(D toPrettyString)
  */
-string toJSONString()(JSONValue value)
+string toString()(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
@@ -73,7 +73,7 @@ string toJSONString()(JSONValue value)
     return dst.data;
 }
 /// ditto
-string toJSONString(Input)(Input nodes)
+string toString(Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
@@ -82,7 +82,7 @@ string toJSONString(Input)(Input nodes)
     return dst.data;
 }
 /// ditto
-string toJSONString(Input)(Input tokens)
+string toString(Input)(Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
@@ -91,7 +91,7 @@ string toJSONString(Input)(Input tokens)
     return dst.data;
 }
 /// ditto
-string toJSONString()(JSONToken token)
+string toString()(JSONToken token)
 {
     import std.array;
     auto dst = appender!string();
@@ -146,7 +146,7 @@ unittest
  * This function produces output suitable for human consumption by properly
  * indenting based on the nesting level.
  *
- * See_also: $(D toPrettyJSONString), $(D writeJSONString)
+ * See_also: $(D toPrettyString), $(D writeAsString)
  */
 void writeAsPrettyString(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
@@ -175,7 +175,7 @@ void writeAsPrettyString(Output, Input)(Input nodes, ref Output output)
  *     occur in any order and are simply appended in order to the final string.
  *   token = A single token to convert to a string
  *
- * See_also: $(D toJSONString), $(D writePrettyJSONString)
+ * See_also: $(D toString), $(D writeAsPrettyString)
  */
 void writeAsString(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))

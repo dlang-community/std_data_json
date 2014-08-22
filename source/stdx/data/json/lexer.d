@@ -954,7 +954,7 @@ unittest
  * These flags can be combined using a bitwise or operation.
  */
 enum LexOptions {
-    none          = 0,    /// Don't track token location and only use double numbers
+    none          = 0,    /// Don't track token location and only use double to represent numbers
     trackLocation = 1<<0, /// Counts lines and columns while lexing the source
     noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
     //useLong     = 1<<2, /// Use long to represent integers

@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Enum JSONParserNode.Kind</title>
+		<title>Enum member JSONToken.Kind.error</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -29,10 +29,10 @@
 								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
@@ -72,87 +72,20 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Enum JSONParserNode.Kind</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Enum member JSONToken.Kind.error</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
-				<p> Determines the <a href="../../../../stdx/data/json/parser/JSONParserNode.kind.html"><code class="prettyprint lang-d">kind</code></a> of a parser node.
+				<p>Malformed token
 </p>
 
-					<p>The enum base type is
-						<code class="prettyprint lang-d"><code class="prettyprint lang-d">int</code></code>
-.
-					</p>
 					<section>
-						<h3>Enum members</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayEnd.html">
-										<code>arrayEnd</code>
-									</a>
-								</td>
-								<td>The end of an array value
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayStart.html">
-										<code>arrayStart</code>
-									</a>
-								</td>
-								<td>The start of an array value
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.key.html">
-										<code>key</code>
-									</a>
-								</td>
-								<td>An object <code class="prettyprint lang-d">key</code>
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.literal.html">
-										<code>literal</code>
-									</a>
-								</td>
-								<td>A <code class="prettyprint lang-d">literal</code> value (null, boolean, number or string)
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.none.html">
-										<code>none</code>
-									</a>
-								</td>
-								<td>Used internally, never occurs in a node stream
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectEnd.html">
-										<code>objectEnd</code>
-									</a>
-								</td>
-								<td>The end of an object value
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectStart.html">
-										<code>objectStart</code>
-									</a>
-								</td>
-								<td>The start of an object value
-</td>
-							</tr>
-						</table>
+						<h3>Declaration</h3>
+						<pre class="code prettyprint lang-d prototype">
+enum <a href="../../../../stdx/data/json/lexer/JSONToken.Kind.html">JSONToken.Kind</a>
+{
+	// ...
+	error,
+	// ...
+}</pre>
 					</section>
 
 			</section>

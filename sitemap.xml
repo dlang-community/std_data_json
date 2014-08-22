@@ -41,7 +41,8 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.boolean.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.colon.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.comma.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.invalid.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.error.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.none.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.null_.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.number.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.Kind.objectEnd.html</loc></url>
@@ -58,6 +59,10 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.toHash.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.toString.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/lexJSON.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.none.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.noThrow.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.trackLocation.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.key.html</loc></url>
@@ -65,9 +70,9 @@
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.arrayEnd.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.arrayStart.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.invalid.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.key.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.literal.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.none.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.objectEnd.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.Kind.objectStart.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.kind.html</loc></url>

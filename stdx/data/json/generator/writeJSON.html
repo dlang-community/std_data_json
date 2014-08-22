@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Function toString</title>
+		<title>Function writeJSON</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -72,51 +72,51 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Function toString</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Function writeJSON</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
-				<p> Converts the given JSON document(s) to a compact string representation.
+				<p> Formats the given JSON document(s)/<a href="../../../../stdx/data/json/generator/writeJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> as a compact string.
 </p>
 <section>
-<p> The input can be a JSONValue, or an input range of either JSONToken
- or JSONParserNode elements.
+<p> See <a href="../../../../stdx/data/json/generator/toJSON.html"><code class="prettyprint lang-d">toJSON</code></a> for more information.
 </p>
 </section>
 
 					<section>
 						<h3>Prototypes</h3>
 						<pre class="code prettyprint lang-d prototype">
-string toString()(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value
+void writeJSON(Output)(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value,
+&nbsp;&nbsp;ref Output output
 );
 
-string toString(Input)(
-&nbsp;&nbsp;Input nodes
+void writeJSON(Output, Input)(
+&nbsp;&nbsp;Input nodes,
+&nbsp;&nbsp;ref Output output
 );
 
-string toString(Input)(
-&nbsp;&nbsp;Input tokens
+void writeJSON(Output, Input)(
+&nbsp;&nbsp;Input tokens,
+&nbsp;&nbsp;ref Output output
 );
 
-string toString()(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a> token
+void writeJSON(Output)(
+&nbsp;&nbsp;ref <a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a> token,
+&nbsp;&nbsp;ref Output output
 );</pre>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="output">output</td><td> The <a href="../../../../stdx/data/json/generator/writeJSON.html#output"><code class="prettyprint lang-d">output</code></a> range to take the result string in UTF-8 encoding.</td></tr>
 <tr><td id="value">value</td><td> A single JSON document</td></tr>
-<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser <a href="../../../../stdx/data/json/generator/toString.html#nodes"><code class="prettyprint lang-d">nodes</code></a>. The <a href="../../../../stdx/data/json/generator/toString.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
+<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser <a href="../../../../stdx/data/json/generator/writeJSON.html#nodes"><code class="prettyprint lang-d">nodes</code></a>. The <a href="../../../../stdx/data/json/generator/writeJSON.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
      must be in valid document order, or the parser result will be undefined.</td></tr>
-<tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/toString.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/toString.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
+<tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/writeJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/writeJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
      occur in any order and are simply appended in order to the final string.</td></tr>
-<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/toString.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
+<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/writeJSON.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
 </table>
 </section>
-<section><h3>Returns</h3>
-<p>   Returns a JSON formatted string.
-</p>
-</section>
 <section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/generator/writeAsString.html"><code class="prettyprint lang-d">writeAsString</code></a>, <a href="../../../../stdx/data/json/generator/toPrettyString.html"><code class="prettyprint lang-d">toPrettyString</code></a>
+<p><a href="../../../../stdx/data/json/generator/toJSON.html"><code class="prettyprint lang-d">toJSON</code></a>, <a href="../../../../stdx/data/json/generator/writeAsPrettyJSON.html"><code class="prettyprint lang-d">writeAsPrettyJSON</code></a>
 </p>
 </section>
 

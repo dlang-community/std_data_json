@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Function writeAsPrettyString</title>
+		<title>Function writeAsPrettyJSON</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -72,12 +72,12 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Function writeAsPrettyString</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Function writeAsPrettyJSON</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
 				<p> Formats the given JSON document(s) as an indented multi-line string.
 </p>
 <section>
-<p> This function produces <a href="../../../../stdx/data/json/generator/writeAsPrettyString.html#output"><code class="prettyprint lang-d">output</code></a> suitable for human consumption by properly
+<p> This function produces <a href="../../../../stdx/data/json/generator/writeAsPrettyJSON.html#output"><code class="prettyprint lang-d">output</code></a> suitable for human consumption by properly
  indenting based on the nesting level.
 </p>
 </section>
@@ -85,18 +85,18 @@ $(document).ready(function() {
 					<section>
 						<h3>Prototypes</h3>
 						<pre class="code prettyprint lang-d prototype">
-void writeAsPrettyString(Output)(
+void writeAsPrettyJSON(Output)(
 &nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value,
 &nbsp;&nbsp;ref Output output
 );
 
-void writeAsPrettyString(Output, Input)(
+void writeAsPrettyJSON(Output, Input)(
 &nbsp;&nbsp;Input nodes,
 &nbsp;&nbsp;ref Output output
 );</pre>
 					</section>
 <section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/generator/toPrettyString.html"><code class="prettyprint lang-d">toPrettyString</code></a>, <a href="../../../../stdx/data/json/generator/writeAsString.html"><code class="prettyprint lang-d">writeAsString</code></a>
+<p><a href="../../../../stdx/data/json/generator/toPrettyJSON.html"><code class="prettyprint lang-d">toPrettyJSON</code></a>, <a href="../../../../stdx/data/json/generator/writeJSON.html"><code class="prettyprint lang-d">writeJSON</code></a>
 </p>
 </section>
 

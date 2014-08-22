@@ -60,9 +60,11 @@ JSONLexerRange!(Input, track_location) lexJSON(bool track_location = true, Input
 }
 
 ///
-unittest {
+unittest
+{
     auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
-    with (JSONToken.Kind) {
+    with (JSONToken.Kind)
+    {
         assert(rng.map!(t => t.kind).equal(
             [objectStart, string, colon, number, comma, string, colon,
             arrayStart, number, comma, boolean, comma, null_, arrayEnd, objectEnd]));
@@ -70,7 +72,8 @@ unittest {
 }
 
 ///
-unittest {
+unittest
+{
     auto rng = lexJSON("true\n   false null\r\n  1.0\r \"test\"");
     rng.popFront();
     assert(rng.front.boolean == false);
@@ -88,7 +91,8 @@ unittest {
     assert(rng.empty);
 }
 
-unittest {
+unittest
+{
     import std.exception;
     assertThrown(lexJSON(`trui`).array); // invalid token
     assertThrown(lexJSON(`fal`).array); // invalid token
@@ -113,7 +117,8 @@ struct JSONLexerRange(Input, bool track_location = true)
 {
     import std.string : representation;
 
-    private {
+    private
+    {
         typeof(Input.init.representation) _input;
         JSONToken _front;
         Location _loc;
@@ -155,7 +160,8 @@ struct JSONLexerRange(Input, bool track_location = true)
     @property ref const(JSONToken) front()
     {
         assert(!empty, "Calling front on an empty JSONTokenRange.");
-        if (_front.kind == JSONToken.Kind.invalid) {
+        if (_front.kind == JSONToken.Kind.invalid)
+        {
             readToken();
             assert(_front.kind != JSONToken.Kind.invalid);
         }
@@ -167,7 +173,8 @@ struct JSONLexerRange(Input, bool track_location = true)
      */
     void popFront()
     {
-        if (_front.kind == JSONToken.Kind.invalid) {
+        if (_front.kind == JSONToken.Kind.invalid)
+        {
             readToken();
             assert(_front.kind != JSONToken.Kind.invalid);
         }
@@ -190,7 +197,8 @@ struct JSONLexerRange(Input, bool track_location = true)
 
         _front.location = _loc;
 
-        switch (_input.front) {
+        switch (_input.front)
+        {
             default:
             import std.conv;
                 throw new JSONException(`Malformed token: `~to!string(cast(Input)_input), _loc);
@@ -224,9 +232,12 @@ struct JSONLexerRange(Input, bool track_location = true)
 
     private void skipWhitespace()
     {
-        while (!_input.empty) {
-            static if (track_location) {
-                switch (_input.front) {
+        while (!_input.empty)
+        {
+            static if (track_location)
+            {
+                switch (_input.front)
+                {
                     default: return;
                     case '\r': // Mac and Windows line breaks
                         _loc.line++;
@@ -245,8 +256,11 @@ struct JSONLexerRange(Input, bool track_location = true)
                         _input.popFront();
                         break;
                 }
-            } else {
-                switch (_input.front) {
+            }
+            else
+            {
+                switch (_input.front)
+                {
                     default: return;
                     case '\r', '\n', ' ', '\t':
                         _input.popFront();
@@ -261,15 +275,17 @@ struct JSONLexerRange(Input, bool track_location = true)
 /**
  * A low-level JSON token as returned by $(D JSONLexer).
 */
-struct JSONToken {
+struct JSONToken
+{
     @safe:
     import std.algorithm : among;
 
     /**
      * The kind of token represented.
      */
-    enum Kind {
-        invalid,      /// Used internally
+    enum Kind
+    {
+        invalid,      /// Used internally, never returned from the lexer
         null_,        /// The "null" token
         boolean,      /// "true" or "false" token
         number,       /// Numeric token
@@ -282,8 +298,10 @@ struct JSONToken {
         comma         /// The "," token
     }
 
-    private {
-        union {
+    private
+    {
+        union
+        {
             .string _string;
             bool _boolean;
             double _number;
@@ -306,42 +324,42 @@ struct JSONToken {
         body { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.
-    @property bool boolean()
-    const nothrow {
+    @property bool boolean() const nothrow
+    {
         assert(_kind == Kind.boolean, "Token is not a boolean.");
         return _boolean;
     }
     /// ditto
-    @property bool boolean(bool value)
-    nothrow {
+    @property bool boolean(bool value) nothrow
+    {
         _kind = Kind.boolean;
         _boolean = value;
         return value;
     }
 
     /// Gets/sets the numeric value of the token.
-    @property double number()
-    const nothrow {
+    @property double number() const nothrow
+    {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
     }
     /// ditto
-    @property double number(double value)
-    nothrow {
+    @property double number(double value) nothrow
+    {
         _kind = Kind.number;
         _number = value;
         return value;
     }
 
     /// Gets/sets the string value of the token.
-    @property .string string()
-    const @trusted nothrow {
+    @property .string string() const @trusted nothrow
+    {
         assert(_kind == Kind.string, "Token is not a string.");
         return _string;
     }
     /// ditto
-    @property .string string(.string value)
-    nothrow {
+    @property .string string(.string value) nothrow
+    {
         _kind = Kind.string;
         _string = value;
         return value;
@@ -353,11 +371,12 @@ struct JSONToken {
      * Note that the location is considered token meta data and thus does not
      * affect the comparison.
      */
-    bool opEquals(in ref JSONToken other)
-    const nothrow {
+    bool opEquals(in ref JSONToken other) const nothrow
+    {
         if (this.kind != other.kind) return false;
 
-        switch (this.kind) {
+        switch (this.kind)
+        {
             default: return true;
             case Kind.boolean: return this.boolean == other.boolean;
             case Kind.number: return this.number == other.number;
@@ -374,7 +393,8 @@ struct JSONToken {
     const nothrow {
         hash_t ret = 3781249591u + cast(uint)_kind * 2721371;
 
-        switch (_kind) {
+        switch (_kind)
+        {
             default: return ret;
             case Kind.boolean: return ret + _boolean;
             case Kind.number: return ret + typeid(double).getHash(&_number);
@@ -390,9 +410,11 @@ struct JSONToken {
      * location.
      */
     .string toString()
-    const @trusted {
+    const @trusted
+    {
         import std.string;
-        switch (this.kind) {
+        switch (this.kind)
+        {
             default: return format("[%s %s]", location, this.kind);
             case Kind.boolean: return format("[%s %s]", location, this.boolean);
             case Kind.number: return format("[%s %s]", location, this.number);
@@ -401,7 +423,8 @@ struct JSONToken {
     }
 }
 
-unittest {
+unittest
+{
     JSONToken tok;
 
     assert((tok.boolean = true) == true);
@@ -447,21 +470,25 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
     Appender!string ret;
 
     // try the fast slice based route first
-    static if (is(Input == string) || is(Input == immutable(ubyte)[])) {
+    static if (is(Input == string) || is(Input == immutable(ubyte)[]))
+    {
         auto orig = input;
         size_t idx = 0;
-        while (true) {
+        while (true)
+        {
             enforceJson(idx < input.length, "Unterminated string literal", loc);
 
             // return a slice for simple strings
-            if (input[idx] == '"') {
+            if (input[idx] == '"')
+            {
                 input = input[idx+1 .. $];
                 static if (track_location) loc.column += idx+1;
                 return cast(string)orig[0 .. idx];
             }
 
             // fall back to full decoding when an escape sequence is encountered
-            if (input[idx] == '\\') {
+            if (input[idx] == '\\')
+            {
                 ret = appender!string();
                 ret.put(cast(string)input[0 .. idx]);
                 input = input[idx .. $];
@@ -473,16 +500,19 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
             enforceJson(input[idx] >= 0x20, "Control chararacter found in string literal", loc);
             idx++;
         }
-    } else ret = appender!string();
+    }
+    else ret = appender!string();
 
     // perform full decoding
-    while (true) {
+    while (true)
+    {
         enforceJson(!input.empty, "Unterminated string literal", loc);
         auto ch = input.front;
         input.popFront();
        static if (track_location)  loc.column++;
 
-        switch (ch) {
+        switch (ch)
+        {
             default: ret.put(ch); break;
             case '"': return ret.data;
             case '\\':
@@ -491,7 +521,8 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
                 input.popFront();
                 static if (track_location) loc.column++;
 
-                switch (ech) {
+                switch (ech)
+                {
                     default: enforceJson(false, "Invalid string escape sequence.", loc); break;
                     case '"': ret.put('\"'); break;
                     case '\\': ret.put('\\'); break;
@@ -503,9 +534,11 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
                     case 't': ret.put('\t'); break;
                     case 'u': // \uXXXX
                         static if (track_location) loc.column += 4;
-                        dchar decode_unicode_escape() {
+                        dchar decode_unicode_escape()
+                        {
                             dchar uch = 0;
-                            foreach (i; 0 .. 4) {
+                            foreach (i; 0 .. 4)
+                            {
                                 enforceJson(!input.empty, "Premature end of unicode escape sequence", loc);
                                 uch *= 16;
                                 auto dc = input.front;
@@ -523,7 +556,8 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
                         dchar uch = decode_unicode_escape();
 
                         // detect UTF-16 surrogate pairs
-                        if (0xD800 <= uch && uch <= 0xDBFF) {
+                        if (0xD800 <= uch && uch <= 0xDBFF)
+                        {
                             static if (track_location) loc.column += 6;
                             enforceJson(input.skipOver("\\u"), "Missing second UTF-16 surrogate", loc);
                             auto uch2 = decode_unicode_escape();
@@ -540,12 +574,14 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
     }
 }
 
-unittest {
+unittest
+{
     import std.conv;
     import std.exception;
     import std.string : format, representation;
 
-    void testResult(string str, string expected, string remaining, bool slice_expected = false) {
+    void testResult(string str, string expected, string remaining, bool slice_expected = false)
+    {
         { // test with string (possibly sliced result)
             Location loc;
             string scopy = str;
@@ -613,18 +649,22 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 
     assert(!input.empty, "Passed empty range to parseNumber");
 
-    static if (isSomeString!Input) {
+    static if (isSomeString!Input)
+    {
         auto rep = input.representation;
         auto result = .parseNumber!track_location(rep, loc);
         input = cast(Input) rep;
         return result;
-    } else {
+    }
+    else
+    {
         import std.math;
         double result = 0;
         bool neg = false;
 
         // negative sign
-        if (input.front == '-') {
+        if (input.front == '-')
+        {
             input.popFront();
             static if (track_location) loc.column++;
             neg = true;
@@ -632,21 +672,26 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 
         // integer part of the number
         enforceJson(!input.empty && input.front.isDigit(), "Invalid number, expected digit", loc);
-        if (input.front == '0') {
+        if (input.front == '0')
+        {
             input.popFront();
             loc.column++;
             if (input.empty) return neg ? -result : result;
             enforceJson(!input.front.isDigit, "Invalid number, 0 must not be followed by another digit", loc);
-        } else do {
+        }
+        else do
+        {
             result = result * 10 + (input.front - '0');
             input.popFront();
             static if (track_location) loc.column++;
             if (input.empty) return neg ? -result : result;
-        } while (isDigit(input.front));
+        }
+        while (isDigit(input.front));
 
         // post decimal point part
         assert(!input.empty);
-        if (input.front == '.') {
+        if (input.front == '.')
+        {
             input.popFront();
             enforceJson(!input.empty, "Missing fractional number part", loc);
             static if (track_location) loc.column++;
@@ -663,19 +708,24 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 
         // exponent
         assert(!input.empty);
-        if (input.front.among('e', 'E')) {
+        if (input.front.among('e', 'E'))
+        {
             input.popFront();
             static if (track_location) loc.column++;
             enforceJson(!input.empty, "Missing exponent", loc);
 
             bool negexp = void;
-            if (input.front == '-') {
+            if (input.front == '-')
+            {
                 negexp = true;
                 input.popFront();
                 static if (track_location) loc.column++;
-            } else {
+            }
+            else
+            {
                 negexp = false;
-                if (input.front == '+') {
+                if (input.front == '+')
+                {
                     input.popFront();
                     static if (track_location) loc.column++;
                 }
@@ -683,7 +733,8 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 
             enforceJson(!input.empty && input.front.isDigit, "Missing exponent", loc);
             uint exp = 0;
-            while (true) {
+            while (true)
+            {
                 exp = exp * 10 + (input.front - '0');
                 input.popFront();
                 static if (track_location) loc.column++;
@@ -696,11 +747,13 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
     }
 }
 
-unittest {
+unittest
+{
     import std.exception;
     import std.math : approxEqual;
 
-    void test(string str, double expected, string remainder) {
+    void test(string str, double expected, string remainder)
+    {
         Location loc;
         auto strcopy = str;
         auto res = parseNumber(strcopy, loc);

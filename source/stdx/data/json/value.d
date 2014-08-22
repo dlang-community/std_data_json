@@ -33,7 +33,8 @@ import stdx.data.json.foundation;
  * Raw values can be either $(D null), $(D bool), $(D double), $(D string),
  * $(D JSONValue[]) or $(D JSONValue[string]).
 */
-struct JSONValue {
+struct JSONValue
+{
     @safe:
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
@@ -86,7 +87,8 @@ struct JSONValue {
 }
 
 ///
-unittest {
+unittest
+{
     JSONValue a = 12;
     JSONValue b = 13;
 

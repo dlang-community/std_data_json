@@ -17,7 +17,8 @@ import stdx.data.json.lexer;
  * The indices are zero based and the column is represented in code units of
  * the input (i.e. in bytes in case of a UTF-8 input string).
  */
-struct Location {
+struct Location
+{
     /// Optional file name.
     string file;
     /// The zero based line of the input file.
@@ -26,8 +27,8 @@ struct Location {
     size_t column = 0;
 
     /// Returns a string representation of the location.
-    string toString()
-    const {
+    string toString() const
+    {
         import std.string;
         return format("%s(%s:%s)", this.file, this.line, this.column);
     }
@@ -39,7 +40,8 @@ struct Location {
  *
  * This exception is thrown during the lexing and parsing stages.
 */
-class JSONException : Exception {
+class JSONException : Exception
+{
     /// The bare error message
     string message;
 

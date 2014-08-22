@@ -77,13 +77,15 @@ string toJSONString()(JSONToken token)
 }
 
 ///
-unittest {
+unittest
+{
     JSONValue value = true;
     assert(value.toJSONString() == "true");
 }
 
 ///
-unittest {
+unittest
+{
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
     // write compact JSON
@@ -100,7 +102,8 @@ unittest {
     assert(a.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 }
 
-unittest {
+unittest
+{
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
     assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
     assert(nodes.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
@@ -134,7 +137,8 @@ unittest {
 void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
-    void indent(size_t depth) {
+    void indent(size_t depth)
+    {
         output.put('\n');
         foreach (tab; 0 .. depth) output.put('\t');
     }
@@ -143,10 +147,12 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
     else if (auto pv = value.peek!bool) output.put(*pv ? "true" : "false");
     else if (auto pv = value.peek!double) output.writeNumber(*pv);
     else if (auto pv = value.peek!string) { output.put('"'); output.escapeString(*pv); output.put('"'); }
-    else if (auto pv = value.peek!(JSONValue[string])) {
+    else if (auto pv = value.peek!(JSONValue[string]))
+    {
         output.put('{');
         bool first = true;
-        foreach (string k, ref e; *pv) {
+        foreach (string k, ref e; *pv)
+        {
             if (!first) output.put(',');
             else first = false;
             static if (pretty_print) indent(nesting_level+1);
@@ -155,22 +161,28 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
             output.put(pretty_print ? `": ` : `":`);
             e.writeAsString!pretty_print(output, nesting_level+1);
         }
-        static if (pretty_print) {
+        static if (pretty_print)
+        {
             if (!first) indent(nesting_level);
         }
         output.put('}');
-    } else if (auto pv = value.peek!(JSONValue[])) {
+    }
+    else if (auto pv = value.peek!(JSONValue[]))
+    {
         output.put('[');
-        foreach (i, ref e; *pv) {
+        foreach (i, ref e; *pv)
+        {
             if (i > 0) output.put(",");
             static if (pretty_print) indent(nesting_level+1);
             e.writeAsString!pretty_print(output, nesting_level+1);
         }
-        static if (pretty_print) {
+        static if (pretty_print)
+        {
             if (pv.length > 0) indent(nesting_level);
         }
         output.put(']');
-    } else assert(false);
+    }
+    else assert(false);
 }
 /// ditto
 void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Output output)
@@ -180,24 +192,30 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
     bool first = false;
     bool is_object_field = false;
 
-    void indent(size_t depth) {
+    void indent(size_t depth)
+    {
         output.put('\n');
         foreach (tab; 0 .. depth) output.put('\t');
     }
 
     void preValue()
     {
-        if (!is_object_field) {
+        if (!is_object_field)
+        {
             if (nesting > 0 && !first) output.put(',');
             else first = false;
-            static if (pretty_print) {
+            static if (pretty_print)
+            {
                 if (nesting > 0) indent(nesting);
             }
-        } else is_object_field = false;
+        }
+        else is_object_field = false;
     }
 
-    while (!nodes.empty) {
-        final switch (nodes.front.kind) with (JSONParserNode.Kind) {
+    while (!nodes.empty)
+    {
+        final switch (nodes.front.kind) with (JSONParserNode.Kind)
+        {
             case invalid: assert(false);
             case key:
                 if (nesting > 0 && !first) output.put(',');
@@ -220,7 +238,8 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
                 break;
             case objectEnd:
                 nesting--;
-                static if (pretty_print) {
+                static if (pretty_print)
+                {
                     if (!first) indent(nesting);
                 }
                 first = false;
@@ -235,7 +254,8 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
                 break;
             case arrayEnd:
                 nesting--;
-                static if (pretty_print) {
+                static if (pretty_print)
+                {
                     if (!first) indent(nesting);
                 }
                 first = false;
@@ -249,7 +269,8 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
 void writeAsString(Output, Input)(Input tokens, ref Output output)
     if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
 {
-    while (!tokens.empty) {
+    while (!tokens.empty)
+    {
         tokens.front.writeAsString(output);
         tokens.popFront();
     }
@@ -258,7 +279,8 @@ void writeAsString(Output, Input)(Input tokens, ref Output output)
 void writeAsString(Output)(in ref JSONToken token, ref Output output)
     if (isOutputRange!(Output, char))
 {
-    final switch (token.kind) with (JSONToken.Kind) {
+    final switch (token.kind) with (JSONToken.Kind)
+    {
         case invalid: assert(false);
         case null_: output.put("null"); break;
         case boolean: output.put(token.boolean ? "true" : "false"); break;
@@ -280,7 +302,8 @@ private void writeNumber(R)(ref R dst, double num)
     () @trusted { dst.formattedWrite("%.16g", num); }();
 }
 
-unittest {
+unittest
+{
     import std.math;
     import std.string;
 
@@ -299,10 +322,12 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
     import std.format;
     import std.utf : decode;
 
-    for (size_t pos = 0; pos < s.length; pos++) {
+    for (size_t pos = 0; pos < s.length; pos++)
+    {
         immutable ch = s[pos];
 
-        switch (ch) {
+        switch (ch)
+        {
             case '\\': dst.put(`\\`); break;
             case '\b': dst.put(`\b`); break;
             case '\f': dst.put(`\f`); break;
@@ -311,8 +336,10 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
             case '\t': dst.put(`\t`); break;
             case '\"': dst.put(`\"`); break;
             default:
-                static if (use_surrogates) {
-                    if (ch >= 0x20 && ch < 0x80) {
+                static if (use_surrogates)
+                {
+                    if (ch >= 0x20 && ch < 0x80)
+                    {
                         dst.put(ch);
                         break;
                     }
@@ -321,16 +348,21 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
                     pos--; // account for the next loop increment
 
                     // encode as one or two UTF-16 code points
-                    if (cp < 0x10000) { // in BMP -> 1 CP
+                    if (cp < 0x10000)
+                    { // in BMP -> 1 CP
                         formattedWrite(dst, "\\u%04X", cp);
-                    } else { // not in BMP -> surrogate pair
+                    }
+                    else
+                    { // not in BMP -> surrogate pair
                         int first, last;
                         cp -= 0x10000;
                         first = 0xD800 | ((cp & 0xffc00) >> 10);
                         last = 0xDC00 | (cp & 0x003ff);
                         formattedWrite(dst, "\\u%04X\\u%04X", first, last);
                     }
-                } else {
+                }
+                else
+                {
                     if (ch < 0x20) formattedWrite(dst, "\\u%04X", ch);
                     else dst.put(ch);
                 }
@@ -339,7 +371,8 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
     }
 }
 
-unittest {
+unittest
+{
     static void test(bool surrog)(string str, string expected)
     {
         auto res = appender!string;

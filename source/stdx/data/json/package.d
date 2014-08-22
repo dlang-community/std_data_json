@@ -53,7 +53,8 @@ public import stdx.data.json.parser;
 public import stdx.data.json.value;
 
 
-version (unittest) {
+version (unittest)
+{
     private enum testString1 =`{
         "cols": [
             "name",
@@ -933,7 +934,8 @@ version (unittest) {
     ]`;
 }
 
-unittest {
+unittest
+{
     import std.algorithm;
     import std.math;
 

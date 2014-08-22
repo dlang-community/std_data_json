@@ -65,7 +65,8 @@ JSONValue toJSONValue(Input)(Input tokens)
 }
 
 ///
-unittest {
+unittest
+{
     // parse a simple number
     JSONValue a = toJSONValue(`1.0`);
     assert(a == 1.0);
@@ -86,7 +87,8 @@ unittest {
     assert(cdoc[2] == null);
 }
 
-unittest {
+unittest
+{
     import std.exception;
     assertNotThrown(toJSONValue("{} \t\r\n"));
     assertThrown(toJSONValue(`{} {}`));
@@ -111,7 +113,8 @@ JSONValue parseJSONValue(bool track_location = true, Input)(ref Input input, str
 }
 
 /// Parse an object
-unittest {
+unittest
+{
     // parse an object
     string str = `{"a": true, "b": "test"}`;
     JSONValue v = parseJSONValue(str);
@@ -124,7 +127,8 @@ unittest {
 }
 
 /// Parse multiple consecutive values
-unittest {
+unittest
+{
     string str = `1.0 2.0`;
     JSONValue v1 = parseJSONValue(str);
     assert(v1 == 1.0);
@@ -150,7 +154,8 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
 
     JSONValue ret;
 
-    final switch (tokens.front.kind) with (JSONToken.Kind) {
+    final switch (tokens.front.kind) with (JSONToken.Kind)
+    {
         case invalid: assert(false);
         case null_: ret = JSONValue(null); break;
         case boolean: ret = JSONValue(tokens.front.boolean); break;
@@ -161,15 +166,18 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
             bool first = true;
             JSONValue[.string] obj;
             tokens.popFront();
-            while (true) {
+            while (true)
+            {
                 enforceJson(!tokens.empty, "Missing closing '}'", loc);
                 if (tokens.front.kind == objectEnd) break;
 
-                if (!first) {
+                if (!first)
+                {
                     enforceJson(tokens.front.kind == comma, "Expected ',' or '}'", tokens.front.location);
                     tokens.popFront();
                     enforceJson(!tokens.empty, "Expected field name", tokens.location);
-                } else first = false;
+                }
+                else first = false;
 
                 enforceJson(tokens.front.kind == string, "Expected field name string", tokens.front.location);
                 auto key = tokens.front.string;
@@ -186,14 +194,17 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
             bool first = true;
             auto array = appender!(JSONValue[]);
             tokens.popFront();
-            while (true) {
+            while (true)
+            {
                 enforceJson(!tokens.empty, "Missing closing ']'", loc);
                 if (tokens.front.kind == arrayEnd) break;
 
-                if (!first) {
+                if (!first)
+                {
                     enforceJson(tokens.front.kind == comma, "Expected ',' or ']'", tokens.front.location);
                     tokens.popFront();
-                } else first = false;
+                }
+                else first = false;
 
                 () @trusted { array ~= parseJSONValue(tokens); }();
             }
@@ -209,7 +220,8 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
 }
 
 ///
-unittest {
+unittest
+{
     // lex
     auto tokens = lexJSON(`[1, 2, 3]`);
 
@@ -223,7 +235,8 @@ unittest {
     assert(arr[2] == 3.0);
 }
 
-unittest {
+unittest
+{
     import std.exception;
 
     assertThrown(toJSONValue(`]`));
@@ -274,26 +287,31 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
 }
 
 ///
-unittest {
+unittest
+{
     import std.algorithm;
 
     auto rng1 = parseJSONStream(`{ "a": 1, "b": [null] }`);
-    with (JSONParserNode.Kind) {
+    with (JSONParserNode.Kind)
+    {
         assert(rng1.map!(n => n.kind).equal(
             [objectStart, key, literal, key, arrayStart, literal, arrayEnd,
             objectEnd]));
     }
 
     auto rng2 = parseJSONStream(`1 {"a": 2} null`);
-    with (JSONParserNode.Kind) {
+    with (JSONParserNode.Kind)
+    {
         assert(rng2.map!(n => n.kind).equal(
             [literal, objectStart, key, literal, objectEnd, literal]));
     }
 }
 
-unittest {
+unittest
+{
     auto rng = parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}`);
-    with (JSONParserNode.Kind) {
+    with (JSONParserNode.Kind)
+    {
         rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "a"); rng.popFront();
         assert(rng.front.kind == literal && rng.front.literal.number == 1.0); rng.popFront();
@@ -313,13 +331,15 @@ unittest {
     }
 
     rng = parseJSONStream(`[]`);
-    with (JSONParserNode.Kind) {
+    with (JSONParserNode.Kind)
+    {
         import std.algorithm;
         assert(rng.map!(n => n.kind).equal([arrayStart, arrayEnd]));
     }
 }
 
-unittest {
+unittest
+{
     import std.array;
     import std.exception;
 
@@ -377,7 +397,8 @@ struct JSONParserRange(Input)
      */
     @property ref const(JSONParserNode) front()
     {
-        if (_node.kind == JSONParserNode.Kind.invalid) {
+        if (_node.kind == JSONParserNode.Kind.invalid)
+        {
             readNext();
             assert(_node.kind != JSONParserNode.Kind.invalid);
         }
@@ -390,7 +411,8 @@ struct JSONParserRange(Input)
      */
     void popFront()
     {
-        if (_node.kind == JSONParserNode.Kind.invalid) {
+        if (_node.kind == JSONParserNode.Kind.invalid)
+        {
             readNext();
             assert(_node.kind != JSONParserNode.Kind.invalid);
         }
@@ -401,23 +423,29 @@ struct JSONParserRange(Input)
 
     private void readNext()
     {
-        if (_containerStackFill) {
+        if (_containerStackFill)
+        {
             if (_containerStack[_containerStackFill-1] == JSONToken.Kind.objectStart)
                 readNextInObject();
             else readNextInArray();
-        } else readNextValue();
+        }
+        else readNextValue();
     }
 
     private void readNextInObject()
     {
         enforceJson(!_input.empty, "Missing closing '}'", _input.location);
-        switch (_prevKind) {
+        switch (_prevKind)
+        {
             default: assert(false);
             case JSONParserNode.Kind.objectStart:
-                if (_input.front.kind == JSONToken.Kind.objectEnd) {
+                if (_input.front.kind == JSONToken.Kind.objectEnd)
+                {
                     _node.kind = JSONParserNode.Kind.objectEnd;
                     _containerStackFill--;
-                } else {
+                }
+                else
+                {
                     enforceJson(_input.front.kind == JSONToken.Kind.string,
                         "Expected field name", _input.front.location);
                     _node.key = _input.front.string;
@@ -431,10 +459,13 @@ struct JSONParserRange(Input)
                 readNextValue();
                 break;
             case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
-                if (_input.front.kind == JSONToken.Kind.objectEnd) {
+                if (_input.front.kind == JSONToken.Kind.objectEnd)
+                {
                     _node.kind = JSONParserNode.Kind.objectEnd;
                     _containerStackFill--;
-                } else {
+                }
+                else
+                {
                     enforceJson(_input.front.kind == JSONToken.Kind.comma,
                         "Expected ',' or '}'", _input.front.location);
                     _input.popFront();
@@ -450,23 +481,30 @@ struct JSONParserRange(Input)
     private void readNextInArray()
     {
         enforceJson(!_input.empty, "Missing closing ']'", _input.location);
-        switch (_prevKind) {
+        switch (_prevKind)
+        {
             default: assert(false);
             case JSONParserNode.Kind.arrayStart:
-                if (_input.front.kind == JSONToken.Kind.arrayEnd) {
+                if (_input.front.kind == JSONToken.Kind.arrayEnd)
+                {
                     _node.kind = JSONParserNode.Kind.arrayEnd;
                     _containerStackFill--;
                     _input.popFront();
-                } else {
+                }
+                else
+                {
                     readNextValue();
                 }
                 break;
             case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
-                if (_input.front.kind == JSONToken.Kind.arrayEnd) {
+                if (_input.front.kind == JSONToken.Kind.arrayEnd)
+                {
                     _node.kind = JSONParserNode.Kind.arrayEnd;
                     _containerStackFill--;
                     _input.popFront();
-                } else {
+                }
+                else
+                {
                     enforceJson(_input.front.kind == JSONToken.Kind.comma,
                         "Expected ',' or ']'", _input.front.location);
                     _input.popFront();
@@ -479,13 +517,15 @@ struct JSONParserRange(Input)
 
     void readNextValue()
     {
-        void pushContainer(JSONToken.Kind kind) {
+        void pushContainer(JSONToken.Kind kind)
+        {
             if (_containerStackFill >= _containerStack.length)
                 _containerStack.length++;
             _containerStack[_containerStackFill++] = kind;
         }
 
-        switch (_input.front.kind) {
+        switch (_input.front.kind)
+        {
             default:
                 throw new JSONException("Expected JSON value", _input.location);
             case JSONToken.Kind.invalid: assert(false);
@@ -514,14 +554,16 @@ struct JSONParserRange(Input)
  *
  * See $(D parseJSONStream) and $(D JSONParserRange) more information.
  */
-struct JSONParserNode {
+struct JSONParserNode
+{
     @safe:
     import std.algorithm : among;
 
     /**
      * Determines the kind of a parser node.
      */
-    enum Kind {
+    enum Kind
+    {
         invalid,     /// Used internally
         key,         /// An object key
         literal,     /// A literal value ($(D null), $(D boolean), $(D number) or $(D string))
@@ -531,9 +573,11 @@ struct JSONParserNode {
         arrayEnd,    /// The end of an array value
     }
 
-    private {
+    private
+    {
         Kind _kind = Kind.invalid;
-        union {
+        union
+        {
             string _key;
             JSONToken _literal;
         }
@@ -553,14 +597,14 @@ struct JSONParserNode {
      *
      * Setting the key will automatically switch the node kind.
      */
-    @property string key()
-    const @trusted nothrow {
+    @property string key() const @trusted nothrow
+    {
         assert(_kind == Kind.key);
         return _key;
     }
     /// ditto
-    @property string key(string value)
-    nothrow {
+    @property string key(string value) nothrow
+    {
         _kind = Kind.key;
         return _key = value;
     }
@@ -570,14 +614,14 @@ struct JSONParserNode {
      *
      * Setting the literal will automatically switch the node kind.
      */
-    @property ref inout(JSONToken) literal()
-    inout @trusted nothrow {
+    @property ref inout(JSONToken) literal() inout @trusted nothrow
+    {
         assert(_kind == Kind.literal);
         return _literal;
     }
     /// ditto
-    @property ref JSONToken literal(JSONToken literal)
-    nothrow {
+    @property ref JSONToken literal(JSONToken literal) nothrow
+    {
         _kind = Kind.literal;
         return _literal = literal;
     }
@@ -589,10 +633,12 @@ struct JSONParserNode {
      * included in the comparison.
      */
     bool opEquals(in ref JSONParserNode other)
-    const nothrow {
+    const nothrow
+    {
         if (this.kind != other.kind) return false;
 
-        switch (this.kind) {
+        switch (this.kind)
+        {
             default: return true;
             case Kind.literal: return this.literal == other.literal;
             case Kind.key: return this.key == other.key;
@@ -601,7 +647,8 @@ struct JSONParserNode {
     /// ditto
     bool opEquals(JSONParserNode other) const nothrow { return opEquals(other); }
 
-    unittest {
+    unittest
+    {
         JSONToken t1, t2, t3;
         t1.string = "test";
         t2.string = "test".idup;
@@ -621,11 +668,12 @@ struct JSONParserNode {
     /**
      * Enables usage of $(D JSONToken) as an associative array key.
      */
-    size_t toHash()
-    const nothrow @trusted {
+    size_t toHash() const nothrow @trusted
+    {
         hash_t ret = 723125331 + cast(int)_kind * 3962627;
 
-        switch (_kind) {
+        switch (_kind)
+        {
             default: return ret;
             case Kind.literal: return ret + _literal.toHash();
             case Kind.key: return ret + typeid(.string).getHash(&_key);
@@ -638,10 +686,11 @@ struct JSONParserNode {
      * Note that this representation is NOT the JSON representation, but rather
      * a representation suitable for printing out a node.
      */
-    string toString()
-    const {
+    string toString() const
+    {
         import std.string;
-        switch (this.kind) {
+        switch (this.kind)
+        {
             default: return format("%s", this.kind);
             case Kind.key: return format("[key \"%s\"]", this.key);
             case Kind.literal: return literal.toString();

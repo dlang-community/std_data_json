@@ -26,22 +26,22 @@ import std.range;
  * Pretty printed strings are indented multi-line strings suitable for human
  * consumption.
  *
- * See_also: $(D writeAsPrettyString), $(D toString)
+ * See_also: $(D writeAsPrettyJSON), $(D toJSON)
  */
-string toPrettyString()(JSONValue value)
+string toPrettyJSON(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
-    value.writeAsPrettyString(dst);
+    value.writeAsPrettyJSON(dst);
     return dst.data;
 }
 /// ditto
-string toPrettyString(Input)(Input nodes)
+string toPrettyJSON(Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    nodes.writeAsPrettyString(dst);
+    nodes.writeAsPrettyJSON(dst);
     return dst.data;
 }
 
@@ -63,39 +63,39 @@ string toPrettyString(Input)(Input nodes)
  * Returns:
  *   Returns a JSON formatted string.
  *
- * See_also: $(D writeAsString), $(D toPrettyString)
+ * See_also: $(D writeJSON), $(D toPrettyJSON)
  */
-string toString()(JSONValue value)
+string toJSON(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
-    value.writeAsString(dst);
+    value.writeJSON(dst);
     return dst.data;
 }
 /// ditto
-string toString(Input)(Input nodes)
+string toJSON(Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    nodes.writeAsString(dst);
+    nodes.writeJSON(dst);
     return dst.data;
 }
 /// ditto
-string toString(Input)(Input tokens)
+string toJSON(Input)(Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    tokens.writeAsString(dst);
+    tokens.writeJSON(dst);
     return dst.data;
 }
 /// ditto
-string toString()(JSONToken token)
+string toJSON(JSONToken token)
 {
     import std.array;
     auto dst = appender!string();
-    token.writeAsString(dst);
+    token.writeJSON(dst);
     return dst.data;
 }
 
@@ -103,7 +103,7 @@ string toString()(JSONToken token)
 unittest
 {
     JSONValue value = true;
-    assert(value.toJSONString() == "true");
+    assert(value.toJSON() == "true");
 }
 
 ///
@@ -112,7 +112,7 @@ unittest
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
     // write compact JSON
-    assert(a.toJSONString() == `{"a":[],"b":[1,{}]}`);
+    assert(a.toJSON() == `{"a":[],"b":[1,{}]}`, a.toJSON());
 
     // pretty print:
     // {
@@ -122,21 +122,21 @@ unittest
     //         {},
     //     ]
     // }
-    assert(a.toPrettyJSONString() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 }
 
 unittest
 {
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
-    assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
-    assert(nodes.toPrettyJSONString() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(nodes.toJSON() == `{"a":[],"b":[1,{}]}`);
+    assert(nodes.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 
     auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
-    assert(tokens.toJSONString() == `{"a":[],"b":[1,{},null,true,false]}`);
+    assert(tokens.toJSON() == `{"a":[],"b":[1,{},null,true,false]}`);
 
     JSONToken tok;
     tok.string = "Hello World";
-    assert(tok.toJSONString() == `"Hello World"`);
+    assert(tok.toJSON() == `"Hello World"`);
 }
 
 
@@ -146,15 +146,15 @@ unittest
  * This function produces output suitable for human consumption by properly
  * indenting based on the nesting level.
  *
- * See_also: $(D toPrettyString), $(D writeAsString)
+ * See_also: $(D toPrettyJSON), $(D writeJSON)
  */
-void writeAsPrettyString(Output)(JSONValue value, ref Output output)
+void writeAsPrettyJSON(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
     writeAsStringImpl!true(value, output);
 }
 /// ditto
-void writeAsPrettyString(Output, Input)(Input nodes, ref Output output)
+void writeAsPrettyJSON(Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     writeAsStringImpl!true(nodes, output);
@@ -164,7 +164,7 @@ void writeAsPrettyString(Output, Input)(Input nodes, ref Output output)
 /**
  * Formats the given JSON document(s)/tokens as a compact string.
  *
- * See $(D toJSONString) for more information.
+ * See $(D toJSON) for more information.
  *
  * Params:
  *   output = The output range to take the result string in UTF-8 encoding.
@@ -175,31 +175,31 @@ void writeAsPrettyString(Output, Input)(Input nodes, ref Output output)
  *     occur in any order and are simply appended in order to the final string.
  *   token = A single token to convert to a string
  *
- * See_also: $(D toString), $(D writeAsPrettyString)
+ * See_also: $(D toJSON), $(D writeAsPrettyJSON)
  */
-void writeAsString(Output)(JSONValue value, ref Output output)
+void writeJSON(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
     writeAsStringImpl(value, output);
 }
 /// ditto
-void writeAsString(Output, Input)(Input nodes, ref Output output)
+void writeJSON(Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     writeAsStringImpl(nodes, output);
 }
 /// ditto
-void writeAsString(Output, Input)(Input tokens, ref Output output)
+void writeJSON(Output, Input)(Input tokens, ref Output output)
     if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
 {
     while (!tokens.empty)
     {
-        tokens.front.writeAsString(output);
+        tokens.front.writeJSON(output);
         tokens.popFront();
     }
 }
 /// ditto
-void writeAsString(Output)(in ref JSONToken token, ref Output output)
+void writeJSON(Output)(in ref JSONToken token, ref Output output)
     if (isOutputRange!(Output, char))
 {
     final switch (token.kind) with (JSONToken.Kind)
@@ -257,7 +257,7 @@ private void writeAsStringImpl(bool pretty_print = false, Output)(JSONValue valu
         output.put('[');
         foreach (i, ref e; *pv)
         {
-            if (i > 0) output.put(",");
+            if (i > 0) output.put(',');
             static if (pretty_print) indent(nesting_level+1);
             e.writeAsStringImpl!pretty_print(output, nesting_level+1);
         }
@@ -313,7 +313,7 @@ private void writeAsStringImpl(bool pretty_print = false, Output, Input)(Input n
                 break;
             case literal:
                 preValue();
-                nodes.front.literal.writeAsString(output);
+                nodes.front.literal.writeJSON(output);
                 break;
             case objectStart:
                 preValue();

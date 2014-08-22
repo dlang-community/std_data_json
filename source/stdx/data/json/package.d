@@ -943,7 +943,7 @@ unittest
     {
         /*auto val = */toJSONValue(txt);
         // Note: order is undefined due to AA use in JSONValue
-        //assert(val.toJSONString() == val.toJSONString().parseJSONValue().toJSONString());
+        //assert(val.toJSON() == val.toJSON().parseJSONValue().toJSON());
 
         static bool ncmp(JSONParserNode a, JSONParserNode b)
         {
@@ -955,7 +955,7 @@ unittest
         }
 
         auto nodes = parseJSONStream(txt);
-        auto nodes2 = nodes.toJSONString().parseJSONStream();
+        auto nodes2 = nodes.toJSON().parseJSONStream();
         assert(equal!ncmp(nodes, nodes2));
     }
 

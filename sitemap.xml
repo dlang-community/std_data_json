@@ -18,12 +18,12 @@
 <url><loc>http://127.0.0.1/stdx/data/json/generator/toJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/toPrettyJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/toPrettyJSON.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/generator/writeAsPrettyJSON.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/generator/writeAsPrettyJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/writeJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/writeJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/writeJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/generator/writeJSON.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/generator/writePrettyJSON.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/generator/writePrettyJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONLexerRange.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONLexerRange.empty.html</loc></url>

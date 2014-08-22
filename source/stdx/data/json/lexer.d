@@ -34,6 +34,7 @@
  * Source:    $(PHOBOSSRC std/data/json/lexer.d)
  */
 module stdx.data.json.lexer;
+@safe:
 
 import std.range;
 import std.traits : isSomeChar, isIntegral;
@@ -261,6 +262,7 @@ struct JSONLexerRange(Input, bool track_location = true)
  * A low-level JSON token as returned by $(D JSONLexer).
 */
 struct JSONToken {
+    @safe:
     import std.algorithm : among;
 
     /**
@@ -298,20 +300,20 @@ struct JSONToken {
      * Setting the token kind is not allowed for any of the kinds that have
      * additional data associated (boolean, number and string).
      */
-    @property Kind kind() const { return _kind; }
-    @property Kind kind(Kind value)
+    @property Kind kind() const nothrow { return _kind; }
+    @property Kind kind(Kind value) nothrow
         in { assert(!value.among(Kind.boolean, Kind.number, Kind.string)); }
         body { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.
     @property bool boolean()
-    const {
+    const nothrow {
         assert(_kind == Kind.boolean, "Token is not a boolean.");
         return _boolean;
     }
     /// ditto
     @property bool boolean(bool value)
-    {
+    nothrow {
         _kind = Kind.boolean;
         _boolean = value;
         return value;
@@ -319,13 +321,13 @@ struct JSONToken {
 
     /// Gets/sets the numeric value of the token.
     @property double number()
-    const {
+    const nothrow {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
     }
     /// ditto
     @property double number(double value)
-    {
+    nothrow {
         _kind = Kind.number;
         _number = value;
         return value;
@@ -333,13 +335,13 @@ struct JSONToken {
 
     /// Gets/sets the string value of the token.
     @property .string string()
-    const {
+    const @trusted nothrow {
         assert(_kind == Kind.string, "Token is not a string.");
         return _string;
     }
     /// ditto
     @property .string string(.string value)
-    {
+    nothrow {
         _kind = Kind.string;
         _string = value;
         return value;
@@ -352,7 +354,7 @@ struct JSONToken {
      * affect the comparison.
      */
     bool opEquals(in ref JSONToken other)
-    const {
+    const nothrow {
         if (this.kind != other.kind) return false;
 
         switch (this.kind) {
@@ -363,13 +365,13 @@ struct JSONToken {
         }
     }
     /// ditto
-    bool opEquals(JSONToken other) const { return opEquals(other); }
+    bool opEquals(JSONToken other) const nothrow { return opEquals(other); }
 
     /**
      * Enables usage of $(D JSONToken) as an associative array key.
      */
     size_t toHash()
-    const nothrow @safe {
+    const nothrow {
         hash_t ret = 3781249591u + cast(uint)_kind * 2721371;
 
         switch (_kind) {
@@ -388,7 +390,7 @@ struct JSONToken {
      * location.
      */
     .string toString()
-    const {
+    const @trusted {
         import std.string;
         switch (this.kind) {
             default: return format("[%s %s]", location, this.kind);
@@ -550,7 +552,7 @@ unittest {
             auto ret = parseString(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
-            if (slice_expected) assert(ret.ptr is str.ptr+1);
+            if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
         }
@@ -561,7 +563,7 @@ unittest {
             auto ret = parseString(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
-            if (slice_expected) assert(ret.ptr is str.ptr+1);
+            if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
         }
@@ -697,14 +699,13 @@ private double parseNumber(bool track_location = true, Input)(ref Input input, r
 unittest {
     import std.exception;
     import std.math : approxEqual;
-    import std.string : format;
 
     void test(string str, double expected, string remainder) {
         Location loc;
         auto strcopy = str;
         auto res = parseNumber(strcopy, loc);
-        assert(approxEqual(res, expected), format("%s vs %s %s", res, expected, res-expected));
-        assert(strcopy == remainder, format("rem '%s' '%s'", str, strcopy));
+        assert(approxEqual(res, expected));
+        assert(strcopy == remainder);
         assert(loc.line == 0);
         assert(loc.column == str.length - remainder.length);
     }

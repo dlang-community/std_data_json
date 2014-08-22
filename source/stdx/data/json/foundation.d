@@ -7,6 +7,7 @@
  * Source:    $(PHOBOSSRC std/data/json/foundation.d)
  */
 module stdx.data.json.foundation;
+@safe:
 
 import stdx.data.json.lexer;
 

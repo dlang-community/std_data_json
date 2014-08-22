@@ -18,6 +18,7 @@
  * Source:    $(PHOBOSSRC std/data/json/value.d)
  */
 module stdx.data.json.value;
+@safe
 
 import stdx.data.json.foundation;
 
@@ -33,6 +34,7 @@ import stdx.data.json.foundation;
  * $(D JSONValue[]) or $(D JSONValue[string]).
 */
 struct JSONValue {
+    @safe:
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
 

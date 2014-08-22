@@ -31,6 +31,7 @@
  * Source:    $(PHOBOSSRC std/data/json/parser.d)
  */
 module stdx.data.json.parser;
+@safe:
 
 import stdx.data.json.lexer;
 import stdx.data.json.value;
@@ -194,7 +195,7 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
                     tokens.popFront();
                 } else first = false;
 
-                array ~= parseJSONValue(tokens);
+                () @trusted { array ~= parseJSONValue(tokens); }();
             }
             ret = JSONValue(array.data, loc);
             break;
@@ -514,6 +515,7 @@ struct JSONParserRange(Input)
  * See $(D parseJSONStream) and $(D JSONParserRange) more information.
  */
 struct JSONParserNode {
+    @safe:
     import std.algorithm : among;
 
     /**
@@ -531,18 +533,18 @@ struct JSONParserNode {
 
     private {
         Kind _kind = Kind.invalid;
-        //union { // not @safe
+        union {
             string _key;
             JSONToken _literal;
-        //}
+        }
     }
 
     /**
      * The kind of this node.
      */
-    @property Kind kind() const { return _kind; }
+    @property Kind kind() const nothrow { return _kind; }
     /// ditto
-    @property Kind kind(Kind value)
+    @property Kind kind(Kind value) nothrow
         in { assert(!value.among(Kind.key, Kind.literal)); }
         body { return _kind = value; }
 
@@ -552,13 +554,13 @@ struct JSONParserNode {
      * Setting the key will automatically switch the node kind.
      */
     @property string key()
-    const {
+    const @trusted nothrow {
         assert(_kind == Kind.key);
         return _key;
     }
     /// ditto
     @property string key(string value)
-    {
+    nothrow {
         _kind = Kind.key;
         return _key = value;
     }
@@ -569,13 +571,13 @@ struct JSONParserNode {
      * Setting the literal will automatically switch the node kind.
      */
     @property ref inout(JSONToken) literal()
-    inout {
+    inout @trusted nothrow {
         assert(_kind == Kind.literal);
         return _literal;
     }
     /// ditto
     @property ref JSONToken literal(JSONToken literal)
-    {
+    nothrow {
         _kind = Kind.literal;
         return _literal = literal;
     }
@@ -587,7 +589,7 @@ struct JSONParserNode {
      * included in the comparison.
      */
     bool opEquals(in ref JSONParserNode other)
-    const {
+    const nothrow {
         if (this.kind != other.kind) return false;
 
         switch (this.kind) {
@@ -597,7 +599,7 @@ struct JSONParserNode {
         }
     }
     /// ditto
-    bool opEquals(JSONParserNode other) const { return opEquals(other); }
+    bool opEquals(JSONParserNode other) const nothrow { return opEquals(other); }
 
     unittest {
         JSONToken t1, t2, t3;
@@ -620,7 +622,7 @@ struct JSONParserNode {
      * Enables usage of $(D JSONToken) as an associative array key.
      */
     size_t toHash()
-    const nothrow @safe {
+    const nothrow @trusted {
         hash_t ret = 723125331 + cast(int)_kind * 3962627;
 
         switch (_kind) {

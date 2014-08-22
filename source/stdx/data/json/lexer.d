@@ -960,7 +960,7 @@ enum LexOptions {
     //useLong     = 1<<2, /// Use long to represent integers
     //useBigInt   = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
     //useDecimal  = 1<<4, /// Use Decimal to represent floating point numbers
-    defaults      = trackLocation, // Same as trackLocation
+    defaults      = trackLocation, /// Same as trackLocation
 }
 
 

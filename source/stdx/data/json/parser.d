@@ -156,7 +156,7 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
 
     final switch (tokens.front.kind) with (JSONToken.Kind)
     {
-        case invalid: assert(false);
+        case none: assert(false);
         case error: enforceJson(false, "Invalid token encountered", tokens.front.location); assert(false);
         case null_: ret = JSONValue(null); break;
         case boolean: ret = JSONValue(tokens.front.boolean); break;
@@ -529,7 +529,7 @@ struct JSONParserRange(Input)
         {
             default:
                 throw new JSONException("Expected JSON value", _input.location);
-            case JSONToken.Kind.invalid: assert(false);
+            case JSONToken.Kind.none: assert(false);
             case JSONToken.Kind.null_, JSONToken.Kind.boolean,
                     JSONToken.Kind.number, JSONToken.Kind.string:
                 _node.literal = _input.front;

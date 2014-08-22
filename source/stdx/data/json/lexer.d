@@ -160,7 +160,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
      */
     @property bool empty()
     {
-        if (_front.kind != JSONToken.Kind.invalid) return false;
+        if (_front.kind != JSONToken.Kind.none) return false;
         if (_input.empty) return true;
         skipWhitespace();
         return _input.empty;
@@ -171,12 +171,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
      */
     @property ref const(JSONToken) front()
     {
-        assert(!empty, "Calling front on an empty JSONTokenRange.");
-        if (_front.kind == JSONToken.Kind.invalid)
-        {
-            readToken();
-            assert(_front.kind != JSONToken.Kind.invalid);
-        }
+        ensureFrontValid();
         return _front;
     }
 
@@ -185,20 +180,17 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
      */
     void popFront()
     {
-        if (_front.kind == JSONToken.Kind.invalid)
-        {
-            readToken();
-            assert(_front.kind != JSONToken.Kind.invalid);
-        }
-        _front.kind = JSONToken.Kind.invalid;
+        ensureFrontValid();
+        _front.kind = JSONToken.Kind.none;
     }
 
     private void ensureFrontValid()
     {
-        if (_front.kind == JSONToken.Kind.invalid)
+        assert(!empty, "Reading from an empty JSONLexerRange.");
+        if (_front.kind == JSONToken.Kind.none)
         {
             readToken();
-            assert(_front.kind != JSONToken.Kind.invalid);
+            assert(_front.kind != JSONToken.Kind.none);
         }
     }
 
@@ -680,7 +672,7 @@ struct JSONToken
      */
     enum Kind
     {
-        invalid,      /// Used internally, never returned from the lexer
+        none,         /// Used internally, never returned from the lexer
         error,        /// Malformed token
         null_,        /// The "null" token
         boolean,      /// "true" or "false" token
@@ -702,7 +694,7 @@ struct JSONToken
             bool _boolean;
             double _number;
         }
-        Kind _kind = Kind.invalid;
+        Kind _kind = Kind.none;
     }
 
     /// The location of the token in the input.
@@ -835,8 +827,10 @@ unittest
     assert(tok.kind == JSONToken.Kind.string);
     assert(tok.string == "test");
 
-    assert((tok.kind = JSONToken.Kind.invalid) == JSONToken.Kind.invalid);
-    assert(tok.kind == JSONToken.Kind.invalid);
+    assert((tok.kind = JSONToken.Kind.none) == JSONToken.Kind.none);
+    assert(tok.kind == JSONToken.Kind.none);
+    assert((tok.kind = JSONToken.Kind.error) == JSONToken.Kind.error);
+    assert(tok.kind == JSONToken.Kind.error);
     assert((tok.kind = JSONToken.Kind.null_) == JSONToken.Kind.null_);
     assert(tok.kind == JSONToken.Kind.null_);
     assert((tok.kind = JSONToken.Kind.objectStart) == JSONToken.Kind.objectStart);

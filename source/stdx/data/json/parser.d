@@ -398,12 +398,7 @@ struct JSONParserRange(Input)
      */
     @property ref const(JSONParserNode) front()
     {
-        if (_node.kind == JSONParserNode.Kind.invalid)
-        {
-            readNext();
-            assert(_node.kind != JSONParserNode.Kind.invalid);
-        }
-
+        ensureFrontValid();
         return _node;
     }
 
@@ -412,14 +407,18 @@ struct JSONParserRange(Input)
      */
     void popFront()
     {
-        if (_node.kind == JSONParserNode.Kind.invalid)
+        ensureFrontValid();
+        _prevKind = _node.kind;
+        _node.kind = JSONParserNode.Kind.none;
+    }
+
+    private void ensureFrontValid()
+    {
+        if (_node.kind == JSONParserNode.Kind.none)
         {
             readNext();
-            assert(_node.kind != JSONParserNode.Kind.invalid);
+            assert(_node.kind != JSONParserNode.Kind.none);
         }
-
-        _prevKind = _node.kind;
-        _node.kind = JSONParserNode.Kind.invalid;
     }
 
     private void readNext()
@@ -565,7 +564,7 @@ struct JSONParserNode
      */
     enum Kind
     {
-        invalid,     /// Used internally
+        none,        /// Used internally, never occurs in a node stream
         key,         /// An object key
         literal,     /// A literal value ($(D null), $(D boolean), $(D number) or $(D string))
         objectStart, /// The start of an object value
@@ -576,7 +575,7 @@ struct JSONParserNode
 
     private
     {
-        Kind _kind = Kind.invalid;
+        Kind _kind = Kind.none;
         union
         {
             string _key;

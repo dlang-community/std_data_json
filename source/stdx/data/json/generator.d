@@ -301,7 +301,7 @@ private void writeAsStringImpl(bool pretty_print = false, Output, Input)(Input n
     {
         final switch (nodes.front.kind) with (JSONParserNode.Kind)
         {
-            case invalid: assert(false);
+            case none: assert(false);
             case key:
                 if (nesting > 0 && !first) output.put(',');
                 else first = false;

@@ -134,6 +134,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         InternalInput _input;
         JSONToken _front;
         Location _loc;
+        string _error;
     }
 
     /**
@@ -191,6 +192,16 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         {
             readToken();
             assert(_front.kind != JSONToken.Kind.none);
+
+            if (_front.kind == JSONToken.Kind.error)
+            {
+                // consume the remaining input after an invalid token
+                while (!_input.empty)
+                    _input.popFront();
+
+                static if (!(options & LexOptions.noThrow))
+                    throw new JSONException(_error, _loc);
+            }
         }
     }
 
@@ -204,23 +215,6 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             static if (options & LexOptions.trackLocation) _loc.column++;
         }
 
-        bool parseKeyword(string kw)
-        {
-            /*static if (options & LexOptions.noThrow)
-            {
-                if (!_input.skipOver(kw))
-                {
-                    _input.kind = JSONToken.Kind.error;
-                    return false;
-                }
-            }
-            else
-            {*/
-                enforceJson(_input.skipOver(kw), `Malformed token, expected `~kw, _loc);
-            //}
-            static if (options & LexOptions.trackLocation) _loc.column += kw.length;
-            return true;
-        }
 
         skipWhitespace();
 
@@ -228,22 +222,16 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
 
         _front.location = _loc;
 
+        string kw;
+
         switch (_input.front)
         {
             default:
-                /*static if (options & LexOptions.noThrow)
-                {
-                    _front.kind = JSONToken.Kind.error;
-                    _input.popFront();
-                    break;
-                }
-                else
-                {*/
-                    throw new JSONException(`Malformed token`, _loc);
-                //}
-            case 'f': if (parseKeyword("false")) _front.boolean = false; break;
-            case 't': if (parseKeyword("true")) _front.boolean = true; break;
-            case 'n': if (parseKeyword("null")) _front.kind = JSONToken.Kind.null_; break;
+                setError("Malformed token");
+                return;
+            case 'f': kw = "false"; _front.boolean = false; goto parse_kw;
+            case 't': kw = "true"; _front.boolean = true; goto parse_kw;
+            case 'n': kw = "null"; _front.kind = JSONToken.Kind.null_; goto parse_kw;
             case '"': parseString(); break;
             case '0': .. case '9': case '-': parseNumber(); break;
             case '[': skipChar(); _front.kind = JSONToken.Kind.arrayStart; break;
@@ -255,6 +243,14 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         }
 
         skipWhitespace();
+        return;
+
+		parse_kw:
+            if (_input.skipOver(kw))
+            {
+                static if (options & LexOptions.trackLocation) _loc.column += kw.length;
+            }
+            else setError("Invalid keyord");
     }
 
     private void skipWhitespace()
@@ -315,7 +311,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             size_t idx = 0;
             while (true)
             {
-                enforceJson(idx < _input.length, "Unterminated string literal", _loc);
+                if (idx >= _input.length)
+                {
+                    setError("Unterminated string literal");
+                    return;
+                }
 
                 // return a slice for simple strings
                 if (_input[idx] == '"')
@@ -337,7 +337,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 }
 
                 // Make sure that no illegal characters are present
-                enforceJson(_input[idx] >= 0x20, "Control chararacter found in string literal", _loc);
+                if (_input[idx] < 0x20)
+                {
+                    setError("Control chararacter found in string literal");
+                    return;
+                }
                 idx++;
             }
         }
@@ -346,7 +350,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         // perform full decoding
         while (true)
         {
-            enforceJson(!_input.empty, "Unterminated string literal", _loc);
+            if (_input.empty)
+            {
+                setError("Unterminated string literal");
+                return;
+            }
+
             auto ch = _input.front;
             _input.popFront();
             static if (options & LexOptions.trackLocation)  _loc.column++;
@@ -358,14 +367,21 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                     _front.string = ret.data;
                     return;
                 case '\\':
-                    enforceJson(!_input.empty, "Unterminated string escape sequence.", _loc);
+                    if (_input.empty)
+                    {
+                        setError("Unterminated string escape sequence.");
+                        return;
+                    }
+
                     auto ech = _input.front;
                     _input.popFront();
                     static if (options & LexOptions.trackLocation) _loc.column++;
 
                     switch (ech)
                     {
-                        default: enforceJson(false, "Invalid string escape sequence.", _loc); break;
+                        default:
+                            setError("Invalid string escape sequence.");
+                            return;
                         case '"': ret.put('\"'); break;
                         case '\\': ret.put('\\'); break;
                         case '/': ret.put('/'); break;
@@ -381,7 +397,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                                 dchar uch = 0;
                                 foreach (i; 0 .. 4)
                                 {
-                                    enforceJson(!_input.empty, "Premature end of unicode escape sequence", _loc);
+                                    if (_input.empty)
+                                    {
+                                        setError("Premature end of unicode escape sequence");
+                                        return dchar.max;
+                                    }
+
                                     uch *= 16;
                                     auto dc = _input.front;
                                     _input.popFront();
@@ -390,20 +411,38 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                                         uch += dc - '0';
                                     else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
                                         uch += (dc & ~0x20) - 'A' + 10;
-                                    else enforceJson(false, "Invalid character in Unicode escape sequence", _loc);
+                                    else
+                                    {
+                                        setError("Invalid character in Unicode escape sequence");
+                                        return dchar.max;
+                                    }
                                 }
                                 return uch;
                             }
 
                             dchar uch = decode_unicode_escape();
+                            if (uch == dchar.max) return;
 
                             // detect UTF-16 surrogate pairs
                             if (0xD800 <= uch && uch <= 0xDBFF)
                             {
                                 static if (options & LexOptions.trackLocation) _loc.column += 6;
-                                enforceJson(_input.skipOver("\\u"), "Missing second UTF-16 surrogate", _loc);
+
+                                if (!_input.skipOver("\\u"))
+                                {
+                                    setError("Missing second UTF-16 surrogate");
+                                    return;
+                                }
+
                                 auto uch2 = decode_unicode_escape();
-                                enforceJson(0xDC00 <= uch2 && uch2 <= 0xDFFF, "Invalid UTF-16 surrogate sequence", _loc);
+                                if (uch2 == dchar.max) return;
+
+                                if (0xDC00 > uch2 || uch2 > 0xDFFF)
+                                {
+                                    setError("Invalid UTF-16 surrogate sequence");
+                                    return;
+                                }
+
                                 // combine to a valid UCS-4 character
                                 uch = ((uch - 0xD800) << 10) + (uch2 - 0xDC00) + 0x10000;
                             }
@@ -443,7 +482,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         }
 
         // integer part of the number
-        enforceJson(!_input.empty && _input.front.isDigit(), "Invalid number, expected digit", _loc);
+        if (_input.empty || !_input.front.isDigit())
+        {
+            setError("Invalid number, expected digit");
+            return;
+        }
+
         if (_input.front == '0')
         {
             skipChar();
@@ -452,7 +496,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 _front.number = neg ? -result : result;
                 return;
             }
-            enforceJson(!_input.front.isDigit, "Invalid number, 0 must not be followed by another digit", _loc);
+
+            if (_input.front.isDigit)
+            {
+                setError("Invalid number, 0 must not be followed by another digit");
+                return;
+            }
         }
         else do
         {
@@ -471,7 +520,13 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         if (_input.front == '.')
         {
             skipChar();
-            enforceJson(!_input.empty, "Missing fractional number part", _loc);
+
+            if (_input.empty)
+            {
+                setError("Missing fractional number part");
+                return;
+            }
+
             double mul = 0.1;
             while (true) {
                 if (_input.empty)
@@ -491,7 +546,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         if (_input.front.among('e', 'E'))
         {
             skipChar();
-            enforceJson(!_input.empty, "Missing exponent", _loc);
+            if (_input.empty)
+            {
+                setError("Missing exponent");
+                return;
+            }
 
             bool negexp = void;
             if (_input.front == '-')
@@ -505,7 +564,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 if (_input.front == '+') skipChar();
             }
 
-            enforceJson(!_input.empty && _input.front.isDigit, "Missing exponent", _loc);
+            if (_input.empty || !_input.front.isDigit)
+            {
+                setError("Missing exponent");
+                return;
+            }
+
             uint exp = 0;
             while (true)
             {
@@ -517,6 +581,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         }
 
         _front.number = neg ? -result : result;
+    }
+
+    void setError(string err)
+    {
+        _front.kind = JSONToken.Kind.error;
+        _error = err;
     }
 }
 
@@ -579,20 +649,36 @@ unittest
     testResult(`"\r\n\\\"\b\f\t\/"`, "\r\n\\\"\b\f\t/", "");
     testResult(`"\u1234"`, "\u1234", "");
     testResult(`"\uD800\udc00"`, "\U00010000", "");
+}
 
-    Location loc;
-    string s;
-    assertThrown(parseStringHelper(s = `"`, loc)); // unterminated string
-    assertThrown(parseStringHelper(s = `"test\"`, loc)); // unterminated string
-    assertThrown(parseStringHelper(s = `"test'`, loc)); // unterminated string
-    assertThrown(parseStringHelper(s = "\"test\n\"", loc)); // illegal control character
-    assertThrown(parseStringHelper(s = `"\x"`, loc)); // invalid escape sequence
-    assertThrown(parseStringHelper(s = `"\u123"`, loc)); // too short unicode escape sequence
-    assertThrown(parseStringHelper(s = `"\u123G"`, loc)); // invalid unicode escape sequence
-    assertThrown(parseStringHelper(s = `"\u123g"`, loc)); // invalid unicode escape sequence
-    assertThrown(parseStringHelper(s = `"\uD800"`, loc)); // missing surrogate
-    assertThrown(parseStringHelper(s = `"\uD800\u"`, loc)); // too short second surrogate
-    assertThrown(parseStringHelper(s = `"\uD800\u1234"`, loc)); // invalid surrogate pair
+unittest
+{
+    import std.exception;
+
+    void testFail(string str)
+    {
+        Location loc;
+        auto rng1 = JSONLexerRange!(string, LexOptions.defaults)(str);
+        assertThrown(rng1.front);
+
+        auto rng2 = JSONLexerRange!(string, LexOptions.noThrow)(str);
+        assertNotThrown(rng2.front);
+        assert(rng2.front.kind == JSONToken.Kind.error);
+    }
+
+    testFail(`"`); // unterminated string
+    testFail(`"\`); // unterminated string escape sequence
+    testFail(`"test\"`); // unterminated string
+    testFail(`"test'`); // unterminated string
+    testFail("\"test\n\""); // illegal control character
+    testFail(`"\x"`); // invalid escape sequence
+    testFail(`"\u123`); // unterminated unicode escape sequence
+    testFail(`"\u123"`); // too short unicode escape sequence
+    testFail(`"\u123G"`); // invalid unicode escape sequence
+    testFail(`"\u123g"`); // invalid unicode escape sequence
+    testFail(`"\uD800"`); // missing surrogate
+    testFail(`"\uD800\u"`); // too short second surrogate
+    testFail(`"\uD800\u1234"`); // invalid surrogate pair
 }
 
 unittest
@@ -639,23 +725,37 @@ unittest
     test("123.456e-01 ", 12.3456, " ");
     test("0.123e-12", 0.123e-12, "");
     test("0.123e-12 ", 0.123e-12, " ");
+}
 
-    Location loc;
-    string s;
-    assertThrown(parseNumberHelper(s = "+", loc));
-    assertThrown(parseNumberHelper(s = "-", loc));
-    assertThrown(parseNumberHelper(s = "+1", loc));
-    assertThrown(parseNumberHelper(s = "1.", loc));
-    assertThrown(parseNumberHelper(s = ".1", loc));
-    assertThrown(parseNumberHelper(s = "01", loc));
-    assertThrown(parseNumberHelper(s = "1e", loc));
-    assertThrown(parseNumberHelper(s = "1e+", loc));
-    assertThrown(parseNumberHelper(s = "1e-", loc));
-    assertThrown(parseNumberHelper(s = "1.e", loc));
-    assertThrown(parseNumberHelper(s = "1.e-", loc));
-    assertThrown(parseNumberHelper(s = "1.ee", loc));
-    assertThrown(parseNumberHelper(s = "1.e-e", loc));
-    assertThrown(parseNumberHelper(s = "1.e+e", loc));
+unittest
+{
+    import std.exception;
+
+    void testFail(string str)
+    {
+        Location loc;
+        auto rng1 = JSONLexerRange!(string, LexOptions.defaults)(str);
+        assertThrown(rng1.front);
+
+        auto rng2 = JSONLexerRange!(string, LexOptions.noThrow)(str);
+        assertNotThrown(rng2.front);
+        assert(rng2.front.kind == JSONToken.Kind.error);
+    }
+
+    testFail("+");
+    testFail("-");
+    testFail("+1");
+    testFail("1.");
+    testFail(".1");
+    testFail("01");
+    testFail("1e");
+    testFail("1e+");
+    testFail("1e-");
+    testFail("1.e");
+    testFail("1.e-");
+    testFail("1.ee");
+    testFail("1.e-e");
+    testFail("1.e+e");
 }
 
 
@@ -856,7 +956,7 @@ unittest
 enum LexOptions {
     none          = 0,    /// Don't track token location and only use double numbers
     trackLocation = 1<<0, /// Counts lines and columns while lexing the source
-    //noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
+    noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
     //useLong     = 1<<2, /// Use long to represent integers
     //useBigInt   = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
     //useDecimal  = 1<<4, /// Use Decimal to represent floating point numbers

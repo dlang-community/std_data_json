@@ -47,6 +47,7 @@ var symbols = [
 {name: "stdx.data.json.lexer.JSONToken.toString", kind: "functiondeclaration", path: "./stdx/data/json/lexer/JSONToken.toString.html", attributes: ["trusted", "const"]},
 {name: "stdx.data.json.lexer.lexJSON", kind: "functiondeclaration", path: "./stdx/data/json/lexer/lexJSON.html", attributes: []},
 {name: "stdx.data.json.lexer.LexOptions", kind: "enumdeclaration", path: "./stdx/data/json/lexer/LexOptions.html", attributes: []},
+{name: "stdx.data.json.lexer.LexOptions.defaults", kind: "enummemberdeclaration", path: "./stdx/data/json/lexer/LexOptions.defaults.html", attributes: []},
 {name: "stdx.data.json.lexer.LexOptions.none", kind: "enummemberdeclaration", path: "./stdx/data/json/lexer/LexOptions.none.html", attributes: []},
 {name: "stdx.data.json.lexer.LexOptions.noThrow", kind: "enummemberdeclaration", path: "./stdx/data/json/lexer/LexOptions.noThrow.html", attributes: []},
 {name: "stdx.data.json.lexer.LexOptions.trackLocation", kind: "enummemberdeclaration", path: "./stdx/data/json/lexer/LexOptions.trackLocation.html", attributes: []},

@@ -60,6 +60,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.toString.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/lexJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.defaults.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.none.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.noThrow.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/LexOptions.trackLocation.html</loc></url>

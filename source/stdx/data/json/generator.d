@@ -21,17 +21,38 @@ import std.range;
 
 
 /**
- * Converts the given JSON document(s) to a string representation.
+ * Converts the given JSON document(s) to a formatted string representation.
+ *
+ * Pretty printed strings are indented multi-line strings suitable for human
+ * consumption.
+ *
+ * See_also: $(D writePrettyJSONString), $(D toJSONString)
+ */
+string toPrettyJSONString()(JSONValue value)
+{
+    import std.array;
+    auto dst = appender!string();
+    value.writeAsPrettyString(dst);
+    return dst.data;
+}
+/// ditto
+string toPrettyJSONString(Input)(Input nodes)
+    if (isJSONParserNodeInputRange!Input)
+{
+    import std.array;
+    auto dst = appender!string();
+    nodes.writeAsPrettyString(dst);
+    return dst.data;
+}
+
+
+/**
+ * Converts the given JSON document(s) to a compact string representation.
  *
  * The input can be a $(D JSONValue), or an input range of either $(D JSONToken)
- * or $(D JSONParserNode) elements. When converting a $(D JSONValue) or a range
- * of $(D JSONParserNode) elements, the resulting JSON string can optionally be
- * pretty printed. Pretty printed strings are indented multi-line strings
- * suitable for human consumption.
+ * or $(D JSONParserNode) elements.
  *
  * Params:
- *   pretty_print = Option to enable indented output, suitable for human
- *     consumption
  *   value = A single JSON document
  *   nodes = A set of JSON documents encoded as single parser nodes. The nodes
  *     must be in valid document order, or the parser result will be undefined.
@@ -41,21 +62,23 @@ import std.range;
  *
  * Returns:
  *   Returns a JSON formatted string.
+ *
+ * See_also: $(D writeJSONString), $(D toPrettyJSONString)
  */
-string toJSONString(bool pretty_print = false)(JSONValue value)
+string toJSONString()(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
-    value.writeAsString!pretty_print(dst);
+    value.writeAsString(dst);
     return dst.data;
 }
 /// ditto
-string toJSONString(bool pretty_print = false, Input)(Input nodes)
+string toJSONString(Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
     auto dst = appender!string();
-    nodes.writeAsString!pretty_print(dst);
+    nodes.writeAsString(dst);
     return dst.data;
 }
 /// ditto
@@ -89,7 +112,7 @@ unittest
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
     // write compact JSON
-    assert(a.toJSONString!false() == `{"a":[],"b":[1,{}]}`);
+    assert(a.toJSONString() == `{"a":[],"b":[1,{}]}`);
 
     // pretty print:
     // {
@@ -99,14 +122,14 @@ unittest
     //         {},
     //     ]
     // }
-    assert(a.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(a.toPrettyJSONString() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 }
 
 unittest
 {
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
     assert(nodes.toJSONString() == `{"a":[],"b":[1,{}]}`);
-    assert(nodes.toJSONString!true() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(nodes.toPrettyJSONString() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
 
     auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
     assert(tokens.toJSONString() == `{"a":[],"b":[1,{},null,true,false]}`);
@@ -117,15 +140,33 @@ unittest
 }
 
 
+/**
+ * Formats the given JSON document(s) as an indented multi-line string.
+ *
+ * This function produces output suitable for human consumption by properly
+ * indenting based on the nesting level.
+ *
+ * See_also: $(D toPrettyJSONString), $(D writeJSONString)
+ */
+void writeAsPrettyString(Output)(JSONValue value, ref Output output)
+    if (isOutputRange!(Output, char))
+{
+    writeAsStringImpl!true(value, output);
+}
+/// ditto
+void writeAsPrettyString(Output, Input)(Input nodes, ref Output output)
+    if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
+{
+    writeAsStringImpl!true(nodes, output);
+}
+
 
 /**
- * Writes then given JSON formatted document(s) to an output range.
+ * Formats the given JSON document(s)/tokens as a compact string.
  *
  * See $(D toJSONString) for more information.
  *
  * Params:
- *   pretty_print = Option to enable indented output, suitable for human
- *     consumption
  *   output = The output range to take the result string in UTF-8 encoding.
  *   value = A single JSON document
  *   nodes = A set of JSON documents encoded as single parser nodes. The nodes
@@ -133,8 +174,51 @@ unittest
  *   tokens = List of JSON tokens to be converted to strings. The tokens may
  *     occur in any order and are simply appended in order to the final string.
  *   token = A single token to convert to a string
+ *
+ * See_also: $(D toJSONString), $(D writePrettyJSONString)
  */
-void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
+void writeAsString(Output)(JSONValue value, ref Output output)
+    if (isOutputRange!(Output, char))
+{
+    writeAsStringImpl(value, output);
+}
+/// ditto
+void writeAsString(Output, Input)(Input nodes, ref Output output)
+    if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
+{
+    writeAsStringImpl(nodes, output);
+}
+/// ditto
+void writeAsString(Output, Input)(Input tokens, ref Output output)
+    if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
+{
+    while (!tokens.empty)
+    {
+        tokens.front.writeAsString(output);
+        tokens.popFront();
+    }
+}
+/// ditto
+void writeAsString(Output)(in ref JSONToken token, ref Output output)
+    if (isOutputRange!(Output, char))
+{
+    final switch (token.kind) with (JSONToken.Kind)
+    {
+        case invalid: assert(false);
+        case null_: output.put("null"); break;
+        case boolean: output.put(token.boolean ? "true" : "false"); break;
+        case number: output.writeNumber(token.number); break;
+        case string: output.put('"'); output.escapeString(token.string); output.put('"'); break;
+        case objectStart: output.put('{'); break;
+        case objectEnd: output.put('}'); break;
+        case arrayStart: output.put('['); break;
+        case arrayEnd: output.put(']'); break;
+        case colon: output.put(':'); break;
+        case comma: output.put(','); break;
+    }
+}
+
+private void writeAsStringImpl(bool pretty_print = false, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
     void indent(size_t depth)
@@ -159,7 +243,7 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
             output.put('\"');
             output.escapeString(k);
             output.put(pretty_print ? `": ` : `":`);
-            e.writeAsString!pretty_print(output, nesting_level+1);
+            e.writeAsStringImpl!pretty_print(output, nesting_level+1);
         }
         static if (pretty_print)
         {
@@ -174,7 +258,7 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
         {
             if (i > 0) output.put(",");
             static if (pretty_print) indent(nesting_level+1);
-            e.writeAsString!pretty_print(output, nesting_level+1);
+            e.writeAsStringImpl!pretty_print(output, nesting_level+1);
         }
         static if (pretty_print)
         {
@@ -184,8 +268,8 @@ void writeAsString(bool pretty_print = false, Output)(JSONValue value, ref Outpu
     }
     else assert(false);
 }
-/// ditto
-void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Output output)
+
+private void writeAsStringImpl(bool pretty_print = false, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     size_t nesting = 0;
@@ -265,36 +349,6 @@ void writeAsString(bool pretty_print = false, Output, Input)(Input nodes, ref Ou
         nodes.popFront();
     }
 }
-/// ditto
-void writeAsString(Output, Input)(Input tokens, ref Output output)
-    if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
-{
-    while (!tokens.empty)
-    {
-        tokens.front.writeAsString(output);
-        tokens.popFront();
-    }
-}
-/// ditto
-void writeAsString(Output)(in ref JSONToken token, ref Output output)
-    if (isOutputRange!(Output, char))
-{
-    final switch (token.kind) with (JSONToken.Kind)
-    {
-        case invalid: assert(false);
-        case null_: output.put("null"); break;
-        case boolean: output.put(token.boolean ? "true" : "false"); break;
-        case number: output.writeNumber(token.number); break;
-        case string: output.put('"'); output.escapeString(token.string); output.put('"'); break;
-        case objectStart: output.put('{'); break;
-        case objectEnd: output.put('}'); break;
-        case arrayStart: output.put('['); break;
-        case arrayEnd: output.put(']'); break;
-        case colon: output.put(':'); break;
-        case comma: output.put(','); break;
-    }
-}
-
 
 private void writeNumber(R)(ref R dst, double num)
 {

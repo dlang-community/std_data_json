@@ -26,13 +26,13 @@ import std.range;
  * Pretty printed strings are indented multi-line strings suitable for human
  * consumption.
  *
- * See_also: $(D writeAsPrettyJSON), $(D toJSON)
+ * See_also: $(D writePrettyJSON), $(D toJSON)
  */
 string toPrettyJSON(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
-    value.writeAsPrettyJSON(dst);
+    value.writePrettyJSON(dst);
     return dst.data;
 }
 /// ditto
@@ -41,7 +41,7 @@ string toPrettyJSON(Input)(Input nodes)
 {
     import std.array;
     auto dst = appender!string();
-    nodes.writeAsPrettyJSON(dst);
+    nodes.writePrettyJSON(dst);
     return dst.data;
 }
 
@@ -148,13 +148,13 @@ unittest
  *
  * See_also: $(D toPrettyJSON), $(D writeJSON)
  */
-void writeAsPrettyJSON(Output)(JSONValue value, ref Output output)
+void writePrettyJSON(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
     writeAsStringImpl!true(value, output);
 }
 /// ditto
-void writeAsPrettyJSON(Output, Input)(Input nodes, ref Output output)
+void writePrettyJSON(Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     writeAsStringImpl!true(nodes, output);
@@ -175,7 +175,7 @@ void writeAsPrettyJSON(Output, Input)(Input nodes, ref Output output)
  *     occur in any order and are simply appended in order to the final string.
  *   token = A single token to convert to a string
  *
- * See_also: $(D toJSON), $(D writeAsPrettyJSON)
+ * See_also: $(D toJSON), $(D writePrettyJSON)
  */
 void writeJSON(Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))

@@ -51,6 +51,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.opEquals.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.string.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.string.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.toHash.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/JSONToken.toString.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/lexJSON.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser.html</loc></url>
@@ -71,6 +72,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.literal.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.opEquals.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.opEquals.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.toHash.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserNode.toString.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserRange.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/JSONParserRange.empty.html</loc></url>

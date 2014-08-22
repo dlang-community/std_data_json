@@ -79,7 +79,7 @@ $(document).ready(function() {
 <!-- using block ddox.sections in ddox.layout.dt-->
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Parse a JSON string
-JSONValue value = parseJSON(`{"name": "D", "kind": "language"}`);
+JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
 auto fields = value.get!(JSONValue[string]);
 assert(fields["name"] == "D");
 assert(fields["kind"] == "language");
@@ -103,7 +103,7 @@ with (JSONToken.Kind) {
 }
 
 // Parse the tokens to a value
-JSONValue value2 = parseJSON(tokens);
+JSONValue value2 = parseJSONValue(tokens);
 assert(value2 == value);
 
 // Parse the tokens to a JSON node stream

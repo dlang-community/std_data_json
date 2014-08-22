@@ -97,7 +97,7 @@ with (<a href="../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONPars
 
 // Parse a list of tokens instead of a string
 auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
-JSONValue value2 = parseJson(tokens);
+JSONValue value2 = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(tokens);
 assert(value == value2);
 </pre>
 </section>

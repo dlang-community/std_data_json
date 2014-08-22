@@ -366,6 +366,21 @@ struct JSONToken {
     bool opEquals(JSONToken other) const { return opEquals(other); }
 
     /**
+     * Enables usage of $(D JSONToken) as an associative array key.
+     */
+    size_t toHash()
+    const nothrow @safe {
+        hash_t ret = 3781249591u + cast(uint)_kind * 2721371;
+
+        switch (_kind) {
+            default: return ret;
+            case Kind.boolean: return ret + _boolean;
+            case Kind.number: return ret + typeid(double).getHash(&_number);
+            case Kind.string: return ret + typeid(.string).getHash(&_string);
+        }
+    }
+
+    /**
      * Converts the token to a string representation.
      *
      * Note that this representation is NOT the JSON representation, but rather
@@ -496,7 +511,7 @@ private string parseString(bool track_location = true, Input)(ref Input input, r
 
                                 if (dc >= '0' && dc <= '9')
                                     uch += dc - '0';
-                                else if (dc >= 'a' && dc <= 'f' || dc >= 'A' && dc <= 'F')
+                                else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
                                     uch += (dc & ~0x20) - 'A' + 10;
                                 else enforceJson(false, "Invalid character in Unicode escape sequence", loc);
                             }

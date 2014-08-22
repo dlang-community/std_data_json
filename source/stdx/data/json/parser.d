@@ -531,10 +531,10 @@ struct JSONParserNode {
 
     private {
         Kind _kind = Kind.invalid;
-        union {
+        //union { // not @safe
             string _key;
             JSONToken _literal;
-        }
+        //}
     }
 
     /**
@@ -614,6 +614,20 @@ struct JSONParserNode {
         n1.key = "test"; assert(n1 != n2);
         n2.key = "other"; assert(n1 != n2);
         n2.key = "test".idup; assert(n1 == n2);
+    }
+
+    /**
+     * Enables usage of $(D JSONToken) as an associative array key.
+     */
+    size_t toHash()
+    const nothrow @safe {
+        hash_t ret = 723125331 + cast(int)_kind * 3962627;
+
+        switch (_kind) {
+            default: return ret;
+            case Kind.literal: return ret + _literal.toHash();
+            case Kind.key: return ret + typeid(.string).getHash(&_key);
+        }
     }
 
     /**

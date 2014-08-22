@@ -48,10 +48,10 @@ import std.range : isInputRange;
  *
  * See_also: $(D parseJSONValue)
  */
-JSONValue toJSONValue(bool track_location = true, Input)(Input input, string filename = "")
+JSONValue toJSONValue(LexOptions options = LexOptions.defaults, Input)(Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    auto tokens = lexJSON!track_location(input, filename);
+    auto tokens = lexJSON!options(input, filename);
     return toJSONValue(tokens);
 }
 /// ditto
@@ -101,12 +101,12 @@ unittest
  * The input string must start with a valid JSON document. Any characters
  * occurring after this document will be left in the input range.
  */
-JSONValue parseJSONValue(bool track_location = true, Input)(ref Input input, string filename = "")
+JSONValue parseJSONValue(LexOptions options = LexOptions.defaults, Input)(ref Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     import stdx.data.json.foundation;
 
-    auto tokens = lexJSON!track_location(input, filename);
+    auto tokens = lexJSON!options(input, filename);
     auto ret = parseJSONValue(tokens);
     input = tokens.input;
     return ret;
@@ -157,6 +157,7 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
     final switch (tokens.front.kind) with (JSONToken.Kind)
     {
         case invalid: assert(false);
+        case error: enforceJson(false, "Invalid token encountered", tokens.front.location); assert(false);
         case null_: ret = JSONValue(null); break;
         case boolean: ret = JSONValue(tokens.front.boolean); break;
         case number: ret = JSONValue(tokens.front.number); break;
@@ -274,10 +275,10 @@ unittest
  *   $(LI object → OBJECTSTART (KEY value)* OBJECTEND)
  * )
  */
-JSONParserRange!(JSONLexerRange!(Input, track_location)) parseJSONStream(bool track_location = true, Input)(Input input, string filename = null)
+JSONParserRange!(JSONLexerRange!(Input, options)) parseJSONStream(LexOptions options = LexOptions.defaults, Input)(Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    return parseJSONStream(lexJSON(input, filename));
+    return parseJSONStream(lexJSON!options(input, filename));
 }
 /// ditto
 JSONParserRange!Input parseJSONStream(Input)(Input tokens)
@@ -702,9 +703,9 @@ struct JSONParserNode
 /// Tests if a given type is an input range of $(D JSONToken).
 enum isJSONTokenInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONToken);
 
-static assert(isJSONTokenInputRange!(JSONLexerRange!(string, true)));
+static assert(isJSONTokenInputRange!(JSONLexerRange!string));
 
 /// Tests if a given type is an input range of $(D JSONParserNode).
 enum isJSONParserNodeInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONParserNode);
 
-static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!(string, true))));
+static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!string)));

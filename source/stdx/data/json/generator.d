@@ -205,6 +205,7 @@ void writeAsString(Output)(in ref JSONToken token, ref Output output)
     final switch (token.kind) with (JSONToken.Kind)
     {
         case invalid: assert(false);
+        case error: output.put("_error_"); break;
         case null_: output.put("null"); break;
         case boolean: output.put(token.boolean ? "true" : "false"); break;
         case number: output.writeNumber(token.number); break;

@@ -37,7 +37,7 @@ module stdx.data.json.lexer;
 @safe:
 
 import std.range;
-import std.traits : isSomeChar, isIntegral;
+import std.traits : isIntegral, isSomeChar, isSomeString;
 import stdx.data.json.foundation;
 
 
@@ -53,10 +53,12 @@ import stdx.data.json.foundation;
  * containing no escape sequences will result in allocation-free operation o
  * the lexer.
 */
-JSONLexerRange!(Input, track_location) lexJSON(bool track_location = true, Input)(Input input, string filename = null)
+JSONLexerRange!(Input, options) lexJSON
+    (LexOptions options = LexOptions.defaults, Input)
+    (Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    return JSONLexerRange!(Input, track_location)(input, filename);
+    return JSONLexerRange!(Input, options)(input, filename);
 }
 
 ///
@@ -112,14 +114,24 @@ unittest
  *
  * See $(D lexJSON) for more information.
 */
-struct JSONLexerRange(Input, bool track_location = true)
+struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     import std.string : representation;
 
+    static if (isSomeString!Input)
+        alias InternalInput = typeof(Input.init.representation);
+    else
+        alias InternalInput = Input;
+
+    static if (typeof(InternalInput.init.front).sizeof > 1)
+        alias CharType = dchar;
+    else
+        alias CharType = char;
+
     private
     {
-        typeof(Input.init.representation) _input;
+        InternalInput _input;
         JSONToken _front;
         Location _loc;
     }
@@ -129,7 +141,7 @@ struct JSONLexerRange(Input, bool track_location = true)
      */
     this(Input input, string filename = null)
     {
-        _input = input.representation;
+        _input = cast(InternalInput)input;
         _front.location.file = filename;
     }
 
@@ -181,6 +193,15 @@ struct JSONLexerRange(Input, bool track_location = true)
         _front.kind = JSONToken.Kind.invalid;
     }
 
+    private void ensureFrontValid()
+    {
+        if (_front.kind == JSONToken.Kind.invalid)
+        {
+            readToken();
+            assert(_front.kind != JSONToken.Kind.invalid);
+        }
+    }
+
     private void readToken()
     {
         import std.algorithm : skipOver;
@@ -188,7 +209,25 @@ struct JSONLexerRange(Input, bool track_location = true)
         void skipChar()
         {
             _input.popFront();
-            static if (track_location) _loc.column++;
+            static if (options & LexOptions.trackLocation) _loc.column++;
+        }
+
+        bool parseKeyword(string kw)
+        {
+            /*static if (options & LexOptions.noThrow)
+            {
+                if (!_input.skipOver(kw))
+                {
+                    _input.kind = JSONToken.Kind.error;
+                    return false;
+                }
+            }
+            else
+            {*/
+                enforceJson(_input.skipOver(kw), `Malformed token, expected `~kw, _loc);
+            //}
+            static if (options & LexOptions.trackLocation) _loc.column += kw.length;
+            return true;
         }
 
         skipWhitespace();
@@ -200,25 +239,21 @@ struct JSONLexerRange(Input, bool track_location = true)
         switch (_input.front)
         {
             default:
-            import std.conv;
-                throw new JSONException(`Malformed token: `~to!string(cast(Input)_input), _loc);
-            case 'f':
-                enforceJson(_input.skipOver("false"), `Malformed token, expected "false"`, _loc);
-                static if (track_location) _loc.column += 5;
-                _front.boolean = false;
-                break;
-            case 't':
-                enforceJson(_input.skipOver("true"), `Malformed token, expected "true"`, _loc);
-                static if (track_location) _loc.column += 4;
-                _front.boolean = true;
-                break;
-            case 'n':
-                enforceJson(_input.skipOver("null"), `Malformed token, expected "null"`, _loc);
-                static if (track_location) _loc.column += 4;
-                _front.kind = JSONToken.Kind.null_;
-                break;
-            case '"': _front.string = _input.parseString!track_location(_loc); break;
-            case '0': .. case '9': case '-': _front.number = _input.parseNumber!track_location(_loc); break;
+                /*static if (options & LexOptions.noThrow)
+                {
+                    _front.kind = JSONToken.Kind.error;
+                    _input.popFront();
+                    break;
+                }
+                else
+                {*/
+                    throw new JSONException(`Malformed token`, _loc);
+                //}
+            case 'f': if (parseKeyword("false")) _front.boolean = false; break;
+            case 't': if (parseKeyword("true")) _front.boolean = true; break;
+            case 'n': if (parseKeyword("null")) _front.kind = JSONToken.Kind.null_; break;
+            case '"': parseString(); break;
+            case '0': .. case '9': case '-': parseNumber(); break;
             case '[': skipChar(); _front.kind = JSONToken.Kind.arrayStart; break;
             case ']': skipChar(); _front.kind = JSONToken.Kind.arrayEnd; break;
             case '{': skipChar(); _front.kind = JSONToken.Kind.objectStart; break;
@@ -234,7 +269,7 @@ struct JSONLexerRange(Input, bool track_location = true)
     {
         while (!_input.empty)
         {
-            static if (track_location)
+            static if (options & LexOptions.trackLocation)
             {
                 switch (_input.front)
                 {
@@ -269,6 +304,366 @@ struct JSONLexerRange(Input, bool track_location = true)
             }
         }
     }
+
+    private void parseString()
+    {
+        import std.algorithm : skipOver;
+        import std.array;
+
+        assert(!_input.empty && _input.front == '"');
+        _input.popFront();
+        static if (options & LexOptions.trackLocation) _loc.column++;
+
+        Appender!string ret;
+
+        // try the fast slice based route first
+        static if (is(Input == string) || is(Input == immutable(ubyte)[]))
+        {
+            auto orig = input;
+            size_t idx = 0;
+            while (true)
+            {
+                enforceJson(idx < _input.length, "Unterminated string literal", _loc);
+
+                // return a slice for simple strings
+                if (_input[idx] == '"')
+                {
+                    _input = _input[idx+1 .. $];
+                    static if (options & LexOptions.trackLocation) _loc.column += idx+1;
+                    _front.string = cast(string)orig[0 .. idx];
+                    return;
+                }
+
+                // fall back to full decoding when an escape sequence is encountered
+                if (_input[idx] == '\\')
+                {
+                    ret = appender!string();
+                    ret.put(cast(string)_input[0 .. idx]);
+                    _input = _input[idx .. $];
+                    static if (options & LexOptions.trackLocation) _loc.column += idx;
+                    break;
+                }
+
+                // Make sure that no illegal characters are present
+                enforceJson(_input[idx] >= 0x20, "Control chararacter found in string literal", _loc);
+                idx++;
+            }
+        }
+        else ret = appender!string();
+
+        // perform full decoding
+        while (true)
+        {
+            enforceJson(!_input.empty, "Unterminated string literal", _loc);
+            auto ch = _input.front;
+            _input.popFront();
+            static if (options & LexOptions.trackLocation)  _loc.column++;
+
+            switch (ch)
+            {
+                default: ret.put(cast(CharType)ch); break;
+                case '"':
+                    _front.string = ret.data;
+                    return;
+                case '\\':
+                    enforceJson(!_input.empty, "Unterminated string escape sequence.", _loc);
+                    auto ech = _input.front;
+                    _input.popFront();
+                    static if (options & LexOptions.trackLocation) _loc.column++;
+
+                    switch (ech)
+                    {
+                        default: enforceJson(false, "Invalid string escape sequence.", _loc); break;
+                        case '"': ret.put('\"'); break;
+                        case '\\': ret.put('\\'); break;
+                        case '/': ret.put('/'); break;
+                        case 'b': ret.put('\b'); break;
+                        case 'f': ret.put('\f'); break;
+                        case 'n': ret.put('\n'); break;
+                        case 'r': ret.put('\r'); break;
+                        case 't': ret.put('\t'); break;
+                        case 'u': // \uXXXX
+                            static if (options & LexOptions.trackLocation) _loc.column += 4;
+                            dchar decode_unicode_escape()
+                            {
+                                dchar uch = 0;
+                                foreach (i; 0 .. 4)
+                                {
+                                    enforceJson(!_input.empty, "Premature end of unicode escape sequence", _loc);
+                                    uch *= 16;
+                                    auto dc = _input.front;
+                                    _input.popFront();
+
+                                    if (dc >= '0' && dc <= '9')
+                                        uch += dc - '0';
+                                    else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
+                                        uch += (dc & ~0x20) - 'A' + 10;
+                                    else enforceJson(false, "Invalid character in Unicode escape sequence", _loc);
+                                }
+                                return uch;
+                            }
+
+                            dchar uch = decode_unicode_escape();
+
+                            // detect UTF-16 surrogate pairs
+                            if (0xD800 <= uch && uch <= 0xDBFF)
+                            {
+                                static if (options & LexOptions.trackLocation) _loc.column += 6;
+                                enforceJson(_input.skipOver("\\u"), "Missing second UTF-16 surrogate", _loc);
+                                auto uch2 = decode_unicode_escape();
+                                enforceJson(0xDC00 <= uch2 && uch2 <= 0xDFFF, "Invalid UTF-16 surrogate sequence", _loc);
+                                // combine to a valid UCS-4 character
+                                uch = ((uch - 0xD800) << 10) + (uch2 - 0xDC00) + 0x10000;
+                            }
+
+                            ret.put(uch);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void parseNumber()
+    {
+        import std.algorithm : among;
+        import std.ascii;
+        import std.string;
+        import std.traits;
+
+        assert(!_input.empty, "Passed empty range to parseNumber");
+
+        void skipChar()
+        {
+            _input.popFront();
+            static if (options & LexOptions.trackLocation) _loc.column++;
+        }
+
+        import std.math;
+        double result = 0;
+        bool neg = false;
+
+        // negative sign
+        if (_input.front == '-')
+        {
+            skipChar();
+            neg = true;
+        }
+
+        // integer part of the number
+        enforceJson(!_input.empty && _input.front.isDigit(), "Invalid number, expected digit", _loc);
+        if (_input.front == '0')
+        {
+            skipChar();
+            if (_input.empty) // return 0
+            {
+                _front.number = neg ? -result : result;
+                return;
+            }
+            enforceJson(!_input.front.isDigit, "Invalid number, 0 must not be followed by another digit", _loc);
+        }
+        else do
+        {
+            result = result * 10 + (_input.front - '0');
+            skipChar();
+            if (_input.empty) // return integer
+            {
+                _front.number = neg ? -result : result;
+                return;
+            }
+        }
+        while (isDigit(_input.front));
+
+        // post decimal point part
+        assert(!_input.empty);
+        if (_input.front == '.')
+        {
+            skipChar();
+            enforceJson(!_input.empty, "Missing fractional number part", _loc);
+            double mul = 0.1;
+            while (true) {
+                if (_input.empty)
+                {
+                    _front.number = neg ? -result : result;
+                    return;
+                }
+                if (!isDigit(_input.front)) break;
+                result = result + (_input.front - '0') * mul;
+                mul *= 0.1;
+                skipChar();
+            }
+        }
+
+        // exponent
+        assert(!_input.empty);
+        if (_input.front.among('e', 'E'))
+        {
+            skipChar();
+            enforceJson(!_input.empty, "Missing exponent", _loc);
+
+            bool negexp = void;
+            if (_input.front == '-')
+            {
+                negexp = true;
+                skipChar();
+            }
+            else
+            {
+                negexp = false;
+                if (_input.front == '+') skipChar();
+            }
+
+            enforceJson(!_input.empty && _input.front.isDigit, "Missing exponent", _loc);
+            uint exp = 0;
+            while (true)
+            {
+                exp = exp * 10 + (_input.front - '0');
+                skipChar();
+                if (_input.empty || !_input.front.isDigit) break;
+            }
+            result *= pow(negexp ? 0.1 : 10.0, exp);
+        }
+
+        _front.number = neg ? -result : result;
+    }
+}
+
+unittest
+{
+    import std.conv;
+    import std.exception;
+    import std.string : format, representation;
+
+    static string parseStringHelper(R)(ref R input, ref Location loc)
+    {
+        auto rng = JSONLexerRange!R(input);
+        rng.parseString();
+        input = cast(R)rng._input;
+        loc = rng._loc;
+        return rng._front.string;
+    }
+
+    void testResult(string str, string expected, string remaining, bool slice_expected = false)
+    {
+        { // test with string (possibly sliced result)
+            Location loc;
+            string scopy = str;
+            auto ret = parseStringHelper(scopy, loc);
+            assert(ret == expected, ret);
+            assert(scopy == remaining);
+            if (slice_expected) assert(&ret[0] is &str[1]);
+            assert(loc.line == 0);
+            assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
+        }
+
+        { // test with string representation (possibly sliced result)
+            Location loc;
+            immutable(ubyte)[] scopy = str.representation;
+            auto ret = parseStringHelper(scopy, loc);
+            assert(ret == expected, ret);
+            assert(scopy == remaining);
+            if (slice_expected) assert(&ret[0] is &str[1]);
+            assert(loc.line == 0);
+            assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
+        }
+
+        { // test with dstring (fully duplicated result)
+            Location loc;
+            dstring scopy = str.to!dstring;
+            auto ret = parseStringHelper(scopy, loc);
+            assert(ret == expected);
+            assert(scopy == remaining.to!dstring);
+            assert(loc.line == 0);
+            assert(loc.column == str.to!dstring.length - remaining.to!dstring.length, format("%s col %s", str, loc.column));
+        }
+    }
+
+    testResult(`"test"`, "test", "", true);
+    testResult(`"test"...`, "test", "...", true);
+    testResult(`"test\n"`, "test\n", "");
+    testResult(`"test\n"...`, "test\n", "...");
+    testResult(`"test\""...`, "test\"", "...");
+    testResult(`"ä"`, "ä", "", true);
+    testResult(`"\r\n\\\"\b\f\t\/"`, "\r\n\\\"\b\f\t/", "");
+    testResult(`"\u1234"`, "\u1234", "");
+    testResult(`"\uD800\udc00"`, "\U00010000", "");
+
+    Location loc;
+    string s;
+    assertThrown(parseStringHelper(s = `"`, loc)); // unterminated string
+    assertThrown(parseStringHelper(s = `"test\"`, loc)); // unterminated string
+    assertThrown(parseStringHelper(s = `"test'`, loc)); // unterminated string
+    assertThrown(parseStringHelper(s = "\"test\n\"", loc)); // illegal control character
+    assertThrown(parseStringHelper(s = `"\x"`, loc)); // invalid escape sequence
+    assertThrown(parseStringHelper(s = `"\u123"`, loc)); // too short unicode escape sequence
+    assertThrown(parseStringHelper(s = `"\u123G"`, loc)); // invalid unicode escape sequence
+    assertThrown(parseStringHelper(s = `"\u123g"`, loc)); // invalid unicode escape sequence
+    assertThrown(parseStringHelper(s = `"\uD800"`, loc)); // missing surrogate
+    assertThrown(parseStringHelper(s = `"\uD800\u"`, loc)); // too short second surrogate
+    assertThrown(parseStringHelper(s = `"\uD800\u1234"`, loc)); // invalid surrogate pair
+}
+
+unittest
+{
+    import std.exception;
+    import std.math : approxEqual;
+
+    static double parseNumberHelper(R)(ref R input, ref Location loc)
+    {
+        auto rng = JSONLexerRange!R(input);
+        rng.parseNumber();
+        input = cast(R)rng._input;
+        loc = rng._loc;
+        return rng._front.number;
+    }
+
+    void test(string str, double expected, string remainder)
+    {
+        Location loc;
+        auto strcopy = str;
+        auto res = parseNumberHelper(strcopy, loc);
+        assert(approxEqual(res, expected));
+        assert(strcopy == remainder);
+        assert(loc.line == 0);
+        assert(loc.column == str.length - remainder.length);
+    }
+
+    test("-0", 0.0, "");
+    test("-0 ", 0.0, " ");
+    test("-0e+10 ", 0.0, " ");
+    test("123", 123.0, "");
+    test("123 ", 123.0, " ");
+    test("123.0", 123.0, "");
+    test("123.0 ", 123.0, " ");
+    test("123.456", 123.456, "");
+    test("123.456 ", 123.456, " ");
+    test("123.456e1", 1234.56, "");
+    test("123.456e1 ", 1234.56, " ");
+    test("123.456e+1", 1234.56, "");
+    test("123.456e+1 ", 1234.56, " ");
+    test("123.456e-1", 12.3456, "");
+    test("123.456e-1 ", 12.3456, " ");
+    test("123.456e-01", 12.3456, "");
+    test("123.456e-01 ", 12.3456, " ");
+    test("0.123e-12", 0.123e-12, "");
+    test("0.123e-12 ", 0.123e-12, " ");
+
+    Location loc;
+    string s;
+    assertThrown(parseNumberHelper(s = "+", loc));
+    assertThrown(parseNumberHelper(s = "-", loc));
+    assertThrown(parseNumberHelper(s = "+1", loc));
+    assertThrown(parseNumberHelper(s = "1.", loc));
+    assertThrown(parseNumberHelper(s = ".1", loc));
+    assertThrown(parseNumberHelper(s = "01", loc));
+    assertThrown(parseNumberHelper(s = "1e", loc));
+    assertThrown(parseNumberHelper(s = "1e+", loc));
+    assertThrown(parseNumberHelper(s = "1e-", loc));
+    assertThrown(parseNumberHelper(s = "1.e", loc));
+    assertThrown(parseNumberHelper(s = "1.e-", loc));
+    assertThrown(parseNumberHelper(s = "1.ee", loc));
+    assertThrown(parseNumberHelper(s = "1.e-e", loc));
+    assertThrown(parseNumberHelper(s = "1.e+e", loc));
 }
 
 
@@ -286,6 +681,7 @@ struct JSONToken
     enum Kind
     {
         invalid,      /// Used internally, never returned from the lexer
+        error,        /// Malformed token
         null_,        /// The "null" token
         boolean,      /// "true" or "false" token
         number,       /// Numeric token
@@ -458,347 +854,19 @@ unittest
 }
 
 
-private string parseString(bool track_location = true, Input)(ref Input input, ref Location loc)
-{
-    import std.algorithm : skipOver;
-    import std.array;
-
-    assert(!input.empty && input.front == '"');
-    input.popFront();
-    static if (track_location) loc.column++;
-
-    Appender!string ret;
-
-    // try the fast slice based route first
-    static if (is(Input == string) || is(Input == immutable(ubyte)[]))
-    {
-        auto orig = input;
-        size_t idx = 0;
-        while (true)
-        {
-            enforceJson(idx < input.length, "Unterminated string literal", loc);
-
-            // return a slice for simple strings
-            if (input[idx] == '"')
-            {
-                input = input[idx+1 .. $];
-                static if (track_location) loc.column += idx+1;
-                return cast(string)orig[0 .. idx];
-            }
-
-            // fall back to full decoding when an escape sequence is encountered
-            if (input[idx] == '\\')
-            {
-                ret = appender!string();
-                ret.put(cast(string)input[0 .. idx]);
-                input = input[idx .. $];
-                static if (track_location) loc.column += idx;
-                break;
-            }
-
-            // Make sure that no illegal characters are present
-            enforceJson(input[idx] >= 0x20, "Control chararacter found in string literal", loc);
-            idx++;
-        }
-    }
-    else ret = appender!string();
-
-    // perform full decoding
-    while (true)
-    {
-        enforceJson(!input.empty, "Unterminated string literal", loc);
-        auto ch = input.front;
-        input.popFront();
-       static if (track_location)  loc.column++;
-
-        switch (ch)
-        {
-            default: ret.put(ch); break;
-            case '"': return ret.data;
-            case '\\':
-                enforceJson(!input.empty, "Unterminated string escape sequence.", loc);
-                auto ech = input.front;
-                input.popFront();
-                static if (track_location) loc.column++;
-
-                switch (ech)
-                {
-                    default: enforceJson(false, "Invalid string escape sequence.", loc); break;
-                    case '"': ret.put('\"'); break;
-                    case '\\': ret.put('\\'); break;
-                    case '/': ret.put('/'); break;
-                    case 'b': ret.put('\b'); break;
-                    case 'f': ret.put('\f'); break;
-                    case 'n': ret.put('\n'); break;
-                    case 'r': ret.put('\r'); break;
-                    case 't': ret.put('\t'); break;
-                    case 'u': // \uXXXX
-                        static if (track_location) loc.column += 4;
-                        dchar decode_unicode_escape()
-                        {
-                            dchar uch = 0;
-                            foreach (i; 0 .. 4)
-                            {
-                                enforceJson(!input.empty, "Premature end of unicode escape sequence", loc);
-                                uch *= 16;
-                                auto dc = input.front;
-                                input.popFront();
-
-                                if (dc >= '0' && dc <= '9')
-                                    uch += dc - '0';
-                                else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
-                                    uch += (dc & ~0x20) - 'A' + 10;
-                                else enforceJson(false, "Invalid character in Unicode escape sequence", loc);
-                            }
-                            return uch;
-                        }
-
-                        dchar uch = decode_unicode_escape();
-
-                        // detect UTF-16 surrogate pairs
-                        if (0xD800 <= uch && uch <= 0xDBFF)
-                        {
-                            static if (track_location) loc.column += 6;
-                            enforceJson(input.skipOver("\\u"), "Missing second UTF-16 surrogate", loc);
-                            auto uch2 = decode_unicode_escape();
-                            enforceJson(0xDC00 <= uch2 && uch2 <= 0xDFFF, "Invalid UTF-16 surrogate sequence", loc);
-                            // combine to a valid UCS-4 character
-                            uch = ((uch - 0xD800) << 10) + (uch2 - 0xDC00) + 0x10000;
-                        }
-
-                        ret.put(uch);
-                        break;
-                }
-                break;
-        }
-    }
-}
-
-unittest
-{
-    import std.conv;
-    import std.exception;
-    import std.string : format, representation;
-
-    void testResult(string str, string expected, string remaining, bool slice_expected = false)
-    {
-        { // test with string (possibly sliced result)
-            Location loc;
-            string scopy = str;
-            auto ret = parseString(scopy, loc);
-            assert(ret == expected, ret);
-            assert(scopy == remaining);
-            if (slice_expected) assert(&ret[0] is &str[1]);
-            assert(loc.line == 0);
-            assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
-        }
-
-        { // test with string representation (possibly sliced result)
-            Location loc;
-            immutable(ubyte)[] scopy = str.representation;
-            auto ret = parseString(scopy, loc);
-            assert(ret == expected, ret);
-            assert(scopy == remaining);
-            if (slice_expected) assert(&ret[0] is &str[1]);
-            assert(loc.line == 0);
-            assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
-        }
-
-        { // test with dstring (fully duplicated result)
-            Location loc;
-            dstring scopy = str.to!dstring;
-            auto ret = parseString(scopy, loc);
-            assert(ret == expected);
-            assert(scopy == remaining.to!dstring);
-            assert(loc.line == 0);
-            assert(loc.column == str.to!dstring.length - remaining.to!dstring.length, format("%s col %s", str, loc.column));
-        }
-    }
-
-    testResult(`"test"`, "test", "", true);
-    testResult(`"test"...`, "test", "...", true);
-    testResult(`"test\n"`, "test\n", "");
-    testResult(`"test\n"...`, "test\n", "...");
-    testResult(`"test\""...`, "test\"", "...");
-    testResult(`"ä"`, "ä", "", true);
-    testResult(`"\r\n\\\"\b\f\t\/"`, "\r\n\\\"\b\f\t/", "");
-    testResult(`"\u1234"`, "\u1234", "");
-    testResult(`"\uD800\udc00"`, "\U00010000", "");
-
-    Location loc;
-    string s;
-    assertThrown(parseString(s = `"`, loc)); // unterminated string
-    assertThrown(parseString(s = `"test\"`, loc)); // unterminated string
-    assertThrown(parseString(s = `"test'`, loc)); // unterminated string
-    assertThrown(parseString(s = "\"test\n\"", loc)); // illegal control character
-    assertThrown(parseString(s = `"\x"`, loc)); // invalid escape sequence
-    assertThrown(parseString(s = `"\u123"`, loc)); // too short unicode escape sequence
-    assertThrown(parseString(s = `"\u123G"`, loc)); // invalid unicode escape sequence
-    assertThrown(parseString(s = `"\u123g"`, loc)); // invalid unicode escape sequence
-    assertThrown(parseString(s = `"\uD800"`, loc)); // missing surrogate
-    assertThrown(parseString(s = `"\uD800\u"`, loc)); // too short second surrogate
-    assertThrown(parseString(s = `"\uD800\u1234"`, loc)); // invalid surrogate pair
-}
-
-private double parseNumber(bool track_location = true, Input)(ref Input input, ref Location loc)
-{
-    import std.algorithm : among;
-    import std.ascii;
-    import std.string;
-    import std.traits;
-
-    assert(!input.empty, "Passed empty range to parseNumber");
-
-    static if (isSomeString!Input)
-    {
-        auto rep = input.representation;
-        auto result = .parseNumber!track_location(rep, loc);
-        input = cast(Input) rep;
-        return result;
-    }
-    else
-    {
-        import std.math;
-        double result = 0;
-        bool neg = false;
-
-        // negative sign
-        if (input.front == '-')
-        {
-            input.popFront();
-            static if (track_location) loc.column++;
-            neg = true;
-        }
-
-        // integer part of the number
-        enforceJson(!input.empty && input.front.isDigit(), "Invalid number, expected digit", loc);
-        if (input.front == '0')
-        {
-            input.popFront();
-            loc.column++;
-            if (input.empty) return neg ? -result : result;
-            enforceJson(!input.front.isDigit, "Invalid number, 0 must not be followed by another digit", loc);
-        }
-        else do
-        {
-            result = result * 10 + (input.front - '0');
-            input.popFront();
-            static if (track_location) loc.column++;
-            if (input.empty) return neg ? -result : result;
-        }
-        while (isDigit(input.front));
-
-        // post decimal point part
-        assert(!input.empty);
-        if (input.front == '.')
-        {
-            input.popFront();
-            enforceJson(!input.empty, "Missing fractional number part", loc);
-            static if (track_location) loc.column++;
-            double mul = 0.1;
-            while (true) {
-                if (input.empty) return neg ? -result : result;
-                if (!isDigit(input.front)) break;
-                result = result + (input.front - '0') * mul;
-                mul *= 0.1;
-                input.popFront();
-                static if (track_location) loc.column++;
-            }
-        }
-
-        // exponent
-        assert(!input.empty);
-        if (input.front.among('e', 'E'))
-        {
-            input.popFront();
-            static if (track_location) loc.column++;
-            enforceJson(!input.empty, "Missing exponent", loc);
-
-            bool negexp = void;
-            if (input.front == '-')
-            {
-                negexp = true;
-                input.popFront();
-                static if (track_location) loc.column++;
-            }
-            else
-            {
-                negexp = false;
-                if (input.front == '+')
-                {
-                    input.popFront();
-                    static if (track_location) loc.column++;
-                }
-            }
-
-            enforceJson(!input.empty && input.front.isDigit, "Missing exponent", loc);
-            uint exp = 0;
-            while (true)
-            {
-                exp = exp * 10 + (input.front - '0');
-                input.popFront();
-                static if (track_location) loc.column++;
-                if (input.empty || !input.front.isDigit) break;
-            }
-            result *= pow(negexp ? 0.1 : 10.0, exp);
-        }
-
-        return neg ? -result : result;
-    }
-}
-
-unittest
-{
-    import std.exception;
-    import std.math : approxEqual;
-
-    void test(string str, double expected, string remainder)
-    {
-        Location loc;
-        auto strcopy = str;
-        auto res = parseNumber(strcopy, loc);
-        assert(approxEqual(res, expected));
-        assert(strcopy == remainder);
-        assert(loc.line == 0);
-        assert(loc.column == str.length - remainder.length);
-    }
-
-    test("-0", 0.0, "");
-    test("-0 ", 0.0, " ");
-    test("-0e+10 ", 0.0, " ");
-    test("123", 123.0, "");
-    test("123 ", 123.0, " ");
-    test("123.0", 123.0, "");
-    test("123.0 ", 123.0, " ");
-    test("123.456", 123.456, "");
-    test("123.456 ", 123.456, " ");
-    test("123.456e1", 1234.56, "");
-    test("123.456e1 ", 1234.56, " ");
-    test("123.456e+1", 1234.56, "");
-    test("123.456e+1 ", 1234.56, " ");
-    test("123.456e-1", 12.3456, "");
-    test("123.456e-1 ", 12.3456, " ");
-    test("123.456e-01", 12.3456, "");
-    test("123.456e-01 ", 12.3456, " ");
-    test("0.123e-12", 0.123e-12, "");
-    test("0.123e-12 ", 0.123e-12, " ");
-
-    Location loc;
-    string s;
-    assertThrown(parseNumber(s = "+", loc));
-    assertThrown(parseNumber(s = "-", loc));
-    assertThrown(parseNumber(s = "+1", loc));
-    assertThrown(parseNumber(s = "1.", loc));
-    assertThrown(parseNumber(s = ".1", loc));
-    assertThrown(parseNumber(s = "01", loc));
-    assertThrown(parseNumber(s = "1e", loc));
-    assertThrown(parseNumber(s = "1e+", loc));
-    assertThrown(parseNumber(s = "1e-", loc));
-    assertThrown(parseNumber(s = "1.e", loc));
-    assertThrown(parseNumber(s = "1.e-", loc));
-    assertThrown(parseNumber(s = "1.ee", loc));
-    assertThrown(parseNumber(s = "1.e-e", loc));
-    assertThrown(parseNumber(s = "1.e+e", loc));
+/**
+ * Flags for configuring the JSON lexer.
+ *
+ * These flags can be combined using a bitwise or operation.
+ */
+enum LexOptions {
+    none          = 0,    /// Don't track token location and only use double numbers
+    trackLocation = 1<<0, /// Counts lines and columns while lexing the source
+    //noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
+    //useLong     = 1<<2, /// Use long to represent integers
+    //useBigInt   = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
+    //useDecimal  = 1<<4, /// Use Decimal to represent floating point numbers
+    defaults      = trackLocation, // Same as trackLocation
 }
 
 

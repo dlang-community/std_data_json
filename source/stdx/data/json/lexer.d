@@ -48,11 +48,20 @@ import stdx.data.json.foundation;
  * characters, or of integral values. In case of integral types, the input
  * ecoding is assumed to be a superset of ASCII that is parsed unit by unit.
  *
- * For inputs of type $(D string), string literals not containing any escape
- * sequences will be returned as slices into the original string. JSON documents
- * containing no escape sequences will result in allocation-free operation o
- * the lexer.
-*/
+ * For inputs of type $(D string) and of type $(D immutable(ubyte)[]), all
+ * string literals will be stored as slices into the original string. String
+ * literals containung escape sequences will be unescaped on demand when
+ * $(D JSONString.value) is accessed.
+ *
+ * Throws:
+ *   Without $(D LexOptions.noThrow), a $(D JSONException) is thrown as soon as
+ *   an invalid token is encountered.
+ *
+ *   If $(D LexOptions.noThrow) is given, lexJSON does not throw any exceptions,
+ *   apart from letting through any exceptins thrown by the input range.
+ *   Instead, a token with kind $(D JSONToken.Kind.error) is generated as the
+ *   last token in the range.
+ */
 JSONLexerRange!(Input, options) lexJSON
     (LexOptions options = LexOptions.defaults, Input)
     (Input input, string filename = null)

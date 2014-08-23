@@ -295,163 +295,37 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
 
     private void parseString()
     {
-        import std.algorithm : skipOver;
-        import std.array;
-
-        assert(!_input.empty && _input.front == '"');
-        _input.popFront();
-        static if (options & LexOptions.trackLocation) _loc.column++;
-
-        Appender!string ret;
-
-        // try the fast slice based route first
         static if (is(Input == string) || is(Input == immutable(ubyte)[]))
         {
-            auto orig = input;
-            size_t idx = 0;
-            while (true)
+            InternalInput lit;
+            if (skipStringLiteral!(!!(options & LexOptions.trackLocation))(_input, lit, _error, _loc.column))
             {
-                if (idx >= _input.length)
-                {
-                    setError("Unterminated string literal");
-                    return;
-                }
-
-                // return a slice for simple strings
-                if (_input[idx] == '"')
-                {
-                    _input = _input[idx+1 .. $];
-                    static if (options & LexOptions.trackLocation) _loc.column += idx+1;
-                    _front.string = cast(string)orig[0 .. idx];
-                    return;
-                }
-
-                // fall back to full decoding when an escape sequence is encountered
-                if (_input[idx] == '\\')
-                {
-                    ret = appender!string();
-                    ret.put(cast(string)_input[0 .. idx]);
-                    _input = _input[idx .. $];
-                    static if (options & LexOptions.trackLocation) _loc.column += idx;
-                    break;
-                }
-
-                // Make sure that no illegal characters are present
-                if (_input[idx] < 0x20)
-                {
-                    setError("Control chararacter found in string literal");
-                    return;
-                }
-                idx++;
+                JSONString js;
+                js.rawValue = cast(string)lit;
+                _front.string = js;
             }
+            else _front.kind = JSONToken.Kind.error;
         }
-        else ret = appender!string();
-
-        // perform full decoding
-        while (true)
+        else
         {
-            if (_input.empty)
-            {
-                setError("Unterminated string literal");
-                return;
+            bool appender_init = false;
+            Appender!string dst;
+            string slice;
+
+            void initAppender()
+            @safe {
+                dst = appender!string();
+                appender_init = true;
             }
 
-            auto ch = _input.front;
-            _input.popFront();
-            static if (options & LexOptions.trackLocation)  _loc.column++;
-
-            switch (ch)
+            if (unescapeStringLiteral!(!!(options & LexOptions.trackLocation))(
+                    _input, dst, slice, &initAppender, _error, _loc.column
+                ))
             {
-                default: ret.put(cast(CharType)ch); break;
-                case '"':
-                    _front.string = ret.data;
-                    return;
-                case '\\':
-                    if (_input.empty)
-                    {
-                        setError("Unterminated string escape sequence.");
-                        return;
-                    }
-
-                    auto ech = _input.front;
-                    _input.popFront();
-                    static if (options & LexOptions.trackLocation) _loc.column++;
-
-                    switch (ech)
-                    {
-                        default:
-                            setError("Invalid string escape sequence.");
-                            return;
-                        case '"': ret.put('\"'); break;
-                        case '\\': ret.put('\\'); break;
-                        case '/': ret.put('/'); break;
-                        case 'b': ret.put('\b'); break;
-                        case 'f': ret.put('\f'); break;
-                        case 'n': ret.put('\n'); break;
-                        case 'r': ret.put('\r'); break;
-                        case 't': ret.put('\t'); break;
-                        case 'u': // \uXXXX
-                            static if (options & LexOptions.trackLocation) _loc.column += 4;
-                            dchar decode_unicode_escape()
-                            {
-                                dchar uch = 0;
-                                foreach (i; 0 .. 4)
-                                {
-                                    if (_input.empty)
-                                    {
-                                        setError("Premature end of unicode escape sequence");
-                                        return dchar.max;
-                                    }
-
-                                    uch *= 16;
-                                    auto dc = _input.front;
-                                    _input.popFront();
-
-                                    if (dc >= '0' && dc <= '9')
-                                        uch += dc - '0';
-                                    else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
-                                        uch += (dc & ~0x20) - 'A' + 10;
-                                    else
-                                    {
-                                        setError("Invalid character in Unicode escape sequence");
-                                        return dchar.max;
-                                    }
-                                }
-                                return uch;
-                            }
-
-                            dchar uch = decode_unicode_escape();
-                            if (uch == dchar.max) return;
-
-                            // detect UTF-16 surrogate pairs
-                            if (0xD800 <= uch && uch <= 0xDBFF)
-                            {
-                                static if (options & LexOptions.trackLocation) _loc.column += 6;
-
-                                if (!_input.skipOver("\\u"))
-                                {
-                                    setError("Missing second UTF-16 surrogate");
-                                    return;
-                                }
-
-                                auto uch2 = decode_unicode_escape();
-                                if (uch2 == dchar.max) return;
-
-                                if (0xDC00 > uch2 || uch2 > 0xDFFF)
-                                {
-                                    setError("Invalid UTF-16 surrogate sequence");
-                                    return;
-                                }
-
-                                // combine to a valid UCS-4 character
-                                uch = ((uch - 0xD800) << 10) + (uch2 - 0xDC00) + 0x10000;
-                            }
-
-                            ret.put(uch);
-                            break;
-                    }
-                    break;
+                if (!appender_init) _front.string = slice;
+                else _front.string = dst.data;
             }
+            else _front.kind = JSONToken.Kind.error;
         }
     }
 
@@ -596,7 +470,7 @@ unittest
     import std.exception;
     import std.string : format, representation;
 
-    static string parseStringHelper(R)(ref R input, ref Location loc)
+    static JSONString parseStringHelper(R)(ref R input, ref Location loc)
     {
         auto rng = JSONLexerRange!R(input);
         rng.parseString();
@@ -613,6 +487,7 @@ unittest
             auto ret = parseStringHelper(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
+            assert(&ret.rawValue[0] is &str[0]); // string[] must always slice string literals
             if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
@@ -624,6 +499,7 @@ unittest
             auto ret = parseStringHelper(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
+            assert(&ret.rawValue[0] is &str[0]); // immutable(ubyte)[] must always slice string literals
             if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
@@ -790,9 +666,9 @@ struct JSONToken
     {
         union
         {
-            .string _string;
+            JSONString _string;
             bool _boolean;
-            double _number;
+            JSONNumber _number;
         }
         Kind _kind = Kind.none;
     }
@@ -826,32 +702,36 @@ struct JSONToken
     }
 
     /// Gets/sets the numeric value of the token.
-    @property double number() const nothrow
+    @property JSONNumber number() const nothrow
     {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
     }
     /// ditto
-    @property double number(double value) nothrow
+    @property JSONNumber number(JSONNumber value) nothrow
     {
         _kind = Kind.number;
         _number = value;
         return value;
     }
+    /// ditto
+    @property JSONNumber number(double value) nothrow { return this.number = JSONNumber(value); }
 
     /// Gets/sets the string value of the token.
-    @property .string string() const @trusted nothrow
+    @property JSONString string() const @trusted nothrow
     {
         assert(_kind == Kind.string, "Token is not a string.");
         return _string;
     }
     /// ditto
-    @property .string string(.string value) nothrow
+    @property JSONString string(JSONString value) nothrow
     {
         _kind = Kind.string;
         _string = value;
         return value;
     }
+    /// ditto
+    @property JSONString string(.string value) nothrow { return this.string = JSONString(value); }
 
     /**
      * Enables equality comparisons.
@@ -877,8 +757,8 @@ struct JSONToken
     /**
      * Enables usage of $(D JSONToken) as an associative array key.
      */
-    size_t toHash()
-    const nothrow {
+    size_t toHash() const nothrow
+    {
         hash_t ret = 3781249591u + cast(uint)_kind * 2721371;
 
         switch (_kind)
@@ -897,8 +777,7 @@ struct JSONToken
      * a representation suitable for printing out a token including its
      * location.
      */
-    .string toString()
-    const @trusted
+    .string toString() const @trusted
     {
         import std.string;
         switch (this.kind)
@@ -949,6 +828,137 @@ unittest
 
 
 /**
+ * Represents a JSON string literal with lazy (un)escaping.
+ */
+struct JSONString {
+    private {
+        string _value;
+        string _rawValue;
+    }
+
+    nothrow:
+
+    /**
+     * Constructs a JSONString from the given string value (unescaped).
+     */
+    this(string value)
+    {
+        _value = value;
+    }
+
+    /**
+     * The decoded (unescaped) string value.
+     */
+    @property string value()
+    {
+        if (!_value.length && _rawValue.length) {
+            auto res = unescapeStringLiteral(_rawValue, _value);
+            assert(res, "Invalid raw string literal passed to JSONString: "~_rawValue);
+        }
+        return _value;
+    }
+    /// ditto
+    @property string value() const
+    {
+        if (!_value.length && _rawValue.length) {
+            string unescaped;
+            auto res = unescapeStringLiteral(_rawValue, unescaped);
+            assert(res, "Invalid raw string literal passed to JSONString: "~_rawValue);
+            return unescaped;
+        }
+        return _value;
+    }
+    /// ditto
+    @property string value(string val)
+    {
+        _rawValue = null;
+        return _value = val;
+    }
+
+    /**
+     * The raw (escaped) string literal, including the enclosing quotation marks.
+     */
+    @property string rawValue()
+    {
+        if (!_rawValue.length && _value.length)
+            _rawValue = escapeStringLiteral(_value);
+        return _rawValue;
+    }
+    /// ditto
+    @property string rawValue(string val)
+    {
+        assert(isValidStringLiteral(val), "Invalid raw string literal: "~val);
+        _rawValue = val;
+        _value = null;
+        return val;
+    }
+
+    alias value this;
+
+    /// Support equality comparisons
+    bool opEquals(JSONString other) nothrow { return value == other.value; }
+    /// ditto
+    bool opEquals(JSONString other) const nothrow { return this.value == other.value; }
+    /// ditto
+    bool opEquals(string other) nothrow { return this.value == other; }
+    /// ditto
+    bool opEquals(string other) const nothrow { return this.value == other; }
+
+    /// Support relational comparisons
+    int opCmp(JSONString other) nothrow @trusted { import std.algorithm; return cmp(this.value, other.value); }
+
+    /// Support use as hash key
+    size_t toHash() const nothrow @trusted { auto val = this.value; return typeid(string).getHash(&val); }
+}
+
+
+/**
+ * Represents a JSON number literal with lazy conversion.
+ */
+struct JSONNumber {
+    import std.bigint;
+
+    private {
+        //BigInt _bigInt;
+        //long _long;
+        //int _exponent;
+        double _double;
+    }
+
+    @property bool isInteger() const nothrow { return false; }
+
+    @property double doubleValue() const nothrow { return _double; }
+    @property double doubleValue(double val) nothrow { return _double = val; }
+
+    alias doubleValue this;
+
+    /// Support equality comparisons
+    bool opEquals(T)(T other) const nothrow
+    {
+        static if (is(T == JSONNumber)) return _double == other._double;
+        else static if (is(T : double)) return _double == other;
+        else static assert(false, "Unsupported type for comparison: "~T.stringof);
+    }
+
+    /// Support relational comparisons
+    int opCmp(T)(T other) const nothrow
+    {
+        static if (is(T == JSONNumber)) return this == other._double;
+        else static if (is(T : double)) return _double < other ? -1 : _double > other ? 1 : 0;
+        else static assert(false, "Unsupported type for comparison: "~T.stringof);
+
+    }
+
+    /// Support use as hash key
+    size_t toHash() const nothrow @trusted
+    {
+        auto val = this.doubleValue;
+        return typeid(double).getHash(&val);
+    }
+}
+
+
+/**
  * Flags for configuring the JSON lexer.
  *
  * These flags can be combined using a bitwise or operation.
@@ -966,3 +976,373 @@ enum LexOptions {
 
 package enum bool isStringInputRange(R) = isInputRange!R && isSomeChar!(typeof(R.init.front));
 package enum bool isIntegralInputRange(R) = isInputRange!R && isIntegral!(typeof(R.init.front));
+
+// returns true for success
+package bool unescapeStringLiteral(bool track_location = true, Input, Output)(
+    ref Input input, // input range, string and immutable(ubyte)[] can be sliced
+    ref Output output, // uninitialized output range
+    ref string sliced_result, // target for possible result slice
+    scope void delegate() @safe nothrow output_init, // delegate that is called before writing to output
+    ref string error, // target for error message
+    ref size_t column) // counter to use for tracking the current column
+{
+    static if (typeof(Input.init.front).sizeof > 1)
+        alias CharType = dchar;
+    else
+        alias CharType = char;
+
+    import std.algorithm : skipOver;
+    import std.array;
+
+    if (input.empty || input.front != '"')
+    {
+        error = "String literal must start with double quotation mark";
+        return false;
+    }
+
+    input.popFront();
+    static if (track_location) column++;
+
+    // try the fast slice based route first
+    static if (is(Input == string) || is(Input == immutable(ubyte)[]))
+    {
+        auto orig = input;
+        size_t idx = 0;
+        while (true)
+        {
+            if (idx >= input.length)
+            {
+                error = "Unterminated string literal";
+                return false;
+            }
+
+            // return a slice for simple strings
+            if (input[idx] == '"')
+            {
+                input = input[idx+1 .. $];
+                static if (track_location) column += idx+1;
+                sliced_result = cast(string)orig[0 .. idx];
+                return true;
+            }
+
+            // fall back to full decoding when an escape sequence is encountered
+            if (input[idx] == '\\')
+            {
+                output_init();
+                output.put(cast(string)input[0 .. idx]);
+                input = input[idx .. $];
+                static if (track_location) column += idx;
+                break;
+            }
+
+            // Make sure that no illegal characters are present
+            if (input[idx] < 0x20)
+            {
+                error = "Control chararacter found in string literal";
+                return false;
+            }
+            idx++;
+        }
+    } else output_init();
+
+    // perform full decoding
+    while (true)
+    {
+        if (input.empty)
+        {
+            error = "Unterminated string literal";
+            return false;
+        }
+
+        auto ch = input.front;
+        input.popFront();
+        static if (track_location)  column++;
+
+        switch (ch)
+        {
+            default: output.put(cast(CharType)ch); break;
+            case 0x00: .. case 0x19:
+                error = "Illegal control character in string literal";
+                return false;
+            case '"': return true;
+            case '\\':
+                if (input.empty)
+                {
+                    error = "Unterminated string escape sequence.";
+                    return false;
+                }
+
+                auto ech = input.front;
+                input.popFront();
+                static if (track_location) column++;
+
+                switch (ech)
+                {
+                    default:
+                        error = "Invalid string escape sequence.";
+                        return false;
+                    case '"': output.put('\"'); break;
+                    case '\\': output.put('\\'); break;
+                    case '/': output.put('/'); break;
+                    case 'b': output.put('\b'); break;
+                    case 'f': output.put('\f'); break;
+                    case 'n': output.put('\n'); break;
+                    case 'r': output.put('\r'); break;
+                    case 't': output.put('\t'); break;
+                    case 'u': // \uXXXX
+                        dchar uch = decodeUTF16CP(input, error);
+                        if (uch == dchar.max) return false;
+                        static if (track_location) column += 4;
+
+                        // detect UTF-16 surrogate pairs
+                        if (0xD800 <= uch && uch <= 0xDBFF)
+                        {
+                            static if (track_location) column += 6;
+
+                            if (!input.skipOver("\\u"))
+                            {
+                                error = "Missing second UTF-16 surrogate";
+                                return false;
+                            }
+
+                            auto uch2 = decodeUTF16CP(input, error);
+                            if (uch2 == dchar.max) return false;
+
+                            if (0xDC00 > uch2 || uch2 > 0xDFFF)
+                            {
+                                error = "Invalid UTF-16 surrogate sequence";
+                                return false;
+                            }
+
+                            // combine to a valid UCS-4 character
+                            uch = ((uch - 0xD800) << 10) + (uch2 - 0xDC00) + 0x10000;
+                        }
+
+                        output.put(uch);
+                        break;
+                }
+                break;
+        }
+    }
+}
+
+package bool unescapeStringLiteral(string str_lit, ref string dst)
+nothrow {
+    import std.string;
+
+    bool appender_init = false;
+    Appender!string app;
+    string slice, error;
+    size_t col;
+
+    void initAppender() @safe nothrow { app = appender!string(); appender_init = true; }
+
+    auto rep = str_lit.representation;
+    try // Appender.put and skipOver are not nothrow
+    {
+        if (!unescapeStringLiteral(rep, app, slice, &initAppender, error, col))
+            return false;
+    }
+    catch (Exception e) return false;
+
+    dst = appender_init ? app.data : slice;
+    return true;
+}
+
+package bool isValidStringLiteral(string str)
+nothrow {
+    string dst;
+    return unescapeStringLiteral(str, dst);
+}
+
+
+package bool skipStringLiteral(bool track_location = true, Array)(
+        ref Array input,
+        ref Array destination,
+        ref string error, // target for error message
+        ref size_t column // counter to use for tracking the current column
+    )
+{
+    import std.algorithm : skipOver;
+    import std.array;
+
+    if (input.empty || input.front != '"')
+    {
+        error = "String literal must start with double quotation mark";
+        return false;
+    }
+
+    destination = input;
+
+    input.popFront();
+
+    while (true)
+    {
+        if (input.empty)
+        {
+            error = "Unterminated string literal";
+            return false;
+        }
+
+        auto ch = input.front;
+        input.popFront();
+
+        switch (ch)
+        {
+            default: break;
+            case 0x00: .. case 0x19:
+                error = "Illegal control character in string literal";
+                return false;
+            case '"':
+                size_t len = destination.length - input.length;
+                static if (track_location) column += len;
+                destination = destination[0 .. len];
+                return true;
+            case '\\':
+                if (input.empty)
+                {
+                    error = "Unterminated string escape sequence.";
+                    return false;
+                }
+
+                auto ech = input.front;
+                input.popFront();
+
+                switch (ech)
+                {
+                    default:
+                        error = "Invalid string escape sequence.";
+                        return false;
+                    case '"', '\\', '/', 'b', 'f', 'n', 'r', 't': break;
+                    case 'u': // \uXXXX
+                        dchar uch = decodeUTF16CP(input, error);
+                        if (uch == dchar.max) return false;
+
+                        // detect UTF-16 surrogate pairs
+                        if (0xD800 <= uch && uch <= 0xDBFF)
+                        {
+                            if (!input.skipOver("\\u"))
+                            {
+                                error = "Missing second UTF-16 surrogate";
+                                return false;
+                            }
+
+                            auto uch2 = decodeUTF16CP(input, error);
+                            if (uch2 == dchar.max) return false;
+
+                            if (0xDC00 > uch2 || uch2 > 0xDFFF)
+                            {
+                                error = "Invalid UTF-16 surrogate sequence";
+                                return false;
+                            }
+                        }
+                        break;
+                }
+                break;
+        }
+    }
+}
+
+
+package void escapeStringLiteral(bool use_surrogates = false, Input, Output)(
+    ref Input input, // input range containing the string
+    ref Output output) // output range to hold the escaped result
+{
+    import std.format;
+    import std.utf : decode;
+
+    output.put('"');
+
+    while (!input.empty)
+    {
+        immutable ch = input.front;
+        input.popFront();
+
+        switch (ch)
+        {
+            case '\\': output.put(`\\`); break;
+            case '\b': output.put(`\b`); break;
+            case '\f': output.put(`\f`); break;
+            case '\r': output.put(`\r`); break;
+            case '\n': output.put(`\n`); break;
+            case '\t': output.put(`\t`); break;
+            case '\"': output.put(`\"`); break;
+            default:
+                static if (use_surrogates)
+                {
+                    if (ch >= 0x20 && ch < 0x80)
+                    {
+                        output.put(ch);
+                        break;
+                    }
+
+                    dchar cp = decode(s, pos);
+                    pos--; // account for the next loop increment
+
+                    // encode as one or two UTF-16 code points
+                    if (cp < 0x10000)
+                    { // in BMP -> 1 CP
+                        formattedWrite(output, "\\u%04X", cp);
+                    }
+                    else
+                    { // not in BMP -> surrogate pair
+                        int first, last;
+                        cp -= 0x10000;
+                        first = 0xD800 | ((cp & 0xffc00) >> 10);
+                        last = 0xDC00 | (cp & 0x003ff);
+                        formattedWrite(output, "\\u%04X\\u%04X", first, last);
+                    }
+                }
+                else
+                {
+                    if (ch < 0x20) formattedWrite(output, "\\u%04X", ch);
+                    else output.put(ch);
+                }
+                break;
+        }
+    }
+
+    output.put('"');
+}
+
+package string escapeStringLiteral(string str)
+nothrow {
+    import std.string;
+
+    auto rep = str.representation;
+    auto ret = appender!string();
+    try // Appender.put is not nothrow
+    {
+        escapeStringLiteral(rep, ret);
+    }
+    catch (Exception e) assert(false);
+    return ret.data;
+}
+
+private dchar decodeUTF16CP(R)(ref R input, ref string error)
+{
+    dchar uch = 0;
+    foreach (i; 0 .. 4)
+    {
+        if (input.empty)
+        {
+            error = "Premature end of unicode escape sequence";
+            return dchar.max;
+        }
+
+        uch *= 16;
+        auto dc = input.front;
+        input.popFront();
+
+        if (dc >= '0' && dc <= '9')
+            uch += dc - '0';
+        else if ((dc >= 'a' && dc <= 'f') || (dc >= 'A' && dc <= 'F'))
+            uch += (dc & ~0x20) - 'A' + 10;
+        else
+        {
+            error = "Invalid character in Unicode escape sequence";
+            return dchar.max;
+        }
+    }
+    return uch;
+}

@@ -82,10 +82,10 @@ $(document).ready(function() {
  ecoding is assumed to be a superset of ASCII that is parsed unit by unit.
 </p>
 
-<p> For inputs of type string, string literals not containing any escape
- sequences will be returned as slices into the original string. JSON documents
- containing no escape sequences will result in allocation-free operation o
- the lexer.
+<p> For inputs of type string and of type immutable(ubyte)[], all
+ string literals will be stored as slices into the original string. String
+ literals containung escape sequences will be unescaped on demand when
+ <a href="../../../../stdx/data/json/lexer/JSONString.value.html"><code class="prettyprint lang-d">JSONString.value</code></a> is accessed.
 </p>
 </section>
 
@@ -97,6 +97,17 @@ $(document).ready(function() {
 &nbsp;&nbsp;string filename = null
 );</pre>
 					</section>
+<section><h3>Throws</h3>
+<p>   Without <a href="../../../../stdx/data/json/lexer/LexOptions.noThrow.html"><code class="prettyprint lang-d">LexOptions.noThrow</code></a>, a JSONException is thrown as soon as
+   an invalid token is encountered.
+</p>
+
+<p>   If <a href="../../../../stdx/data/json/lexer/LexOptions.noThrow.html"><code class="prettyprint lang-d">LexOptions.noThrow</code></a> is given, <code class="prettyprint lang-d">lexJSON</code> does not throw any exceptions,
+   apart from letting through any exceptins thrown by the <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> range.
+   Instead, a token with kind <a href="../../../../stdx/data/json/lexer/JSONToken.Kind.error.html"><code class="prettyprint lang-d">JSONToken.Kind.error</code></a> is generated as the
+   last token in the range.
+</p>
+</section>
 
 			</section>
 			<section>

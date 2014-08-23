@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Function JSONToken.string</title>
+		<title>Struct JSONNumber</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -72,23 +72,47 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Function JSONToken.string</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Struct JSONNumber</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
-				<p>Gets/sets the <code class="prettyprint lang-d">string</code> <a href="../../../../stdx/data/json/lexer/JSONToken.string.html#value"><code class="prettyprint lang-d">value</code></a> of the token.
+				<p> Represents a JSON number literal with lazy conversion.
 </p>
 
 					<section>
-						<h3>Prototypes</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/lexer/JSONString.html">JSONString</a> string() nothrow @property @trusted const;
-
-<a href="../../../../stdx/data/json/lexer/JSONString.html">JSONString</a> string(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONString.html">JSONString</a> value
-) nothrow @property @safe;
-
-<a href="../../../../stdx/data/json/lexer/JSONString.html">JSONString</a> string(
-&nbsp;&nbsp;string value
-) nothrow @property @safe;</pre>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.opCmp.html" class="public">
+										<code>opCmp</code>
+									</a>
+								</td>
+								<td>Support relational comparisons
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.opEquals.html" class="public">
+										<code>opEquals</code>
+									</a>
+								</td>
+								<td>Support equality comparisons
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.toHash.html" class="public">
+										<code>toHash</code>
+									</a>
+								</td>
+								<td>Support use as hash key
+</td>
+							</tr>
+						</table>
 					</section>
 
 			</section>

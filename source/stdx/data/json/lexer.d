@@ -6,10 +6,10 @@
  * // Lex a JSON string into a lazy range of tokens
  * auto tokens = lexJSON(`{"name": "Peter", "age": 42}`);
  *
- * with (JSONToken.Kind) {
+ * with (JSONToken) {
  *     assert(tokens.map!(t => t.kind).equal(
- *         [objectStart, string, colon, string, comma,
- *         string, colon, number, objectEnd]));
+ *         [Kind.objectStart, Kind.string, Kind.colon, Kind.string, Kind.comma,
+ *         Kind.string, Kind.colon, Kind.number, Kind.objectEnd]));
  * }
  *
  * // Get detailed information
@@ -74,11 +74,13 @@ JSONLexerRange!(Input, options) lexJSON
 unittest
 {
     auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
-    with (JSONToken.Kind)
+    with (JSONToken)
     {
         assert(rng.map!(t => t.kind).equal(
-            [objectStart, string, colon, number, comma, string, colon,
-            arrayStart, number, comma, boolean, comma, null_, arrayEnd, objectEnd]));
+            [Kind.objectStart, Kind.string, Kind.colon, Kind.number, Kind.comma,
+            Kind.string, Kind.colon, Kind.arrayStart, Kind.number, Kind.comma,
+            Kind.boolean, Kind.comma, Kind.null_, Kind.arrayEnd,
+            Kind.objectEnd]));
     }
 }
 

@@ -193,6 +193,15 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
     void popFront()
     {
         ensureFrontValid();
+
+        // make sure an error token is the last token in the range
+        if (_front.kind == JSONToken.Kind.error)
+        {
+            // clear the input
+            _input = InternalInput.init;
+            assert(_input.empty);
+        }
+
         _front.kind = JSONToken.Kind.none;
     }
 
@@ -204,15 +213,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             readToken();
             assert(_front.kind != JSONToken.Kind.none);
 
-            if (_front.kind == JSONToken.Kind.error)
-            {
-                // consume the remaining input after an invalid token
-                while (!_input.empty)
-                    _input.popFront();
-
-                static if (!(options & LexOptions.noThrow))
-                    throw new JSONException(_error, _loc);
-            }
+            static if (!(options & LexOptions.noThrow))
+                enforceJson(_front.kind != JSONToken.Kind.error, _error, _loc);
         }
     }
 

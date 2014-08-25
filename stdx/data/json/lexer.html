@@ -81,10 +81,10 @@ $(document).ready(function() {
 <pre class="code prettyprint lang-d">// Lex a JSON string into a lazy range of tokens
 auto tokens = <a href="../../../stdx/data/json/lexer/lexJSON.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
 
-with (<a href="../../../stdx/data/json/lexer/JSONToken.Kind.html">JSONToken.Kind</a>) {
+with (<a href="../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>) {
     assert(tokens.map!(t => t.kind).equal(
-        [objectStart, string, colon, string, comma,
-        string, colon, number, objectEnd]));
+        [Kind.objectStart, Kind.string, Kind.colon, Kind.string, Kind.comma,
+        Kind.string, Kind.colon, Kind.number, Kind.objectEnd]));
 }
 
 // Get detailed information

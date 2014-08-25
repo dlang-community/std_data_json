@@ -36,6 +36,7 @@ import stdx.data.json.foundation;
 struct JSONValue
 {
     @safe:
+    import std.typecons : Nullable;
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
 
@@ -84,9 +85,28 @@ struct JSONValue
     this(JSONValue[] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
     this(JSONValue[string] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
+
+    /**
+     * Gets a descendant of this value.
+     *
+     * If any encountered JSONValue along the path is not an object or does not
+     * have a machting field, a null value is returned.
+     */
+    Nullable!JSONValue opt(scope string[] path...)
+    {
+        JSONValue cur = this;
+        foreach (name; path) {
+            auto obj = cur.peek!(JSONValue[string]);
+            if (!obj) return Nullable!JSONValue.init;
+            auto pv = name in *obj;
+            if (pv is null) return Nullable!JSONValue.init;
+            cur = *pv;
+        }
+        return Nullable!JSONValue(cur);
+    }
 }
 
-///
+/// Shows the basic construction and operations on JSON values.
 unittest
 {
     JSONValue a = 12;
@@ -109,3 +129,14 @@ unittest
     //assert(d["b"] == 13);
 }
 
+/// Using $(D opt) to quickly access a descendant value.
+unittest
+{
+    JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
+    JSONValue obj = ["a": subobj];
+
+    assert(obj.opt("x").isNull);
+    assert(obj.opt("a", "b") == 1.0);
+    assert(obj.opt("a", "c") == 2.0);
+    assert(obj.opt("a", "x").isNull);
+}

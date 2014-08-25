@@ -339,7 +339,7 @@ unittest
     }
 }
 
-unittest
+@trusted unittest
 {
     import std.array;
     import std.exception;

@@ -107,13 +107,13 @@ unittest
 unittest
 {
     import std.exception;
-    assertThrown(lexJSON(`trui`).array); // invalid token
-    assertThrown(lexJSON(`fal`).array); // invalid token
-    assertThrown(lexJSON(`falsi`).array); // invalid token
-    assertThrown(lexJSON(`nul`).array); // invalid token
-    assertThrown(lexJSON(`nulX`).array); // invalid token
-    assertThrown(lexJSON(`0.e`).array); // invalid number
-    assertThrown(lexJSON(`xyz`).array); // invalid token
+    assertThrown(lexJSON(`trui`).front); // invalid token
+    assertThrown(lexJSON(`fal`).front); // invalid token
+    assertThrown(lexJSON(`falsi`).front); // invalid token
+    assertThrown(lexJSON(`nul`).front); // invalid token
+    assertThrown(lexJSON(`nulX`).front); // invalid token
+    assertThrown(lexJSON(`0.e`).front); // invalid number
+    assertThrown(lexJSON(`xyz`).front); // invalid token
  }
 
 
@@ -344,6 +344,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
     {
         import std.algorithm : among;
         import std.ascii;
+        import std.bigint;
+        import std.math;
         import std.string;
         import std.traits;
 
@@ -355,9 +357,31 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             static if (options & LexOptions.trackLocation) _loc.column++;
         }
 
-        import std.math;
-        double result = 0;
+
+        static if (options & (LexOptions.useBigInt/*|LexOptions.useDecimal*/))
+            BigInt int_part = 0;
+        else static if (options & LexOptions.useLong)
+            long int_part = 0;
+        else
+            double int_part = 0;
         bool neg = false;
+
+        void setInt()
+        {
+            if (neg) int_part = -int_part;
+            static if (options & LexOptions.useBigInt)
+            {
+                static if (options & LexOptions.useLong)
+                {
+                    if (int_part >= long.min && int_part <= long.max) _front.number = int_part.toLong();
+                    else _front.number = int_part;
+                }
+                else _front.number = int_part;
+            }
+            //else static if (options & LexOptions.useDecimal) _front.number = Decimal(int_part, 0);
+            else _front.number = int_part;
+        }
+
 
         // negative sign
         if (_input.front == '-')
@@ -378,7 +402,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             skipChar();
             if (_input.empty) // return 0
             {
-                _front.number = neg ? -result : result;
+                setInt();
                 return;
             }
 
@@ -390,15 +414,24 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         }
         else do
         {
-            result = result * 10 + (_input.front - '0');
+            int_part = int_part * 10 + (_input.front - '0');
             skipChar();
             if (_input.empty) // return integer
             {
-                _front.number = neg ? -result : result;
+                setInt();
                 return;
             }
         }
         while (isDigit(_input.front));
+
+        int exponent = 0;
+
+        void setFloat()
+        {
+            if (neg) int_part = -int_part;
+            /*static if (options & LexOptions.useDecimal) _front.number = Decimal(int_part, exponent);
+            else*/ _front.number = int_part * 10.0 ^^ exponent;
+        }
 
         // post decimal point part
         assert(!_input.empty);
@@ -412,16 +445,16 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 return;
             }
 
-            double mul = 0.1;
-            while (true) {
+            while (true)
+            {
                 if (_input.empty)
                 {
-                    _front.number = neg ? -result : result;
+                    setFloat();
                     return;
                 }
                 if (!isDigit(_input.front)) break;
-                result = result + (_input.front - '0') * mul;
-                mul *= 0.1;
+                int_part = int_part * 10 + (_input.front - '0');
+                exponent--;
                 skipChar();
             }
         }
@@ -462,10 +495,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 skipChar();
                 if (_input.empty || !_input.front.isDigit) break;
             }
-            result *= pow(negexp ? 0.1 : 10.0, exp);
+
+            if (negexp) exponent -= exp;
+            else exponent += exp;
         }
 
-        _front.number = neg ? -result : result;
+        setFloat();
     }
 
     void setError(string err)
@@ -584,15 +619,18 @@ unittest
 
     void test(string str, double expected, string remainder)
     {
+        import std.conv;
         Location loc;
         auto strcopy = str;
         auto res = parseNumberHelper(strcopy, loc);
-        assert(approxEqual(res, expected));
+        assert(approxEqual(res, expected), () @trusted {return res.to!string;}());
         assert(strcopy == remainder);
         assert(loc.line == 0);
         assert(loc.column == str.length - remainder.length);
     }
 
+    test("0", 0.0, "");
+    test("0 ", 0.0, " ");
     test("-0", 0.0, "");
     test("-0 ", 0.0, " ");
     test("-0e+10 ", 0.0, " ");
@@ -713,13 +751,13 @@ struct JSONToken
     }
 
     /// Gets/sets the numeric value of the token.
-    @property JSONNumber number() const nothrow
+    @property JSONNumber number() const nothrow @trusted
     {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
     }
     /// ditto
-    @property JSONNumber number(JSONNumber value) nothrow
+    @property JSONNumber number(JSONNumber value) nothrow @trusted
     {
         _kind = Kind.number;
         _number = value;
@@ -922,6 +960,32 @@ struct JSONString {
     size_t toHash() const nothrow @trusted { auto val = this.value; return typeid(string).getHash(&val); }
 }
 
+unittest {
+    JSONString s = "test";
+    assert(s == "test");
+    assert(s.value == "test");
+    assert(s.rawValue == `"test"`);
+
+    JSONString t;
+    auto h = `"hello"`;
+    s.rawValue = h;
+    t = s; assert(s == t);
+    assert(s.rawValue == h);
+    assert(s.value == "hello");
+    t = s; assert(s == t);
+    assert(&s.rawValue[0] is &h[0]);
+    assert(&s.value[0] is &h[1]);
+
+    auto w = `"world\t!"`;
+    s.rawValue = w;
+    t = s; assert(s == t);
+    assert(s.rawValue == w);
+    assert(s.value == "world\t!");
+    t = s; assert(s == t);
+    assert(&s.rawValue[0] is &w[0]);
+    assert(&s.value[0] !is &h[1]);
+}
+
 
 /**
  * Represents a JSON number literal with lazy conversion.
@@ -929,19 +993,190 @@ struct JSONString {
 struct JSONNumber {
     import std.bigint;
 
-    private {
-        //BigInt _bigInt;
-        //long _long;
-        //int _exponent;
-        double _double;
+    enum Type {
+        double_,
+        long_,
+        bigInt/*,
+        decimal*/
     }
 
-    @property bool isInteger() const nothrow { return false; }
+    private struct Decimal {
+        BigInt integer;
+        int exponent;
+    }
 
-    @property double doubleValue() const nothrow { return _double; }
-    @property double doubleValue(double val) nothrow { return _double = val; }
+    private {
+        union {
+            double _double;
+            long _long;
+            Decimal _decimal;
+        }
+        Type _type = Type.long_;
+    }
 
+    /**
+     * Constructs a $(D JSONNumber) from a raw number.
+     */
+    this(double value) nothrow { this.doubleValue = value; }
+    /// ditto
+    this(long value) nothrow { this.longValue = value; }
+    /// ditto
+    this(BigInt value) nothrow { this.bigIntValue = value; }
+    // ditto
+    //this(Decimal value) nothrow { this.decimalValue = value; }
+
+    /**
+     * The native type of the stored number.
+     */
+    @property Type type() const { return _type; }
+
+    /**
+     * Returns the number as a $(D double) value.
+     *
+     * Regardless of the current type of this number, this property will always
+     * yield a value converted to $(D double). Setting this property will
+     * automatically update the number type to $(D Type.double_).
+     */
+    @property double doubleValue() const nothrow @trusted
+    {
+        final switch (_type)
+        {
+            case Type.double_: return _double;
+            case Type.long_: return cast(double)_long;
+            case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
+            //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
+        }
+    }
+    /// ditto
+    @property double doubleValue(double value) nothrow
+    {
+        _type = Type.double_;
+        return _double = value;
+    }
+
+    /**
+     * Returns the number as a $(D long) value.
+     *
+     * Regardless of the current type of this number, this property will always
+     * yield a value converted to $(D long). Setting this property will
+     * automatically update the number type to $(D Type.long_).
+     */
+    @property long longValue() const nothrow @trusted
+    {
+        import std.math;
+
+        final switch (_type)
+        {
+            case Type.double_: return rndtol(_double);
+            case Type.long_: return _long;
+            case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
+            /*case Type.decimal:
+                try
+                {
+                    if (_decimal.exponent == 0) return _decimal.integer.toLong();
+                    else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
+                    else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
+                }
+                catch(Exception) assert(false);*/
+        }
+    }
+    /// ditto
+    @property long longValue(long value) nothrow
+    {
+        _type = Type.long_;
+        return _long = value;
+    }
+
+    /**
+     * Returns the number as a $(D BigInt) value.
+     *
+     * Regardless of the current type of this number, this property will always
+     * yield a value converted to $(D BigInt). Setting this property will
+     * automatically update the number type to $(D Type.bigInt).
+     */
+    @property BigInt bigIntValue() const nothrow @trusted
+    {
+        import std.math;
+
+        final switch (_type)
+        {
+            case Type.double_: return BigInt(rndtol(_double)); // FIXME: convert to string and then to bigint
+            case Type.long_: return BigInt(_long);
+            case Type.bigInt: return _decimal.integer;
+            /*case Type.decimal:
+                try
+                {
+                    if (_decimal.exponent == 0) return _decimal.integer;
+                    else if (_decimal.exponent > 0) return _decimal.integer * BigInt(10) ^^ _decimal.exponent;
+                    else return _decimal.integer / BigInt(10) ^^ -_decimal.exponent;
+                }
+                catch (Exception) assert(false);*/
+        }
+    }
+    /// ditto
+    @property BigInt bigIntValue(BigInt value) nothrow @trusted
+    {
+        _type = Type.bigInt;
+        _decimal.exponent = 0;
+        return _decimal.integer = value;
+    }
+
+    /+/**
+     * Returns the number as a $(D Decimal) value.
+     *
+     * Regardless of the current type of this number, this property will always
+     * yield a value converted to $(D Decimal). Setting this property will
+     * automatically update the number type to $(D Type.decimal).
+     */
+    @property Decimal decimalValue() const nothrow @trusted
+    {
+        import std.bitmanip;
+        import std.math;
+
+        final switch (_type)
+        {
+            case Type.double_:
+                Decimal ret;
+                assert(false, "TODO");
+            case Type.long_: return Decimal(BigInt(_long), 0);
+            case Type.bigInt: return Decimal(_decimal.integer, 0);
+            case Type.decimal: return _decimal;
+        }
+    }
+    /// ditto
+    @property Decimal decimalValue(Decimal value) nothrow @trusted
+    {
+        _type = Type.decimal;
+        try return _decimal = value;
+        catch (Exception) assert(false);
+    }+/
+
+    /// Makes a JSONNumber behave like a $(D double) by default.
     alias doubleValue this;
+
+    /**
+     * Support assignment of numbers.
+     */
+    void opAssign(JSONNumber other) nothrow @trusted
+    {
+        _type = other._type;
+        final switch (_type) {
+            case Type.double_: _double = other._double; break;
+            case Type.long_: _long = other._long; break;
+            case Type.bigInt/*, Type.decimal*/:
+                try _decimal = other._decimal;
+                catch (Exception) assert(false);
+                break;
+        }
+    }
+    /// ditto
+    void opAssign(double value) { this.doubleValue = value; }
+    /// ditto
+    void opAssign(long value) { this.longValue = value; }
+    /// ditto
+    void opAssign(BigInt value) { this.bigIntValue = value; }
+    // ditto
+    //void opAssign(Decimal value) { this.decimalValue = value; }
 
     /// Support equality comparisons
     bool opEquals(T)(T other) const nothrow
@@ -968,6 +1203,111 @@ struct JSONNumber {
     }
 }
 
+unittest // assignment operator
+{
+    import std.bigint;
+
+    JSONNumber num, num2;
+
+    num = 1.0;
+    assert(num.type == JSONNumber.Type.double_);
+    assert(num == 1.0);
+    num2 = num;
+    assert(num2.type == JSONNumber.Type.double_);
+    assert(num2 == 1.0);
+
+    num = 1L;
+    assert(num.type == JSONNumber.Type.long_);
+    assert(num.longValue == 1);
+    num2 = num;
+    assert(num2.type == JSONNumber.Type.long_);
+    assert(num2.longValue == 1);
+
+    num = BigInt(1);
+    assert(num.type == JSONNumber.Type.bigInt);
+    assert(num.bigIntValue == 1);
+    num2 = num;
+    assert(num2.type == JSONNumber.Type.bigInt);
+    assert(num2.bigIntValue == 1);
+
+    /*num = JSONNumber.Decimal(BigInt(1), 0);
+    assert(num.type == JSONNumber.Type.decimal);
+    assert(num.decimalValue == JSONNumber.Decimal(BigInt(1), 0));
+    num2 = num;
+    assert(num2.type == JSONNumber.Type.decimal);
+    assert(num2.decimalValue == JSONNumber.Decimal(BigInt(1), 0));*/
+}
+
+unittest // property access
+{
+    import std.bigint;
+
+    JSONNumber num;
+
+    num.longValue = 2;
+    assert(num.type == JSONNumber.Type.long_);
+    assert(num.longValue == 2);
+    assert(num.doubleValue == 2.0);
+    assert(num.bigIntValue == 2);
+    //assert(num.decimalValue.integer == 2 && num.decimalValue.exponent == 0);
+
+    num.doubleValue = 2.0;
+    assert(num.type == JSONNumber.Type.double_);
+    assert(num.longValue == 2);
+    assert(num.doubleValue == 2.0);
+    assert(num.bigIntValue == 2);
+    //assert(num.decimalValue.integer == 2 * 10 ^^ -num.decimalValue.exponent);
+
+    num.bigIntValue = BigInt(2);
+    assert(num.type == JSONNumber.Type.bigInt);
+    assert(num.longValue == 2);
+    assert(num.doubleValue == 2.0);
+    assert(num.bigIntValue == 2);
+    //assert(num.decimalValue.integer == 2 && num.decimalValue.exponent == 0);
+
+    /*num.decimalValue = JSONNumber.Decimal(BigInt(2), 0);
+    assert(num.type == JSONNumber.Type.decimal);
+    assert(num.longValue == 2);
+    assert(num.doubleValue == 2.0);
+    assert(num.bigIntValue == 2);
+    assert(num.decimalValue.integer == 2 && num.decimalValue.exponent == 0);*/
+}
+
+unittest // negative numbers
+{
+    import std.bigint;
+
+    JSONNumber num;
+
+    num.longValue = -2;
+    assert(num.type == JSONNumber.Type.long_);
+    assert(num.longValue == -2);
+    assert(num.doubleValue == -2.0);
+    assert(num.bigIntValue == -2);
+    //assert(num.decimalValue.integer == -2 && num.decimalValue.exponent == 0);
+
+    num.doubleValue = -2.0;
+    assert(num.type == JSONNumber.Type.double_);
+    assert(num.longValue == -2);
+    assert(num.doubleValue == -2.0);
+    assert(num.bigIntValue == -2);
+    //assert(num.decimalValue.integer == -2 && num.decimalValue.exponent == 0);
+
+    num.bigIntValue = BigInt(-2);
+    assert(num.type == JSONNumber.Type.bigInt);
+    assert(num.longValue == -2);
+    assert(num.doubleValue == -2.0);
+    assert(num.bigIntValue == -2);
+    //assert(num.decimalValue.integer == -2 && num.decimalValue.exponent == 0);
+
+    /*num.decimalValue = JSONNumber.Decimal(BigInt(-2), 0);
+    assert(num.type == JSONNumber.Type.decimal);
+    assert(num.longValue == -2);
+    assert(num.doubleValue == -2.0);
+    assert(num.bigIntValue == -2);
+    assert(num.decimalValue.integer == -2 && num.decimalValue.exponent == 0);*/
+}
+
 
 /**
  * Flags for configuring the JSON lexer.
@@ -978,9 +1318,9 @@ enum LexOptions {
     none          = 0,    /// Don't track token location and only use double to represent numbers
     trackLocation = 1<<0, /// Counts lines and columns while lexing the source
     noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
-    //useLong     = 1<<2, /// Use long to represent integers
-    //useBigInt   = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
-    //useDecimal  = 1<<4, /// Use Decimal to represent floating point numbers
+    useLong       = 1<<2, /// Use long to represent integers
+    useBigInt     = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
+    //useDecimal    = 1<<4, /// Use Decimal to represent floating point numbers
     defaults      = trackLocation, /// Same as trackLocation
 }
 

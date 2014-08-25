@@ -160,7 +160,14 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
         case error: enforceJson(false, "Invalid token encountered", tokens.front.location); assert(false);
         case null_: ret = JSONValue(null); break;
         case boolean: ret = JSONValue(tokens.front.boolean); break;
-        case number: ret = JSONValue(tokens.front.number); break;
+        case number:
+            final switch (tokens.front.number.type)
+            {
+                case JSONNumber.Type.double_: ret = JSONValue(tokens.front.number.doubleValue); break;
+                case JSONNumber.Type.long_: ret = JSONValue(tokens.front.number.longValue); break;
+                case JSONNumber.Type.bigInt: ret = JSONValue(tokens.front.number.bigIntValue); break;
+            }
+            break;
         case string: ret = JSONValue(tokens.front.string); break;
         case objectStart:
             auto loc = tokens.front.location;

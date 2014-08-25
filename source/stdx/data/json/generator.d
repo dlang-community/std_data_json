@@ -17,6 +17,7 @@ module stdx.data.json.generator;
 import stdx.data.json.lexer;
 import stdx.data.json.parser;
 import stdx.data.json.value;
+import std.bigint;
 import std.range;
 
 
@@ -230,7 +231,9 @@ private void writeAsStringImpl(bool pretty_print = false, Output)(JSONValue valu
 
     if (value.peek!(typeof(null))) output.put("null");
     else if (auto pv = value.peek!bool) output.put(*pv ? "true" : "false");
-    else if (auto pv = value.peek!double) output.writeNumber(JSONNumber(*pv));
+    else if (auto pv = value.peek!double) output.writeNumber(*pv);
+    else if (auto pv = value.peek!long) output.writeNumber(*pv);
+    else if (auto pv = value.peek!BigInt) output.writeNumber(*pv);
     else if (auto pv = value.peek!string) { output.put('"'); output.escapeString(*pv); output.put('"'); }
     else if (auto pv = value.peek!(JSONValue[string]))
     {
@@ -351,28 +354,48 @@ private void writeAsStringImpl(bool pretty_print = false, Output, Input)(Input n
     }
 }
 
-private void writeNumber(bool non_standard_floats = false, R)(ref R dst, JSONNumber num)
-@trusted {
+private void writeNumber(bool non_standard_floats = false, R)(ref R dst, JSONNumber num) @trusted
+{
     import std.format;
     import std.math;
 
-    final switch (num.type) {
-        case JSONNumber.Type.double_:
-            double flt = num.doubleValue;
-            static if (non_standard_floats) {
-                if (isNaN(flt)) dst.put("NaN");
-                else if (flt == +double.infinity) dst.put("Infinity");
-                else if (flt == -double.infinity) dst.put("-Infinity");
-                else dst.formattedWrite("%.16g", flt.doubleValue);
-            } else {
-                if (isNaN(flt) || flt == -double.infinity || flt == double.infinity)
-                    dst.put("null");
-                else dst.formattedWrite("%.16g", flt);
-            }
-            break;
-        case JSONNumber.Type.long_: dst.formattedWrite("%d", num.longValue); break;
-        case JSONNumber.Type.bigInt: num.bigIntValue.toString(str => dst.put(str), null); break;
+    final switch (num.type)
+    {
+        case JSONNumber.Type.double_: dst.writeNumber!non_standard_floats(num.doubleValue); break;
+        case JSONNumber.Type.long_: dst.writeNumber(num.longValue); break;
+        case JSONNumber.Type.bigInt: dst.writeNumber(num.bigIntValue); break;
     }
+}
+
+private void writeNumber(bool non_standard_floats = false, R)(ref R dst, double num) @trusted
+{
+    import std.format;
+    import std.math;
+
+    static if (non_standard_floats)
+    {
+        if (isNaN(num)) dst.put("NaN");
+        else if (num == +double.infinity) dst.put("Infinity");
+        else if (num == -double.infinity) dst.put("-Infinity");
+        else dst.formattedWrite("%.16g", num.doubleValue);
+    }
+    else
+    {
+        if (isNaN(num) || num == -double.infinity || num == double.infinity)
+            dst.put("null");
+        else dst.formattedWrite("%.16g", num);
+    }
+}
+
+private void writeNumber(R)(ref R dst, long num) @trusted
+{
+    import std.format;
+    dst.formattedWrite("%d", num);
+}
+
+private void writeNumber(R)(ref R dst, BigInt num) @trusted
+{
+    num.toString(str => dst.put(str), null);
 }
 
 unittest

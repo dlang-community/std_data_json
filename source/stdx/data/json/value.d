@@ -36,6 +36,7 @@ import stdx.data.json.foundation;
 struct JSONValue
 {
     @safe:
+    import std.bigint;
     import std.typecons : Nullable;
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
@@ -48,6 +49,8 @@ struct JSONValue
         typeof(null),
         bool,
         double,
+        long,
+        BigInt,
         string,
         JSONValue[],
         JSONValue[string]
@@ -79,6 +82,10 @@ struct JSONValue
     this(bool value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
     this(double value, Location loc = Location.init) { payload = Payload(value); location = loc; }
+    /// ditto
+    this(long value, Location loc = Location.init) { payload = Payload(value); location = loc; }
+    /// ditto
+    this(BigInt value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
     this(string value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto

@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Variable JSONValue.payload</title>
+		<title>Enum member GeneratorOptions.specialFloatLiterals</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -26,7 +26,7 @@
 								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+								<a href="../../../../stdx/data/json/generator.html" class="selected module">generator</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
@@ -35,7 +35,7 @@
 								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/value.html" class="selected module">value</a>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
 							</li>
 						</ul>
 							</li>
@@ -72,23 +72,18 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable JSONValue.payload</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Enum member GeneratorOptions.specialFloatLiterals</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
-				<p> Holds the data contained in this value.
+				<p>Output special float values as 'NaN' or 'Infinity' instead of 'null'
 </p>
-<section>
-<p> Note that this is available using alias this, so there is usually no
- need to access this field directly.
-</p>
-</section>
 
 					<section>
 						<h3>Declaration</h3>
 						<pre class="code prettyprint lang-d prototype">
-struct <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>
+enum <a href="../../../../stdx/data/json/generator/GeneratorOptions.html">GeneratorOptions</a>
 {
 	// ...
-	<code class="prettyprint lang-d">std.<wbr/>variant.<wbr/>VariantN!(12,,bool,double,long,std.bigint.BigInt,string,stdx.data.json.value.JSONValue[],stdx.data.json.value.JSONValue[string])</code> payload;
+	specialFloatLiterals,
 	// ...
 }</pre>
 					</section>

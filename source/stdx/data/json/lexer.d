@@ -253,6 +253,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
             case '}': skipChar(); _front.kind = JSONToken.Kind.objectEnd; break;
             case ':': skipChar(); _front.kind = JSONToken.Kind.colon; break;
             case ',': skipChar(); _front.kind = JSONToken.Kind.comma; break;
+
+            static if (options & LexOptions.specialFloatLiterals)
+            {
+                case 'N', 'I': parseNumber(); break;
+            }
         }
 
         skipWhitespace();
@@ -390,6 +395,33 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         {
             skipChar();
             neg = true;
+        }
+
+        // support non-standard float special values
+        static if (options & LexOptions.specialFloatLiterals)
+        {
+            import std.algorithm : skipOver;
+            if (!_input.empty) {
+                if (_input.front == 'I') {
+                    if (_input.skipOver("Infinity"))
+                    {
+                        static if (options & LexOptions.trackLocation) _loc.column += 8;
+                        _front.number = neg ? -double.infinity : double.infinity;
+                    }
+                    else setError("Invalid number, expected 'Infinity'");
+                    return;
+                }
+                if (!neg && _input.front == 'N')
+                {
+                    if (_input.skipOver("NaN"))
+                    {
+                        static if (options & LexOptions.trackLocation) _loc.column += 3;
+                        _front.number = double.nan;
+                    }
+                    else setError("Invalid number, expected 'NaN'");
+                    return;
+                }
+            }
         }
 
         // integer part of the number
@@ -608,27 +640,28 @@ unittest
 unittest
 {
     import std.exception;
-    import std.math : approxEqual;
+    import std.math : approxEqual, isNaN;
 
-    static double parseNumberHelper(R)(ref R input, ref Location loc)
+    static double parseNumberHelper(LexOptions options, R)(ref R input, ref Location loc)
     {
-        auto rng = JSONLexerRange!R(input);
+        auto rng = JSONLexerRange!(R, options|LexOptions.trackLocation)(input);
         rng.parseNumber();
         input = cast(R)rng._input;
         loc = rng._loc;
+        assert(rng._front.kind != JSONToken.Kind.error, rng._error);
         return rng._front.number;
     }
 
-    void test(string str, double expected, string remainder)
+    static void test(LexOptions options = LexOptions.defaults)(string str, double expected, string remainder)
     {
         import std.conv;
         Location loc;
         auto strcopy = str;
-        auto res = parseNumberHelper(strcopy, loc);
-        assert(approxEqual(res, expected), () @trusted {return res.to!string;}());
+        auto res = parseNumberHelper!options(strcopy, loc);
+        assert((res.isNaN && expected.isNaN) || approxEqual(res, expected), () @trusted {return res.to!string;}());
         assert(strcopy == remainder);
         assert(loc.line == 0);
-        assert(loc.column == str.length - remainder.length);
+        assert(loc.column == str.length - remainder.length, text(loc.column));
     }
 
     test("0", 0.0, "");
@@ -652,19 +685,26 @@ unittest
     test("123.456e-01 ", 12.3456, " ");
     test("0.123e-12", 0.123e-12, "");
     test("0.123e-12 ", 0.123e-12, " ");
+
+    test!(LexOptions.specialFloatLiterals)("NaN", double.nan, "");
+    test!(LexOptions.specialFloatLiterals)("NaN ", double.nan, " ");
+    test!(LexOptions.specialFloatLiterals)("Infinity", double.infinity, "");
+    test!(LexOptions.specialFloatLiterals)("Infinity ", double.infinity, " ");
+    test!(LexOptions.specialFloatLiterals)("-Infinity", -double.infinity, "");
+    test!(LexOptions.specialFloatLiterals)("-Infinity ", -double.infinity, " ");
 }
 
 unittest
 {
     import std.exception;
 
-    void testFail(string str)
+    static void testFail(LexOptions options = LexOptions.defaults)(string str)
     {
         Location loc;
-        auto rng1 = JSONLexerRange!(string, LexOptions.defaults)(str);
+        auto rng1 = JSONLexerRange!(string, options)(str);
         assertThrown(rng1.front);
 
-        auto rng2 = JSONLexerRange!(string, LexOptions.noThrow)(str);
+        auto rng2 = JSONLexerRange!(string, options|LexOptions.noThrow)(str);
         assertNotThrown(rng2.front);
         assert(rng2.front.kind == JSONToken.Kind.error);
     }
@@ -683,6 +723,12 @@ unittest
     testFail("1.ee");
     testFail("1.e-e");
     testFail("1.e+e");
+    testFail("NaN");
+    testFail("Infinity");
+    testFail("-Infinity");
+    testFail!(LexOptions.specialFloatLiterals)("NaX");
+    testFail!(LexOptions.specialFloatLiterals)("InfinitX");
+    testFail!(LexOptions.specialFloatLiterals)("-InfinitX");
 }
 
 
@@ -1323,6 +1369,7 @@ enum LexOptions {
     useLong       = 1<<2, /// Use long to represent integers
     useBigInt     = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
     //useDecimal    = 1<<4, /// Use Decimal to represent floating point numbers
+    specialFloatLiterals = 1<<5, /// Support "NaN", "Infinite" and "-Infinite" as valid number literals
     defaults      = trackLocation, /// Same as trackLocation
 }
 

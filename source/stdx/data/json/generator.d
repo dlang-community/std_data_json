@@ -230,7 +230,7 @@ private void writeAsStringImpl(bool pretty_print = false, Output)(JSONValue valu
 
     if (value.peek!(typeof(null))) output.put("null");
     else if (auto pv = value.peek!bool) output.put(*pv ? "true" : "false");
-    else if (auto pv = value.peek!double) output.writeNumber(*pv);
+    else if (auto pv = value.peek!double) output.writeNumber(JSONNumber(*pv));
     else if (auto pv = value.peek!string) { output.put('"'); output.escapeString(*pv); output.put('"'); }
     else if (auto pv = value.peek!(JSONValue[string]))
     {
@@ -351,10 +351,28 @@ private void writeAsStringImpl(bool pretty_print = false, Output, Input)(Input n
     }
 }
 
-private void writeNumber(R)(ref R dst, double num)
-{
+private void writeNumber(bool non_standard_floats = false, R)(ref R dst, JSONNumber num)
+@trusted {
     import std.format;
-    () @trusted { dst.formattedWrite("%.16g", num); }();
+    import std.math;
+
+    final switch (num.type) {
+        case JSONNumber.Type.double_:
+            double flt = num.doubleValue;
+            static if (non_standard_floats) {
+                if (isNaN(flt)) dst.put("NaN");
+                else if (flt == +double.infinity) dst.put("Infinity");
+                else if (flt == -double.infinity) dst.put("-Infinity");
+                else dst.formattedWrite("%.16g", flt.doubleValue);
+            } else {
+                if (isNaN(flt) || flt == -double.infinity || flt == double.infinity)
+                    dst.put("null");
+                else dst.formattedWrite("%.16g", flt);
+            }
+            break;
+        case JSONNumber.Type.long_: dst.formattedWrite("%d", num.longValue); break;
+        case JSONNumber.Type.bigInt: num.bigIntValue.toString(str => dst.put(str), null); break;
+    }
 }
 
 unittest
@@ -367,7 +385,7 @@ unittest
     assert(num.get!double.approxEqual(exp));
 
     auto snum = appender!string;
-    snum.writeNumber(num.get!double);
+    snum.writeNumber(JSONNumber(num.get!double));
     auto pnum = toJSONValue(snum.data);
     assert(pnum.get!double.approxEqual(num.get!double));
 }

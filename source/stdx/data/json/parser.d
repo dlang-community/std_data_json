@@ -65,7 +65,7 @@ JSONValue toJSONValue(Input)(Input tokens)
 }
 
 ///
-unittest
+@trusted /*2.065*/ unittest
 {
     // parse a simple number
     JSONValue a = toJSONValue(`1.0`);
@@ -113,7 +113,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.defaults, Input)(ref In
 }
 
 /// Parse an object
-unittest
+@trusted /*2.065*/ unittest
 {
     // parse an object
     string str = `{"a": true, "b": "test"}`;
@@ -337,8 +337,11 @@ unittest
         assert(rng.front.kind == objectEnd); rng.popFront();
         assert(rng.empty);
     }
+}
 
-    rng = parseJSONStream(`[]`);
+unittest
+{
+    auto rng = parseJSONStream(`[]`);
     with (JSONParserNode.Kind)
     {
         import std.algorithm;

@@ -773,6 +773,21 @@ struct JSONToken
     /// The location of the token in the input.
     Location location;
 
+    ref JSONToken opAssign(JSONToken other) nothrow @trusted
+    {
+        _kind = other._kind;
+        final switch (_kind) with (Kind) {
+            case none, error, null_, objectStart, objectEnd, arrayStart, arrayEnd, colon, comma:
+                break;
+            case boolean: _boolean = other._boolean; break;
+            case number: _number = other._number; break;
+            case string: _string = other._string; break;
+        }
+
+        this.location = other.location;
+        return this;
+    }
+
     /**
      * Gets/sets the kind of the represented token.
      *

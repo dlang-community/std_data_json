@@ -210,7 +210,7 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(in 
         case null_: output.put("null"); break;
         case boolean: output.put(token.boolean ? "true" : "false"); break;
         case number: output.writeNumber!options(token.number); break;
-        case string: output.put('"'); output.escapeString(token.string); output.put('"'); break;
+        case string: output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(token.string); output.put('"'); break;
         case objectStart: output.put('{'); break;
         case objectEnd: output.put('}'); break;
         case arrayStart: output.put('['); break;
@@ -227,8 +227,9 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(in 
  * These flags can be combined using a bitwise or operation.
  */
 enum GeneratorOptions {
-    none = 0, ///
+    none = 0, /// Enable none of the supported options
     specialFloatLiterals = 1<<1, /// Output special float values as 'NaN' or 'Infinity' instead of 'null'
+    escapeUnicode = 1<<2, /// Output all non-ASCII characters as unicode escape sequences
     defaults = none ///
 }
 
@@ -247,7 +248,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
     else if (auto pv = value.peek!double) output.writeNumber!options(*pv);
     else if (auto pv = value.peek!long) output.writeNumber(*pv);
     else if (auto pv = value.peek!BigInt) output.writeNumber(*pv);
-    else if (auto pv = value.peek!string) { output.put('"'); output.escapeString(*pv); output.put('"'); }
+    else if (auto pv = value.peek!string) { output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(*pv); output.put('"'); }
     else if (auto pv = value.peek!(JSONValue[string]))
     {
         output.put('{');
@@ -258,7 +259,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
             else first = false;
             static if (pretty_print) indent(nesting_level+1);
             output.put('\"');
-            output.escapeString(k);
+            output.escapeString!(options & GeneratorOptions.escapeUnicode)(k);
             output.put(pretty_print ? `": ` : `":`);
             e.writeAsStringImpl!pretty_print(output, nesting_level+1);
         }
@@ -324,7 +325,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
                 is_object_field = true;
                 static if (pretty_print) indent(nesting);
                 output.put('"');
-                output.escapeString(nodes.front.key);
+                output.escapeString!(options & GeneratorOptions.escapeUnicode)(nodes.front.key);
                 output.put(pretty_print ? `": ` : `":`);
                 break;
             case literal:

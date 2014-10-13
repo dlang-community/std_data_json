@@ -469,7 +469,9 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
             default:
                 static if (use_surrogates)
                 {
-                    if (ch >= 0x20 && ch < 0x80)
+                    // output non-control char ASCII characters directly
+                    // note that 0x7F is the DEL control charactor
+                    if (ch >= 0x20 && ch < 0x7F)
                     {
                         dst.put(ch);
                         break;
@@ -494,7 +496,7 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
                 }
                 else
                 {
-                    if (ch < 0x20) formattedWrite(dst, "\\u%04X", ch);
+                    if (ch < 0x20 && ch != 0x7F) formattedWrite(dst, "\\u%04X", ch);
                     else dst.put(ch);
                 }
                 break;

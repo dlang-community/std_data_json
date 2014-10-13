@@ -48,7 +48,7 @@ import std.range : isInputRange;
  *
  * See_also: $(D parseJSONValue)
  */
-JSONValue toJSONValue(LexOptions options = LexOptions.defaults, Input)(Input input, string filename = "")
+JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     auto tokens = lexJSON!options(input, filename);
@@ -101,7 +101,7 @@ unittest
  * The input string must start with a valid JSON document. Any characters
  * occurring after this document will be left in the input range.
  */
-JSONValue parseJSONValue(LexOptions options = LexOptions.defaults, Input)(ref Input input, string filename = "")
+JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     import stdx.data.json.foundation;
@@ -282,7 +282,7 @@ unittest
  *   $(LI object → OBJECTSTART (KEY value)* OBJECTEND)
  * )
  */
-JSONParserRange!(JSONLexerRange!(Input, options)) parseJSONStream(LexOptions options = LexOptions.defaults, Input)(Input input, string filename = null)
+JSONParserRange!(JSONLexerRange!(Input, options)) parseJSONStream(LexOptions options = LexOptions.init, Input)(Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     return parseJSONStream(lexJSON!options(input, filename));

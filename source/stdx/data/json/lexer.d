@@ -63,7 +63,7 @@ import stdx.data.json.foundation;
  *   last token in the range.
  */
 JSONLexerRange!(Input, options) lexJSON
-    (LexOptions options = LexOptions.defaults, Input)
+    (LexOptions options = LexOptions.init, Input)
     (Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
@@ -125,7 +125,7 @@ unittest
  *
  * See $(D lexJSON) for more information.
 */
-struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
+struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     import std.string : representation;
@@ -225,7 +225,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         void skipChar()
         {
             _input.popFront();
-            static if (options & LexOptions.trackLocation) _loc.column++;
+            static if (!(options & LexOptions.noTrackLocation)) _loc.column++;
         }
 
 
@@ -266,7 +266,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
 		parse_kw:
             if (_input.skipOver(kw))
             {
-                static if (options & LexOptions.trackLocation) _loc.column += kw.length;
+                static if (!(options & LexOptions.noTrackLocation)) _loc.column += kw.length;
             }
             else setError("Invalid keyord");
     }
@@ -275,7 +275,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
     {
         while (!_input.empty)
         {
-            static if (options & LexOptions.trackLocation)
+            static if (!(options & LexOptions.noTrackLocation))
             {
                 switch (_input.front)
                 {
@@ -316,7 +316,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         static if (is(Input == string) || is(Input == immutable(ubyte)[]))
         {
             InternalInput lit;
-            if (skipStringLiteral!(!!(options & LexOptions.trackLocation))(_input, lit, _error, _loc.column))
+            if (skipStringLiteral!(!(options & LexOptions.noTrackLocation))(_input, lit, _error, _loc.column))
             {
                 JSONString js;
                 js.rawValue = cast(string)lit;
@@ -336,7 +336,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 appender_init = true;
             }
 
-            if (unescapeStringLiteral!(!!(options & LexOptions.trackLocation))(
+            if (unescapeStringLiteral!(!(options & LexOptions.noTrackLocation))(
                     _input, dst, slice, &initAppender, _error, _loc.column
                 ))
             {
@@ -361,7 +361,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
         void skipChar()
         {
             _input.popFront();
-            static if (options & LexOptions.trackLocation) _loc.column++;
+            static if (!(options & LexOptions.noTrackLocation)) _loc.column++;
         }
 
 
@@ -405,7 +405,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 if (_input.front == 'I') {
                     if (_input.skipOver("Infinity"))
                     {
-                        static if (options & LexOptions.trackLocation) _loc.column += 8;
+                        static if (!(options & LexOptions.noTrackLocation)) _loc.column += 8;
                         _front.number = neg ? -double.infinity : double.infinity;
                     }
                     else setError("Invalid number, expected 'Infinity'");
@@ -415,7 +415,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.defaults)
                 {
                     if (_input.skipOver("NaN"))
                     {
-                        static if (options & LexOptions.trackLocation) _loc.column += 3;
+                        static if (!(options & LexOptions.noTrackLocation)) _loc.column += 3;
                         _front.number = double.nan;
                     }
                     else setError("Invalid number, expected 'NaN'");
@@ -614,7 +614,7 @@ unittest
     void testFail(string str)
     {
         Location loc;
-        auto rng1 = JSONLexerRange!(string, LexOptions.defaults)(str);
+        auto rng1 = JSONLexerRange!(string, LexOptions.init)(str);
         assertThrown(rng1.front);
 
         auto rng2 = JSONLexerRange!(string, LexOptions.noThrow)(str);
@@ -644,7 +644,7 @@ unittest
 
     static double parseNumberHelper(LexOptions options, R)(ref R input, ref Location loc)
     {
-        auto rng = JSONLexerRange!(R, options|LexOptions.trackLocation)(input);
+        auto rng = JSONLexerRange!(R, options & ~LexOptions.noTrackLocation)(input);
         rng.parseNumber();
         input = cast(R)rng._input;
         loc = rng._loc;
@@ -652,7 +652,7 @@ unittest
         return rng._front.number;
     }
 
-    static void test(LexOptions options = LexOptions.defaults)(string str, double expected, string remainder)
+    static void test(LexOptions options = LexOptions.init)(string str, double expected, string remainder)
     {
         import std.conv;
         Location loc;
@@ -698,7 +698,7 @@ unittest
 {
     import std.exception;
 
-    static void testFail(LexOptions options = LexOptions.defaults)(string str)
+    static void testFail(LexOptions options = LexOptions.init)(string str)
     {
         Location loc;
         auto rng1 = JSONLexerRange!(string, options)(str);
@@ -1378,14 +1378,13 @@ unittest // negative numbers
  * These flags can be combined using a bitwise or operation.
  */
 enum LexOptions {
-    none          = 0,    /// Don't track token location and only use double to represent numbers
-    trackLocation = 1<<0, /// Counts lines and columns while lexing the source
-    noThrow       = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
-    useLong       = 1<<2, /// Use long to represent integers
-    useBigInt     = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
-    //useDecimal    = 1<<4, /// Use Decimal to represent floating point numbers
+    init            = 0,    /// Default options - track token location and only use double to represent numbers
+    noTrackLocation = 1<<0, /// Counts lines and columns while lexing the source
+    noThrow         = 1<<1, /// Uses JSONToken.Kind.error instead of throwing exceptions
+    useLong         = 1<<2, /// Use long to represent integers
+    useBigInt       = 1<<3, /// Use BigInt to represent integers (if larger than long or useLong is not given)
+    //useDecimal      = 1<<4, /// Use Decimal to represent floating point numbers
     specialFloatLiterals = 1<<5, /// Support "NaN", "Infinite" and "-Infinite" as valid number literals
-    defaults      = trackLocation, /// Same as trackLocation
 }
 
 

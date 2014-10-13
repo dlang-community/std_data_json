@@ -29,7 +29,7 @@ import std.range;
  *
  * See_also: $(D writePrettyJSON), $(D toJSON)
  */
-string toPrettyJSON(GeneratorOptions options = GeneratorOptions.defaults)(JSONValue value)
+string toPrettyJSON(GeneratorOptions options = GeneratorOptions.init)(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
@@ -37,7 +37,7 @@ string toPrettyJSON(GeneratorOptions options = GeneratorOptions.defaults)(JSONVa
     return dst.data;
 }
 /// ditto
-string toPrettyJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)(Input nodes)
+string toPrettyJSON(GeneratorOptions options = GeneratorOptions.init, Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
@@ -66,7 +66,7 @@ string toPrettyJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)
  *
  * See_also: $(D writeJSON), $(D toPrettyJSON)
  */
-string toJSON(GeneratorOptions options = GeneratorOptions.defaults)(JSONValue value)
+string toJSON(GeneratorOptions options = GeneratorOptions.init)(JSONValue value)
 {
     import std.array;
     auto dst = appender!string();
@@ -74,7 +74,7 @@ string toJSON(GeneratorOptions options = GeneratorOptions.defaults)(JSONValue va
     return dst.data;
 }
 /// ditto
-string toJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)(Input nodes)
+string toJSON(GeneratorOptions options = GeneratorOptions.init, Input)(Input nodes)
     if (isJSONParserNodeInputRange!Input)
 {
     import std.array;
@@ -83,7 +83,7 @@ string toJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)(Input
     return dst.data;
 }
 /// ditto
-string toJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)(Input tokens)
+string toJSON(GeneratorOptions options = GeneratorOptions.init, Input)(Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
@@ -92,7 +92,7 @@ string toJSON(GeneratorOptions options = GeneratorOptions.defaults, Input)(Input
     return dst.data;
 }
 /// ditto
-string toJSON(GeneratorOptions options = GeneratorOptions.defaults)(JSONToken token)
+string toJSON(GeneratorOptions options = GeneratorOptions.init)(JSONToken token)
 {
     import std.array;
     auto dst = appender!string();
@@ -149,13 +149,13 @@ unittest
  *
  * See_also: $(D toPrettyJSON), $(D writeJSON)
  */
-void writePrettyJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(JSONValue value, ref Output output)
+void writePrettyJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
     writeAsStringImpl!(true, options)(value, output);
 }
 /// ditto
-void writePrettyJSON(GeneratorOptions options = GeneratorOptions.defaults, Output, Input)(Input nodes, ref Output output)
+void writePrettyJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     writeAsStringImpl!(true, options)(nodes, output);
@@ -178,19 +178,19 @@ void writePrettyJSON(GeneratorOptions options = GeneratorOptions.defaults, Outpu
  *
  * See_also: $(D toJSON), $(D writePrettyJSON)
  */
-void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(JSONValue value, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
     writeAsStringImpl!(false, options)(value, output);
 }
 /// ditto
-void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output, Input)(Input nodes, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     writeAsStringImpl!(false, options)(nodes, output);
 }
 /// ditto
-void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output, Input)(Input tokens, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input tokens, ref Output output)
     if (isOutputRange!(Output, char) && isJSONTokenInputRange!Input)
 {
     while (!tokens.empty)
@@ -200,7 +200,7 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output, Inp
     }
 }
 /// ditto
-void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(in ref JSONToken token, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(in ref JSONToken token, ref Output output)
     if (isOutputRange!(Output, char))
 {
     final switch (token.kind) with (JSONToken.Kind)
@@ -227,14 +227,18 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.defaults, Output)(in 
  * These flags can be combined using a bitwise or operation.
  */
 enum GeneratorOptions {
-    none = 0, /// Enable none of the supported options
-    specialFloatLiterals = 1<<1, /// Output special float values as 'NaN' or 'Infinity' instead of 'null'
-    escapeUnicode = 1<<2, /// Output all non-ASCII characters as unicode escape sequences
-    defaults = none ///
+	/// Default value - enable none of the supported options
+    init = 0,
+
+	/// Output special float values as 'NaN' or 'Infinity' instead of 'null'
+    specialFloatLiterals = 1<<1,
+
+	/// Output all non-ASCII characters as unicode escape sequences
+    escapeUnicode = 1<<2,
 }
 
 
-private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.defaults, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
+private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
     void indent(size_t depth)
@@ -287,7 +291,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
     else assert(false);
 }
 
-private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.defaults, Output, Input)(Input nodes, ref Output output)
+private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     size_t nesting = 0;
@@ -422,14 +426,14 @@ unittest
     assert(num.get!double.approxEqual(exp));
 
     auto snum = appender!string;
-    snum.writeNumber!(GeneratorOptions.defaults)(JSONNumber(num.get!double));
+    snum.writeNumber!(GeneratorOptions.init)(JSONNumber(num.get!double));
     auto pnum = toJSONValue(snum.data);
     assert(pnum.get!double.approxEqual(num.get!double));
 }
 
 unittest // special float values
 {
-    static void test(GeneratorOptions options = GeneratorOptions.defaults)(double val, string expected)
+    static void test(GeneratorOptions options = GeneratorOptions.init)(double val, string expected)
     {
         auto dst = appender!string;
         dst.writeNumber!options(val);

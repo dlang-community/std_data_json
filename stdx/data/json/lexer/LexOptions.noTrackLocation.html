@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Enum GeneratorOptions</title>
+		<title>Enum member LexOptions.noTrackLocation</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -26,10 +26,10 @@
 								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/generator.html" class="selected module">generator</a>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
@@ -72,55 +72,20 @@ $(document).ready(function() {
 				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Enum GeneratorOptions</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Enum member LexOptions.noTrackLocation</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<section>
-				<p> Flags for configuring the JSON generator.
+				<p>Counts lines and columns while lexing the source
 </p>
-<section>
-<p> These flags can be combined using a bitwise or operation.
-</p>
-</section>
 
-					<p>The enum base type is
-						<code class="prettyprint lang-d"><code class="prettyprint lang-d">int</code></code>
-.
-					</p>
 					<section>
-						<h3>Enum members</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/generator/GeneratorOptions.escapeUnicode.html">
-										<code>escapeUnicode</code>
-									</a>
-								</td>
-								<td>Output all non-ASCII characters as unicode escape sequences
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/generator/GeneratorOptions.init.html">
-										<code>init</code>
-									</a>
-								</td>
-								<td>Default value - enable none of the supported options
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/generator/GeneratorOptions.specialFloatLiterals.html">
-										<code>specialFloatLiterals</code>
-									</a>
-								</td>
-								<td>Output special float values as 'NaN' or 'Infinity' instead of 'null'
-</td>
-							</tr>
-						</table>
+						<h3>Declaration</h3>
+						<pre class="code prettyprint lang-d prototype">
+enum <a href="../../../../stdx/data/json/lexer/LexOptions.html">LexOptions</a>
+{
+	// ...
+	noTrackLocation,
+	// ...
+}</pre>
 					</section>
 
 			</section>

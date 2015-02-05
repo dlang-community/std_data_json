@@ -114,7 +114,52 @@ unittest
     assertThrown(lexJSON(`nulX`).front); // invalid token
     assertThrown(lexJSON(`0.e`).front); // invalid number
     assertThrown(lexJSON(`xyz`).front); // invalid token
- }
+}
+
+unittest { // test built-in UTF validation
+    import std.exception;
+
+    static void test_invalid(immutable(ubyte)[] str)
+    {
+        assertThrown(lexJSON(str).front);
+        assertNotThrown(lexJSON(cast(string)str).front);
+    }
+
+    test_invalid(['"', 0xFF, '"']);
+    test_invalid(['"', 0xFF, 'x', '"']);
+    test_invalid(['"', 0xFF, 'x', '\\', 't','"']);
+    test_invalid(['"', '\\', 't', 0xFF,'"']);
+    test_invalid(['"', '\\', 't', 0xFF,'x','"']);
+
+    static void testw_invalid(immutable(ushort)[] str)
+    {
+        import std.conv;
+        assertThrown(lexJSON(str).front, str.to!string);
+
+        // Invalid UTF sequences can still throw in the non-validating case,
+        // because UTF-16 is converted to UTF-8 internally, so we don't test
+        // this case:
+        // assertNotThrown(lexJSON(cast(wstring)str).front);
+    }
+
+    static void testw_valid(immutable(ushort)[] str)
+    {
+        import std.conv;
+        assertNotThrown(lexJSON(str).front, str.to!string);
+        assertNotThrown(lexJSON(cast(wstring)str).front);
+    }
+
+    testw_invalid(['"', 0xD800, 0xFFFF, '"']);
+    testw_invalid(['"', 0xD800, 0xFFFF, 'x', '"']);
+    testw_invalid(['"', 0xD800, 0xFFFF, 'x', '\\', 't','"']);
+    testw_invalid(['"', '\\', 't', 0xD800, 0xFFFF,'"']);
+    testw_invalid(['"', '\\', 't', 0xD800, 0xFFFF,'x','"']);
+    testw_valid(['"', 0xE000, '"']);
+    testw_valid(['"', 0xE000, 'x', '"']);
+    testw_valid(['"', 0xE000, 'x', '\\', 't','"']);
+    testw_valid(['"', '\\', 't', 0xE000,'"']);
+    testw_valid(['"', '\\', 't', 0xE000,'x','"']);
+}
 
 
 /**
@@ -318,8 +363,16 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
             InternalInput lit;
             if (skipStringLiteral!(!(options & LexOptions.noTrackLocation))(_input, lit, _error, _loc.column))
             {
+                auto litstr = cast(string)lit;
+                static if (!isSomeChar!(typeof(Input.init.front))) {
+                    import std.encoding;
+                    if (!()@trusted{ return isValid(litstr); }()) {
+                        setError("Invalid UTF sequence in string literal.");
+                        return;
+                    }
+                }
                 JSONString js;
-                js.rawValue = cast(string)lit;
+                js.rawValue = litstr;
                 _front.string = js;
             }
             else _front.kind = JSONToken.Kind.error;
@@ -336,7 +389,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
                 appender_init = true;
             }
 
-            if (unescapeStringLiteral!(!(options & LexOptions.noTrackLocation))(
+            if (unescapeStringLiteral!(!(options & LexOptions.noTrackLocation), isSomeChar!(typeof(Input.init.front)))(
                     _input, dst, slice, &initAppender, _error, _loc.column
                 ))
             {
@@ -795,6 +848,7 @@ struct JSONToken
      * additional data associated (boolean, number and string).
      */
     @property Kind kind() const nothrow { return _kind; }
+    /// ditto
     @property Kind kind(Kind value) nothrow
         in { assert(!value.among(Kind.boolean, Kind.number, Kind.string)); }
         body { return _kind = value; }
@@ -1392,7 +1446,7 @@ package enum bool isStringInputRange(R) = isInputRange!R && isSomeChar!(typeof(R
 package enum bool isIntegralInputRange(R) = isInputRange!R && isIntegral!(typeof(R.init.front));
 
 // returns true for success
-package bool unescapeStringLiteral(bool track_location = true, Input, Output)(
+package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output)(
     ref Input input, // input range, string and immutable(ubyte)[] can be sliced
     ref Output output, // uninitialized output range
     ref string sliced_result, // target for possible result slice
@@ -1436,6 +1490,17 @@ package bool unescapeStringLiteral(bool track_location = true, Input, Output)(
                 input = input[idx+1 .. $];
                 static if (track_location) column += idx+1;
                 sliced_result = cast(string)orig[0 .. idx];
+
+                static if (!skip_utf_validation)
+                {
+                    import std.encoding;
+                    if (!isValid(sliced_result))
+                    {
+                        error = "Invalid UTF sequence in string literal";
+                        return false;
+                    }
+                }
+
                 return true;
             }
 
@@ -1443,6 +1508,14 @@ package bool unescapeStringLiteral(bool track_location = true, Input, Output)(
             if (input[idx] == '\\')
             {
                 output_init();
+                static if (!skip_utf_validation)
+                {
+                    if (!isValid(input[0 .. idx]))
+                    {
+                        error = "Invalid UTF sequence in string literal";
+                        return false;
+                    }
+                }
                 output.put(cast(string)input[0 .. idx]);
                 input = input[idx .. $];
                 static if (track_location) column += idx;
@@ -1468,13 +1541,37 @@ package bool unescapeStringLiteral(bool track_location = true, Input, Output)(
             return false;
         }
 
-        auto ch = input.front;
-        input.popFront();
-        static if (track_location)  column++;
+        static if (!skip_utf_validation)
+        {
+            import std.utf;
+            dchar ch;
+            size_t numcu;
+            auto chrange = castRange!CharType(input);
+            try ch = ()@trusted{ return decodeFront(chrange); }();
+            catch (UTFException)
+            {
+                error = "Invalid UTF sequence in string literal";
+                return false;
+            }
+            if (!isValidDchar(ch))
+            {
+                error = "Invalid Unicode character in string literal";
+                return false;
+            }
+            static if (track_location) column += numcu;
+        }
+        else
+        {
+            auto ch = input.front;
+            input.popFront();
+            static if (track_location) column++;
+        }
 
         switch (ch)
         {
-            default: output.put(cast(CharType)ch); break;
+            default:
+                output.put(cast(CharType)ch);
+                break;
             case 0x00: .. case 0x19:
                 error = "Illegal control character in string literal";
                 return false;
@@ -1554,7 +1651,7 @@ nothrow {
     auto rep = str_lit.representation;
     try // Appender.put and skipOver are not nothrow
     {
-        if (!unescapeStringLiteral(rep, app, slice, &initAppender, error, col))
+        if (!unescapeStringLiteral!(false, true)(rep, app, slice, &initAppender, error, col))
             return false;
     }
     catch (Exception e) return false;
@@ -1760,3 +1857,16 @@ private dchar decodeUTF16CP(R)(ref R input, ref string error)
     }
     return uch;
 }
+
+// little helper to be able to pass integer ranges to std.utf.decodeFront
+private struct CastRange(T, R)
+{
+    private R* _range;
+
+    this(R* range) { _range = range; }
+    @property bool empty() { return (*_range).empty; }
+    @property T front() { return cast(T)(*_range).front; }
+    void popFront() { (*_range).popFront(); }
+}
+private CastRange!(T, R) castRange(T, R)(ref R range) @trusted { return CastRange!(T, R)(&range); }
+static assert(isInputRange!(CastRange!(char, uint[])));

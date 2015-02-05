@@ -113,7 +113,7 @@ struct JSONValue
         return Nullable!JSONValue(cur);
     }
 
-    static if (__VERSION__ < 0x2067)
+    static if (__VERSION__ < 2067)
     {
         /**
          * Temporary index operations until std.variant is fixed in 2.067

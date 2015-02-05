@@ -113,18 +113,29 @@ struct JSONValue
         return Nullable!JSONValue(cur);
     }
 
-    ref JSONValue opIndex(size_t idx)
+    static if (__VERSION__ < 0x2067)
     {
-        auto asArray = payload.peek!(JSONValue[]);
-        enforce(asArray != null, "JSONValue is not an array");
-        return (*asArray)[idx];
-    }
+        /**
+         * Temporary index operations until std.variant is fixed in 2.067
+         *
+         * These exist only to overcome current shortcomings in the index
+         * op for std.variant, which should be fixed in 2.067 and above.
+         * See https://github.com/s-ludwig/std_data_json/pull/3#issuecomment-73127624
+         */
+        ref JSONValue opIndex(size_t idx)
+        {
+            auto asArray = payload.peek!(JSONValue[]);
+            enforce(asArray != null, "JSONValue is not an array");
+            return (*asArray)[idx];
+        }
 
-    ref JSONValue opIndex(string key)
-    {
-        auto asObject = payload.peek!(JSONValue[string]);
-        enforce(asObject != null, "JSONValue is not an object");
-        return (*asObject)[key];
+        /// Ditto
+        ref JSONValue opIndex(string key)
+        {
+            auto asObject = payload.peek!(JSONValue[string]);
+            enforce(asObject != null, "JSONValue is not an object");
+            return (*asObject)[key];
+        }
     }
 }
 

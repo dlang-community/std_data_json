@@ -37,6 +37,7 @@ struct JSONValue
 {
     @safe:
     import std.bigint;
+    import std.exception : enforce;
     import std.typecons : Nullable;
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
@@ -111,6 +112,31 @@ struct JSONValue
         }
         return Nullable!JSONValue(cur);
     }
+
+    static if (__VERSION__ < 2067)
+    {
+        /**
+         * Temporary index operations until std.variant is fixed in 2.067
+         *
+         * These exist only to overcome current shortcomings in the index
+         * op for std.variant, which should be fixed in 2.067 and above.
+         * See https://github.com/s-ludwig/std_data_json/pull/3#issuecomment-73127624
+         */
+        ref JSONValue opIndex(size_t idx)
+        {
+            auto asArray = payload.peek!(JSONValue[]);
+            enforce(asArray != null, "JSONValue is not an array");
+            return (*asArray)[idx];
+        }
+
+        /// Ditto
+        ref JSONValue opIndex(string key)
+        {
+            auto asObject = payload.peek!(JSONValue[string]);
+            enforce(asObject != null, "JSONValue is not an object");
+            return (*asObject)[key];
+        }
+    }
 }
 
 /// Shows the basic construction and operations on JSON values.
@@ -126,14 +152,14 @@ unittest
     auto c = JSONValue([a, b]);
     assert(c.get!(JSONValue[])[0] == 12.0);
     assert(c.get!(JSONValue[])[1] == 13.0);
-    //assert(c[0] == 12);
-    //assert(c[1] == 13);
+    assert(c[0] == 12L);
+    assert(c[1] == 13L);
 
     auto d = JSONValue(["a": a, "b": b]);
     assert(d.get!(JSONValue[string])["a"] == 12.0);
     assert(d.get!(JSONValue[string])["b"] == 13.0);
-    //assert(d["a"] == 12);
-    //assert(d["b"] == 13);
+    assert(d["a"] == 12L);
+    assert(d["b"] == 13L);
 }
 
 /// Using $(D opt) to quickly access a descendant value.

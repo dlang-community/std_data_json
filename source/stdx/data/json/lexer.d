@@ -73,6 +73,8 @@ JSONLexerRange!(Input, options) lexJSON
 ///
 unittest
 {
+    import std.algorithm : equal, map;
+
     auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
     with (JSONToken)
     {

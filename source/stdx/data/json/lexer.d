@@ -268,6 +268,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
     private void readToken()
     {
         import std.algorithm : skipOver;
+        import std.string : representation;
 
         void skipChar()
         {
@@ -311,7 +312,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
         return;
 
 		parse_kw:
-            if (_input.skipOver(kw))
+            if (_input.skipOver(kw.representation))
             {
                 static if (!(options & LexOptions.noTrackLocation)) _loc.column += kw.length;
             }
@@ -458,7 +459,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
             import std.algorithm : skipOver;
             if (!_input.empty) {
                 if (_input.front == 'I') {
-                    if (_input.skipOver("Infinity"))
+                    if (_input.skipOver("Infinity".representation))
                     {
                         static if (!(options & LexOptions.noTrackLocation)) _loc.column += 8;
                         _front.number = neg ? -double.infinity : double.infinity;
@@ -468,7 +469,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
                 }
                 if (!neg && _input.front == 'N')
                 {
-                    if (_input.skipOver("NaN"))
+                    if (_input.skipOver("NaN".representation))
                     {
                         static if (!(options & LexOptions.noTrackLocation)) _loc.column += 3;
                         _front.number = double.nan;
@@ -1121,6 +1122,12 @@ struct JSONNumber {
     private struct Decimal {
         BigInt integer;
         int exponent;
+
+        void opAssign(Decimal other) nothrow @nogc
+        {
+            integer = other.integer;
+            exponent = other.exponent;
+        }
     }
 
     private {
@@ -1447,11 +1454,11 @@ package enum bool isStringInputRange(R) = isInputRange!R && isSomeChar!(typeof(R
 package enum bool isIntegralInputRange(R) = isInputRange!R && isIntegral!(typeof(R.init.front));
 
 // returns true for success
-package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output)(
+package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output, OutputInitFunc)(
     ref Input input, // input range, string and immutable(ubyte)[] can be sliced
     ref Output output, // uninitialized output range
     ref string sliced_result, // target for possible result slice
-    scope void delegate() @safe nothrow output_init, // delegate that is called before writing to output
+    scope OutputInitFunc output_init, // delegate that is called before writing to output
     ref string error, // target for error message
     ref size_t column) // counter to use for tracking the current column
 {
@@ -1462,6 +1469,7 @@ package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation
 
     import std.algorithm : skipOver;
     import std.array;
+    import std.string : representation;
 
     if (input.empty || input.front != '"')
     {
@@ -1611,7 +1619,7 @@ package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation
                         {
                             static if (track_location) column += 6;
 
-                            if (!input.skipOver("\\u"))
+                            if (!input.skipOver("\\u".representation))
                             {
                                 error = "Missing second UTF-16 surrogate";
                                 return false;
@@ -1662,9 +1670,19 @@ nothrow {
 }
 
 package bool isValidStringLiteral(string str)
-nothrow {
-    string dst;
-    return unescapeStringLiteral(str, dst);
+nothrow @nogc {
+    import std.range : NullSink;
+    import std.string : representation;
+
+    auto rep = str.representation;
+    auto nullSink = NullSink();
+    string slice, error;
+    size_t col;
+
+    try
+        return unescapeStringLiteral!(false, true)(rep, nullSink, slice, delegate(){}, error, col);
+    catch(Exception)
+        return false;
 }
 
 
@@ -1677,6 +1695,7 @@ package bool skipStringLiteral(bool track_location = true, Array)(
 {
     import std.algorithm : skipOver;
     import std.array;
+    import std.string : representation;
 
     if (input.empty || input.front != '"')
     {
@@ -1733,7 +1752,7 @@ package bool skipStringLiteral(bool track_location = true, Array)(
                         // detect UTF-16 surrogate pairs
                         if (0xD800 <= uch && uch <= 0xDBFF)
                         {
-                            if (!input.skipOver("\\u"))
+                            if (!input.skipOver("\\u".representation))
                             {
                                 error = "Missing second UTF-16 surrogate";
                                 return false;

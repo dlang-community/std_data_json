@@ -792,7 +792,6 @@ unittest
 */
 struct JSONToken
 {
-    @safe:
     import std.algorithm : among;
 
     /**
@@ -828,7 +827,7 @@ struct JSONToken
     /// The location of the token in the input.
     Location location;
 
-    ref JSONToken opAssign(JSONToken other) nothrow @trusted
+    ref JSONToken opAssign(JSONToken other) nothrow @trusted @nogc
     {
         _kind = other._kind;
         final switch (_kind) with (Kind) {
@@ -849,20 +848,20 @@ struct JSONToken
      * Setting the token kind is not allowed for any of the kinds that have
      * additional data associated (boolean, number and string).
      */
-    @property Kind kind() const nothrow { return _kind; }
+    @property Kind kind() const nothrow @nogc { return _kind; }
     /// ditto
-    @property Kind kind(Kind value) nothrow
+    @property Kind kind(Kind value) nothrow @nogc
         in { assert(!value.among(Kind.boolean, Kind.number, Kind.string)); }
         body { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.
-    @property bool boolean() const nothrow
+    @property bool boolean() const nothrow @trusted @nogc
     {
         assert(_kind == Kind.boolean, "Token is not a boolean.");
         return _boolean;
     }
     /// ditto
-    @property bool boolean(bool value) nothrow
+    @property bool boolean(bool value) nothrow @nogc
     {
         _kind = Kind.boolean;
         _boolean = value;
@@ -870,36 +869,36 @@ struct JSONToken
     }
 
     /// Gets/sets the numeric value of the token.
-    @property JSONNumber number() const nothrow @trusted
+    @property JSONNumber number() const nothrow @trusted @nogc
     {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
     }
     /// ditto
-    @property JSONNumber number(JSONNumber value) nothrow @trusted
+    @property JSONNumber number(JSONNumber value) nothrow @nogc
     {
         _kind = Kind.number;
         _number = value;
         return value;
     }
     /// ditto
-    @property JSONNumber number(double value) nothrow { return this.number = JSONNumber(value); }
+    @property JSONNumber number(double value) nothrow @nogc { return this.number = JSONNumber(value); }
 
     /// Gets/sets the string value of the token.
-    @property JSONString string() const @trusted nothrow
+    @property JSONString string() const nothrow @trusted @nogc
     {
         assert(_kind == Kind.string, "Token is not a string.");
         return _string;
     }
     /// ditto
-    @property JSONString string(JSONString value) nothrow
+    @property JSONString string(JSONString value) nothrow @nogc
     {
         _kind = Kind.string;
         _string = value;
         return value;
     }
     /// ditto
-    @property JSONString string(.string value) nothrow { return this.string = JSONString(value); }
+    @property JSONString string(.string value) nothrow @nogc { return this.string = JSONString(value); }
 
     /**
      * Enables equality comparisons.
@@ -907,7 +906,7 @@ struct JSONToken
      * Note that the location is considered token meta data and thus does not
      * affect the comparison.
      */
-    bool opEquals(in ref JSONToken other) const nothrow
+    bool opEquals(in ref JSONToken other) const nothrow @trusted
     {
         if (this.kind != other.kind) return false;
 
@@ -925,7 +924,7 @@ struct JSONToken
     /**
      * Enables usage of $(D JSONToken) as an associative array key.
      */
-    size_t toHash() const nothrow
+    size_t toHash() const @trusted nothrow
     {
         hash_t ret = 3781249591u + cast(uint)_kind * 2721371;
 
@@ -1009,7 +1008,7 @@ struct JSONString {
     /**
      * Constructs a JSONString from the given string value (unescaped).
      */
-    this(string value)
+    this(string value) nothrow @nogc
     {
         _value = value;
     }
@@ -1037,7 +1036,7 @@ struct JSONString {
         return _value;
     }
     /// ditto
-    @property string value(string val)
+    @property string value(string val) nothrow @nogc
     {
         _rawValue = null;
         return _value = val;
@@ -1053,7 +1052,7 @@ struct JSONString {
         return _rawValue;
     }
     /// ditto
-    @property string rawValue(string val)
+    @property string rawValue(string val) nothrow // @nogc
     {
         assert(isValidStringLiteral(val), "Invalid raw string literal: "~val);
         _rawValue = val;
@@ -1136,18 +1135,18 @@ struct JSONNumber {
     /**
      * Constructs a $(D JSONNumber) from a raw number.
      */
-    this(double value) nothrow { this.doubleValue = value; }
+    this(double value) nothrow @nogc { this.doubleValue = value; }
     /// ditto
-    this(long value) nothrow { this.longValue = value; }
+    this(long value) nothrow @nogc { this.longValue = value; }
     /// ditto
-    this(BigInt value) nothrow { this.bigIntValue = value; }
+    this(BigInt value) nothrow @nogc { this.bigIntValue = value; }
     // ditto
     //this(Decimal value) nothrow { this.decimalValue = value; }
 
     /**
      * The native type of the stored number.
      */
-    @property Type type() const { return _type; }
+    @property Type type() const nothrow @nogc { return _type; }
 
     /**
      * Returns the number as a $(D double) value.
@@ -1156,7 +1155,7 @@ struct JSONNumber {
      * yield a value converted to $(D double). Setting this property will
      * automatically update the number type to $(D Type.double_).
      */
-    @property double doubleValue() const nothrow @trusted
+    @property double doubleValue() const nothrow @trusted @nogc
     {
         final switch (_type)
         {
@@ -1167,7 +1166,7 @@ struct JSONNumber {
         }
     }
     /// ditto
-    @property double doubleValue(double value) nothrow
+    @property double doubleValue(double value) nothrow @nogc
     {
         _type = Type.double_;
         return _double = value;
@@ -1180,7 +1179,7 @@ struct JSONNumber {
      * yield a value converted to $(D long). Setting this property will
      * automatically update the number type to $(D Type.long_).
      */
-    @property long longValue() const nothrow @trusted
+    @property long longValue() const nothrow @trusted @nogc
     {
         import std.math;
 
@@ -1200,7 +1199,7 @@ struct JSONNumber {
         }
     }
     /// ditto
-    @property long longValue(long value) nothrow
+    @property long longValue(long value) nothrow @nogc
     {
         _type = Type.long_;
         return _long = value;
@@ -1233,7 +1232,7 @@ struct JSONNumber {
         }
     }
     /// ditto
-    @property BigInt bigIntValue(BigInt value) nothrow @trusted
+    @property BigInt bigIntValue(BigInt value) nothrow @trusted @nogc
     {
         _type = Type.bigInt;
         _decimal.exponent = 0;
@@ -1276,7 +1275,7 @@ struct JSONNumber {
     /**
      * Support assignment of numbers.
      */
-    void opAssign(JSONNumber other) nothrow @trusted
+    void opAssign(JSONNumber other) nothrow @trusted @nogc
     {
         _type = other._type;
         final switch (_type) {
@@ -1289,16 +1288,16 @@ struct JSONNumber {
         }
     }
     /// ditto
-    void opAssign(double value) { this.doubleValue = value; }
+    void opAssign(double value) nothrow @nogc { this.doubleValue = value; }
     /// ditto
-    void opAssign(long value) { this.longValue = value; }
+    void opAssign(long value) nothrow @nogc { this.longValue = value; }
     /// ditto
-    void opAssign(BigInt value) { this.bigIntValue = value; }
+    void opAssign(BigInt value) nothrow @nogc { this.bigIntValue = value; }
     // ditto
     //void opAssign(Decimal value) { this.decimalValue = value; }
 
     /// Support equality comparisons
-    bool opEquals(T)(T other) const nothrow
+    bool opEquals(T)(T other) const nothrow @nogc
     {
         static if (is(T == JSONNumber)) return _double == other._double;
         else static if (is(T : double)) return _double == other;
@@ -1306,7 +1305,7 @@ struct JSONNumber {
     }
 
     /// Support relational comparisons
-    int opCmp(T)(T other) const nothrow
+    int opCmp(T)(T other) const nothrow @nogc
     {
         static if (is(T == JSONNumber)) return this == other._double;
         else static if (is(T : double)) return _double < other ? -1 : _double > other ? 1 : 0;

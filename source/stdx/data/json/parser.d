@@ -442,7 +442,7 @@ struct JSONParserRange(Input)
         else readNextValue();
     }
 
-    private void readNextInObject()
+    private void readNextInObject() @trusted
     {
         enforceJson(!_input.empty, "Missing closing '}'", _input.location);
         switch (_prevKind)

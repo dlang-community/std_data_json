@@ -1162,16 +1162,33 @@ struct JSONNumber {
      * yield a value converted to $(D double). Setting this property will
      * automatically update the number type to $(D Type.double_).
      */
-    @property double doubleValue() const nothrow @trusted @nogc
+    static if(__VERSION__ < 2067)
     {
-        final switch (_type)
+        @property double doubleValue() const nothrow @trusted
         {
-            case Type.double_: return _double;
-            case Type.long_: return cast(double)_long;
-            case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
-            //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
+            final switch (_type)
+            {
+                case Type.double_: return _double;
+                case Type.long_: return cast(double)_long;
+                case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
+                //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
+            }
         }
     }
+    else
+    {
+        @property double doubleValue() const nothrow @trusted @nogc
+        {
+            final switch (_type)
+            {
+                case Type.double_: return _double;
+                case Type.long_: return cast(double)_long;
+                case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
+                //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
+            }
+        }
+    }
+
     /// ditto
     @property double doubleValue(double value) nothrow @nogc
     {
@@ -1186,25 +1203,51 @@ struct JSONNumber {
      * yield a value converted to $(D long). Setting this property will
      * automatically update the number type to $(D Type.long_).
      */
-    @property long longValue() const nothrow @trusted @nogc
+    static if(__VERSION__ < 2067)
     {
-        import std.math;
-
-        final switch (_type)
+        @property long longValue() const nothrow @trusted
         {
-            case Type.double_: return rndtol(_double);
-            case Type.long_: return _long;
-            case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
-            /*case Type.decimal:
-                try
-                {
-                    if (_decimal.exponent == 0) return _decimal.integer.toLong();
-                    else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
-                    else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
-                }
-                catch(Exception) assert(false);*/
+            import std.math;
+
+            final switch (_type)
+            {
+                case Type.double_: return rndtol(_double);
+                case Type.long_: return _long;
+                case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
+                /*case Type.decimal:
+                    try
+                    {
+                        if (_decimal.exponent == 0) return _decimal.integer.toLong();
+                        else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
+                        else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
+                    }
+                    catch(Exception) assert(false);*/
+            }
         }
     }
+    else
+    {
+        @property long longValue() const nothrow @trusted @nogc
+        {
+            import std.math;
+
+            final switch (_type)
+            {
+                case Type.double_: return rndtol(_double);
+                case Type.long_: return _long;
+                case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
+                /*case Type.decimal:
+                    try
+                    {
+                        if (_decimal.exponent == 0) return _decimal.integer.toLong();
+                        else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
+                        else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
+                    }
+                    catch(Exception) assert(false);*/
+            }
+        }
+    }
+
     /// ditto
     @property long longValue(long value) nothrow @nogc
     {

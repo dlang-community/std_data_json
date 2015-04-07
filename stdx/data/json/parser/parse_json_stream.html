@@ -89,7 +89,7 @@ $('#symbolSearchPane').show();
 					<section>
 						<h3>Prototypes</h3>
 						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!(JSONLexerRange!(Input,options)) parseJSONStream(stdx.data.json.lexer.LexOptions options, Input)(
+<a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!(JSONLexerRange!(Input,options,appenderFactory)) parseJSONStream(stdx.data.json.lexer.LexOptions options, alias appenderFactory, Input)(
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = null
 )

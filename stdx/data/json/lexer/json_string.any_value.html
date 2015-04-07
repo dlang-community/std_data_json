@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function JSONToken.boolean</title>
+		<title>Function JSONString.anyValue</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -62,20 +62,23 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Function JSONToken.boolean</h1>
+			<h1>Function JSONString.anyValue</h1>
 			<section>
-				<p>Gets/sets the <code class="prettyprint lang-d">boolean</code> <a href="../../../../stdx/data/json/lexer/json_token.boolean.html#value"><code class="prettyprint lang-d">value</code></a> of the token.
+				<p> Returns the string <a href="../../../../stdx/data/json/lexer/json_string.value.html"><code class="prettyprint lang-d">value</code></a> in the form that is available without allocating memory.
 </p>
+<section></section>
 
 					<section>
-						<h3>Prototypes</h3>
+						<h3>Prototype</h3>
 						<pre class="code prettyprint lang-d prototype">
-bool boolean() pure nothrow @property @nogc @trusted const;
-
-bool boolean(
-&nbsp;&nbsp;bool value
-) pure nothrow @property @nogc @safe;</pre>
+std.<wbr/>typecons.<wbr/>Tuple!(string,bool) anyValue() pure nothrow @property @nogc @safe const;</pre>
 					</section>
+<section><h3>Returns</h3>
+<p>   A tuple of the string and a boolean <a href="../../../../stdx/data/json/lexer/json_string.value.html"><code class="prettyprint lang-d">value</code></a> is returned. The boolean is
+   set to <code class="prettyprint lang-d">true</code> if the returned string is in decoded form. <code class="prettyprint lang-d">false</code> is
+   returned otherwise.
+</p>
+</section>
 
 			</section>
 			<section>

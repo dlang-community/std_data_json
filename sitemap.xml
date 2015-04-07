@@ -55,6 +55,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_number.to_hash.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_number.type.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_string.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/lexer/json_string.any_value.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_string.op_cmp.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_string.op_equals.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/json_string.op_equals.html</loc></url>

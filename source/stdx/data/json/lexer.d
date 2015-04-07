@@ -889,10 +889,8 @@ struct JSONToken
 
     /// Gets/sets the boolean value of the token.
     @property bool boolean() const pure nothrow @trusted @nogc
-    {
-        assert(_kind == Kind.boolean, "Token is not a boolean.");
-        return _boolean;
-    }
+        in { assert(_kind == Kind.boolean, "Token is not a boolean."); }
+        body { return _boolean; }
     /// ditto
     @property bool boolean(bool value) pure nothrow @nogc
     {
@@ -903,10 +901,8 @@ struct JSONToken
 
     /// Gets/sets the numeric value of the token.
     @property JSONNumber number() const pure nothrow @trusted @nogc
-    {
-        assert(_kind == Kind.number, "Token is not a number.");
-        return _number;
-    }
+        in { assert(_kind == Kind.number, "Token is not a number."); }
+        body { return _number; }
     /// ditto
     @property JSONNumber number(JSONNumber value) nothrow @nogc
     {
@@ -919,10 +915,8 @@ struct JSONToken
 
     /// Gets/sets the string value of the token.
     @property JSONString string() const pure nothrow @trusted @nogc
-    {
-        assert(_kind == Kind.string, "Token is not a string.");
-        return _string;
-    }
+        in { assert(_kind == Kind.string, "Token is not a string."); }
+        body { return _kind == Kind.string ? _string : JSONString.init; }
     /// ditto
     @property JSONString string(JSONString value) pure nothrow @nogc
     {

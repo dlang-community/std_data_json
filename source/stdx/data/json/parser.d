@@ -35,6 +35,7 @@ module stdx.data.json.parser;
 
 import stdx.data.json.lexer;
 import stdx.data.json.value;
+import std.array : appender;
 import std.range : isInputRange;
 
 
@@ -282,10 +283,12 @@ unittest
  *   $(LI object → OBJECTSTART (KEY value)* OBJECTEND)
  * )
  */
-JSONParserRange!(JSONLexerRange!(Input, options)) parseJSONStream(LexOptions options = LexOptions.init, Input)(Input input, string filename = null)
+JSONParserRange!(JSONLexerRange!(Input, options, appenderFactory))
+    parseJSONStream(LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
+        (Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    return parseJSONStream(lexJSON!options(input, filename));
+    return parseJSONStream(lexJSON!(options, appenderFactory)(input, filename));
 }
 /// ditto
 JSONParserRange!Input parseJSONStream(Input)(Input tokens)
@@ -369,6 +372,42 @@ unittest
     assertThrown(parseJSONStream(`{"a" 1}`).array);
     assertThrown(parseJSONStream(`{"a": 1 "b": 2}`).array);
     assertThrown(parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}}`).array);
+}
+
+unittest { // test for @nogc interface
+   static struct MyAppender
+   {
+        @nogc:
+        void put(string s) { }
+        void put(dchar ch) {}
+        void put(char ch) {}
+        @property string data() { return null; }
+    }
+    static MyAppender createAppender() @nogc { return MyAppender.init; }
+
+    static struct EmptyStream
+    {
+        @nogc:
+        @property bool empty() { return true; }
+        @property dchar front() { return ' '; }
+        void popFront() { assert(false); }
+        @property EmptyStream save() { return this; }
+    }
+
+    void test(T)()
+    {
+        T t;
+        auto str = parseJSONStream!(LexOptions.noThrow, createAppender)(t);
+        while (!str.empty) {
+            auto f = str.front;
+            str.popFront();
+        }
+    }
+    // just instantiate, don't run
+    auto t1 = &test!string;
+    auto t2 = &test!wstring;
+    auto t3 = &test!dstring;
+    auto t4 = &test!EmptyStream;
 }
 
 

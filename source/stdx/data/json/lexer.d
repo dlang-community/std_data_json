@@ -37,6 +37,7 @@ module stdx.data.json.lexer;
 @safe:
 
 import std.range;
+import std.array : appender;
 import std.traits : isIntegral, isSomeChar, isSomeString;
 import stdx.data.json.foundation;
 
@@ -62,12 +63,12 @@ import stdx.data.json.foundation;
  *   Instead, a token with kind $(D JSONToken.Kind.error) is generated as the
  *   last token in the range.
  */
-JSONLexerRange!(Input, options) lexJSON
-    (LexOptions options = LexOptions.init, Input)
+JSONLexerRange!(Input, options, appenderFactory) lexJSON
+    (LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
     (Input input, string filename = null)
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
-    return JSONLexerRange!(Input, options)(input, filename);
+    return JSONLexerRange!(Input, options, appenderFactory)(input, filename);
 }
 
 ///
@@ -163,6 +164,37 @@ unittest { // test built-in UTF validation
     testw_valid(['"', '\\', 't', 0xE000,'x','"']);
 }
 
+unittest { // test for @nogc interface
+    static struct MyAppender {
+        @nogc:
+        void put(string s) { }
+        void put(dchar ch) {}
+        void put(char ch) {}
+        @property string data() { return null; }
+    }
+    static MyAppender createAppender() @nogc { return MyAppender.init; }
+
+    @nogc void test(T)()
+    {
+        T text;
+        auto rng = lexJSON!(LexOptions.noThrow, createAppender)(text);
+        while (!rng.empty) {
+            auto f = rng.front;
+            rng.popFront();
+            cast(void)f.boolean;
+            static if (__VERSION__ >= 2067)
+                f.number.longValue;
+            cast(void)f.string;
+            cast(void)f.string.anyValue;
+        }
+    }
+
+    // just instantiate, don't run
+    auto t1 = &test!string;
+    auto t2 = &test!wstring;
+    auto t3 = &test!dstring;
+}
+
 
 /**
  * A lazy input range of JSON tokens.
@@ -172,7 +204,7 @@ unittest { // test built-in UTF validation
  *
  * See $(D lexJSON) for more information.
 */
-struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
+struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string())
     if (isStringInputRange!Input || isIntegralInputRange!Input)
 {
     import std.string : representation;
@@ -383,12 +415,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init)
         else
         {
             bool appender_init = false;
-            Appender!string dst;
+            typeof(appenderFactory()) dst;
             string slice;
 
             void initAppender()
             @safe {
-                dst = appender!string();
+                dst = appenderFactory();
                 appender_init = true;
             }
 
@@ -849,20 +881,20 @@ struct JSONToken
      * Setting the token kind is not allowed for any of the kinds that have
      * additional data associated (boolean, number and string).
      */
-    @property Kind kind() const nothrow @nogc { return _kind; }
+    @property Kind kind() const pure nothrow @nogc { return _kind; }
     /// ditto
     @property Kind kind(Kind value) nothrow @nogc
         in { assert(!value.among(Kind.boolean, Kind.number, Kind.string)); }
         body { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.
-    @property bool boolean() const nothrow @trusted @nogc
+    @property bool boolean() const pure nothrow @trusted @nogc
     {
         assert(_kind == Kind.boolean, "Token is not a boolean.");
         return _boolean;
     }
     /// ditto
-    @property bool boolean(bool value) nothrow @nogc
+    @property bool boolean(bool value) pure nothrow @nogc
     {
         _kind = Kind.boolean;
         _boolean = value;
@@ -870,7 +902,7 @@ struct JSONToken
     }
 
     /// Gets/sets the numeric value of the token.
-    @property JSONNumber number() const nothrow @trusted @nogc
+    @property JSONNumber number() const pure nothrow @trusted @nogc
     {
         assert(_kind == Kind.number, "Token is not a number.");
         return _number;
@@ -886,20 +918,20 @@ struct JSONToken
     @property JSONNumber number(double value) nothrow @nogc { return this.number = JSONNumber(value); }
 
     /// Gets/sets the string value of the token.
-    @property JSONString string() const nothrow @trusted @nogc
+    @property JSONString string() const pure nothrow @trusted @nogc
     {
         assert(_kind == Kind.string, "Token is not a string.");
         return _string;
     }
     /// ditto
-    @property JSONString string(JSONString value) nothrow @nogc
+    @property JSONString string(JSONString value) pure nothrow @nogc
     {
         _kind = Kind.string;
         _string = value;
         return value;
     }
     /// ditto
-    @property JSONString string(.string value) nothrow @nogc { return this.string = JSONString(value); }
+    @property JSONString string(.string value) pure nothrow @nogc { return this.string = JSONString(value); }
 
     /**
      * Enables equality comparisons.
@@ -999,6 +1031,8 @@ unittest
  * Represents a JSON string literal with lazy (un)escaping.
  */
 struct JSONString {
+    import std.typecons : Tuple, tuple;
+
     private {
         string _value;
         string _rawValue;
@@ -1009,7 +1043,7 @@ struct JSONString {
     /**
      * Constructs a JSONString from the given string value (unescaped).
      */
-    this(string value) nothrow @nogc
+    this(string value) pure nothrow @nogc
     {
         _value = value;
     }
@@ -1053,12 +1087,25 @@ struct JSONString {
         return _rawValue;
     }
     /// ditto
-    @property string rawValue(string val) nothrow // @nogc
+    @property string rawValue(string val) nothrow @nogc
     {
-        assert(isValidStringLiteral(val), "Invalid raw string literal: "~val);
+        assert(isValidStringLiteral(val), "Invalid raw string literal");
         _rawValue = val;
         _value = null;
         return val;
+    }
+
+    /**
+     * Returns the string value in the form that is available without allocating memory.
+     *
+     * Returns:
+     *   A tuple of the string and a boolean value is returned. The boolean is
+     *   set to `true` if the returned string is in decoded form. `false` is
+     *   returned otherwise.
+     */
+    @property Tuple!(string, bool) anyValue() const pure @nogc
+    {
+        return !_rawValue.length ? tuple(_value, true) : tuple(_rawValue, false);
     }
 
     alias value this;
@@ -1689,16 +1736,16 @@ package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation
     }
 }
 
-package bool unescapeStringLiteral(string str_lit, ref string dst)
+package bool unescapeStringLiteral(alias appenderFactory = () => appender!string())(string str_lit, ref string dst)
 nothrow {
     import std.string;
 
     bool appender_init = false;
-    Appender!string app;
+    typeof(appenderFactory()) app;
     string slice, error;
     size_t col;
 
-    void initAppender() @safe nothrow { app = appender!string(); appender_init = true; }
+    void initAppender() @safe nothrow { app = appenderFactory(); appender_init = true; }
 
     auto rep = str_lit.representation;
     try // Appender.put and skipOver are not nothrow
@@ -1723,7 +1770,7 @@ nothrow @nogc {
     size_t col;
 
     try
-        return unescapeStringLiteral!(false, true)(rep, nullSink, slice, delegate(){}, error, col);
+        return unescapeStringLiteral!(false, true)(rep, nullSink, slice, {}, error, col);
     catch(Exception)
         return false;
 }

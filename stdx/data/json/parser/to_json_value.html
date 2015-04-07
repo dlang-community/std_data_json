@@ -72,6 +72,7 @@ $('#symbolSearchPane').show();
  contain any additional text other than whitespace after the end of the
  JSON document.
 </p>
+
 </section>
 
 					<section>
@@ -80,13 +81,11 @@ $('#symbolSearchPane').show();
 <a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> toJSONValue(stdx.data.json.lexer.LexOptions options, Input)(
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = ""
-)
-if (isStringInputRange!Input || isIntegralInputRange!Input);
+);
 
 <a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> toJSONValue(Input)(
 &nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);</pre>
+);</pre>
 					</section>
 <section><h3>See also</h3>
 <p><a href="../../../../stdx/data/json/parser/parse_json_value.html"><code class="prettyprint lang-d">parseJSONValue</code></a>
@@ -95,24 +94,23 @@ if (isJSONTokenInputRange!Input);</pre>
 <section><h3>Example</h3>
 
 <pre class="code prettyprint lang-d">// parse a simple number
-JSONValue a = toJSONValue(<code class="prettyprint lang-d">1.0</code>);
+JSONValue a = toJSONValue(`1.0`);
 assert(a == 1.0);
 
 // parse an object
-JSONValue b = toJSONValue(<code class="prettyprint lang-d">{"a": true, "b": "test"}</code>);
+JSONValue b = toJSONValue(`{"a": true, "b": "test"}`);
 auto bdoc = b.get!(JSONValue[string]);
 assert(bdoc.length == 2);
 assert(bdoc["a"] == true);
 assert(bdoc["b"] == "test");
 
 // parse an array
-JSONValue c = toJSONValue(<code class="prettyprint lang-d">[1, 2, null]</code>);
+JSONValue c = toJSONValue(`[1, 2, null]`);
 auto cdoc = c.get!(JSONValue[]);
 assert(cdoc.length == 3);
 assert(cdoc[0] == 1.0);
 assert(cdoc[1] == 2.0);
 assert(cdoc[2] == null);
-
 </pre>
 </section>
 

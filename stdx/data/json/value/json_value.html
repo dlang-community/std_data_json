@@ -133,6 +133,15 @@ $('#symbolSearchPane').show();
 							</tr>
 							<tr>
 								<td>
+									<a href="../../../../stdx/data/json/value/json_value.op_index.html" class="public">
+										<code>opIndex</code>
+									</a>
+								</td>
+								<td> Temporary index operations until std.variant is fixed in 2.067
+</td>
+							</tr>
+							<tr>
+								<td>
 									<a href="../../../../stdx/data/json/value/json_value.opt.html" class="public">
 										<code>opt</code>
 									</a>
@@ -192,7 +201,6 @@ static if (__VERSION__ < 2067) {
     assert(d["a"] == 12.0);
     assert(d["b"] == 13.0);
 }
-
 </pre>
 </section>
 <section><h3>Example</h3>
@@ -205,7 +213,6 @@ assert(obj.opt("x").isNull);
 assert(obj.opt("a", "b") == 1.0);
 assert(obj.opt("a", "c") == 2.0);
 assert(obj.opt("a", "x").isNull);
-
 </pre>
 </section>
 

@@ -65,17 +65,18 @@ $('#symbolSearchPane').show();
 			<h1>Module stdx.data.json</h1>
 			<p> Package import for the whole std.data.json package.
 </p>
-<section></section>
+<section>
+</section>
 
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Parse a JSON string
-JSONValue value = parseJSONValue(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
 auto fields = value.get!(JSONValue[string]);
 assert(fields["name"] == "D");
 assert(fields["kind"] == "language");
 
 // Convert a value back to a JSON string
-assert(value.toJSONString() == <code class="prettyprint lang-d">{"name":"D","kind":"language"}</code>);
+assert(value.toJSONString() == `{"name":"D","kind":"language"}`);
 
 // Convert a value to a formatted JSON string
 assert(value.toJSONString!true() ==
@@ -85,7 +86,7 @@ assert(value.toJSONString!true() ==
 }`);
 
 // Lex a JSON string into a lazy range of tokens
-auto tokens = lexJSON(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
 with (JSONToken.Kind) {
     assert(tokens.map!(t => t.kind).equal(
         [objectStart, string, colon, string, comma,
@@ -103,6 +104,7 @@ with (JSONParserNode.Kind) {
         [objectStart, key, literal, key, literal, objectEnd]));
 }
 </pre>
+
 </section>
 </section>
 			<section>

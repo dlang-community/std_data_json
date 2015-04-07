@@ -65,11 +65,12 @@ $('#symbolSearchPane').show();
 			<h1>Module stdx.data.json.lexer</h1>
 			<p> Provides JSON lexing facilities.
 </p>
-<section></section>
+<section>
+</section>
 
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Lex a JSON string into a lazy range of tokens
-auto tokens = <a href="../../../stdx/data/json/lexer/lex_json.html">lexJSON</a>(<code class="prettyprint lang-d">{"name": "Peter", "age": 42}</code>);
+auto tokens = <a href="../../../stdx/data/json/lexer/lex_json.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
 
 with (<a href="../../../stdx/data/json/lexer/json_token.html">JSONToken</a>) {
     assert(tokens.map!(t => t.kind).equal(
@@ -86,6 +87,7 @@ assert(tokens.front.string == "Peter");
 assert(tokens.front.location.line == 0);
 assert(tokens.front.location.column == 9);
 </pre>
+
 </section>
 <section><h2>Credits</h2>
 <p>   Support for escaped UTF-16 surrogates was contributed to the original
@@ -93,6 +95,7 @@ assert(tokens.front.location.column == 9);
    on the version contained in Andrei Alexandrescu's "std.jgrandson"
    module draft.
 </p>
+
 </section>
 </section>
 			<section>

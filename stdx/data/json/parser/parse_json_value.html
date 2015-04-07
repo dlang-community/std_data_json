@@ -83,14 +83,13 @@ $('#symbolSearchPane').show();
 <a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> parseJSONValue(stdx.data.json.lexer.LexOptions options, Input)(
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = ""
-)
-if (isStringInputRange!Input || isIntegralInputRange!Input);</pre>
+);</pre>
 					</section>
 <section><h3>Example</h3>
 <p>Parse an object
 </p>
 <pre class="code prettyprint lang-d">// parse an object
-string str = <code class="prettyprint lang-d">{"a": true, "b": "test"}</code>;
+string str = `{"a": true, "b": "test"}`;
 JSONValue v = parseJSONValue(str);
 assert(!str.length); // the <a href="../../../../stdx/data/json/parser/parse_json_value.html#input">input</a> has been consumed
 
@@ -98,18 +97,16 @@ auto obj = v.get!(JSONValue[string]);
 assert(obj.length == 2);
 assert(obj["a"] == true);
 assert(obj["b"] == "test");
-
 </pre>
 </section>
 <section><h3>Example</h3>
 <p>Parse multiple consecutive values
 </p>
-<pre class="code prettyprint lang-d">string str = <code class="prettyprint lang-d">1.0 2.0</code>;
+<pre class="code prettyprint lang-d">string str = `1.0 2.0`;
 JSONValue v1 = parseJSONValue(str);
 assert(v1 == 1.0);
 JSONValue v2 = parseJSONValue(str);
 assert(v2 == 2.0);
-
 </pre>
 </section>
 
@@ -130,13 +127,12 @@ assert(v2 == 2.0);
 						<pre class="code prettyprint lang-d prototype">
 <a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> parseJSONValue(Input)(
 &nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);</pre>
+);</pre>
 					</section>
 <section><h3>Example</h3>
 
 <pre class="code prettyprint lang-d">// lex
-auto <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens">tokens</a> = lexJSON(<code class="prettyprint lang-d">[1, 2, 3]</code>);
+auto <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens">tokens</a> = lexJSON(`[1, 2, 3]`);
 
 // parse
 auto doc = <a href="../../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(<a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens">tokens</a>);
@@ -146,7 +142,6 @@ assert(arr.length == 3);
 assert(arr[0] == 1.0);
 assert(arr[1] == 2.0);
 assert(arr[2] == 3.0);
-
 </pre>
 </section>
 

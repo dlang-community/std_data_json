@@ -70,6 +70,7 @@ $('#symbolSearchPane').show();
 <p> The input can be a JSONValue, or an input range of either JSONToken
  or JSONParserNode elements.
 </p>
+
 </section>
 
 					<section>
@@ -81,13 +82,11 @@ string toJSON(stdx.data.json.generator.GeneratorOptions options)(
 
 string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
 &nbsp;&nbsp;Input nodes
-)
-if (isJSONParserNodeInputRange!Input);
+);
 
 string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
 &nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);
+);
 
 string toJSON(stdx.data.json.generator.GeneratorOptions options)(
 &nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/json_token.html">JSONToken</a> token
@@ -100,12 +99,14 @@ string toJSON(stdx.data.json.generator.GeneratorOptions options)(
      must be in valid document order, or the parser result will be undefined.</td></tr>
 <tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/to_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/to_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
      occur in any order and are simply appended in order to the final string.</td></tr>
-<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/to_json.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
+<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/to_json.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string
+</td></tr>
 </table>
 </section>
 <section><h3>Returns</h3>
 <p>   Returns a JSON formatted string.
 </p>
+
 </section>
 <section><h3>See also</h3>
 <p><a href="../../../../stdx/data/json/generator/write_json.html"><code class="prettyprint lang-d">writeJSON</code></a>, <a href="../../../../stdx/data/json/generator/to_pretty_json.html"><code class="prettyprint lang-d">toPrettyJSON</code></a>
@@ -115,15 +116,14 @@ string toJSON(stdx.data.json.generator.GeneratorOptions options)(
 
 <pre class="code prettyprint lang-d">JSONValue <a href="../../../../stdx/data/json/generator/to_json.html#value">value</a> = true;
 assert(value.toJSON() == "true");
-
 </pre>
 </section>
 <section><h3>Example</h3>
 
-<pre class="code prettyprint lang-d">auto a = toJSONValue(<code class="prettyprint lang-d">{"a": [], "b": [1, {}]}</code>);
+<pre class="code prettyprint lang-d">auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
 // write compact JSON
-assert(a.toJSON() == <code class="prettyprint lang-d">{"a":[],"b":[1,{}]}</code>, a.toJSON());
+assert(a.toJSON() == `{"a":[],"b":[1,{}]}`, a.toJSON());
 
 // pretty print:
 // {
@@ -134,7 +134,6 @@ assert(a.toJSON() == <code class="prettyprint lang-d">{"a":[],"b":[1,{}]}</code>
 //     ]
 // }
 assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
-
 </pre>
 </section>
 

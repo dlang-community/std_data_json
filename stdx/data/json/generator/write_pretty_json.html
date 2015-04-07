@@ -70,6 +70,7 @@ $('#symbolSearchPane').show();
 <p> This function produces <a href="../../../../stdx/data/json/generator/write_pretty_json.html#output"><code class="prettyprint lang-d">output</code></a> suitable for human consumption by properly
  indenting based on the nesting level.
 </p>
+
 </section>
 
 					<section>
@@ -78,14 +79,12 @@ $('#symbolSearchPane').show();
 void writePrettyJSON(stdx.data.json.generator.GeneratorOptions options, Output)(
 &nbsp;&nbsp;<a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> value,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char));
+);
 
 void writePrettyJSON(stdx.data.json.generator.GeneratorOptions options, Output, Input)(
 &nbsp;&nbsp;Input nodes,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char) &amp;&amp; isJSONParserNodeInputRange!Input);</pre>
+);</pre>
 					</section>
 <section><h3>See also</h3>
 <p><a href="../../../../stdx/data/json/generator/to_pretty_json.html"><code class="prettyprint lang-d">toPrettyJSON</code></a>, <a href="../../../../stdx/data/json/generator/write_json.html"><code class="prettyprint lang-d">writeJSON</code></a>

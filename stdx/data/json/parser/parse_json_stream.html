@@ -92,19 +92,17 @@ $('#symbolSearchPane').show();
 <a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!(JSONLexerRange!(Input,options,appenderFactory)) parseJSONStream(stdx.data.json.lexer.LexOptions options, alias appenderFactory, Input)(
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = null
-)
-if (isStringInputRange!Input || isIntegralInputRange!Input);
+);
 
 <a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!Input parseJSONStream(Input)(
 &nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);</pre>
+);</pre>
 					</section>
 <section><h3>Example</h3>
 
 <pre class="code prettyprint lang-d">import std.algorithm;
 
-auto rng1 = parseJSONStream(<code class="prettyprint lang-d">{ "a": 1, "b": [null] }</code>);
+auto rng1 = parseJSONStream(`{ "a": 1, "b": [null] }`);
 with (<a href="../../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>)
 {
     assert(rng1.map!(n => n.kind).equal(
@@ -112,13 +110,12 @@ with (<a href="../../../../stdx/data/json/parser/json_parser_node.kind.html">JSO
         objectEnd]));
 }
 
-auto rng2 = parseJSONStream(<code class="prettyprint lang-d">1 {"a": 2} null</code>);
+auto rng2 = parseJSONStream(`1 {"a": 2} null`);
 with (<a href="../../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>)
 {
     assert(rng2.map!(n => n.kind).equal(
         [literal, objectStart, key, literal, objectEnd, literal]));
 }
-
 </pre>
 </section>
 

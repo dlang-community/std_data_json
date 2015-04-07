@@ -106,8 +106,6 @@
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/lex_options.use_big_int.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/lexer/lex_options.use_long.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/parser/is_json_parser_node_input_range.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/parser/is_json_token_input_range.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/json_parser_node.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/json_parser_node.key.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/json_parser_node.key.html</loc></url>
@@ -141,6 +139,8 @@
 <url><loc>http://127.0.0.1/stdx/data/json/value.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/json_value.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/json_value.location.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/value/json_value.op_index.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/value/json_value.op_index.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/json_value.opt.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/json_value.payload.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/json_value.payload.html</loc></url>

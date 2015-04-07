@@ -72,24 +72,26 @@ $('#symbolSearchPane').show();
  of nodes. The stream based parser is particularly useful for
  deserializing with few allocations or for processing large documents.
 </p>
+
 </section>
 
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Parse a JSON string to a single value
-JSONValue value = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+JSONValue value = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(`{"name": "D", "kind": "language"}`);
 
 // Parse a JSON string to a node stream
-auto nodes = <a href="../../../stdx/data/json/parser/parse_json_stream.html">parseJSONStream</a>(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+auto nodes = <a href="../../../stdx/data/json/parser/parse_json_stream.html">parseJSONStream</a>(`{"name": "D", "kind": "language"}`);
 with (<a href="../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>) {
     assert(nodes.map!(n => n.kind).equal(
         [objectStart, key, literal, key, literal, objectEnd]));
 }
 
 // Parse a list of tokens instead of a string
-auto tokens = lexJSON(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
 JSONValue value2 = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(tokens);
 assert(value == value2);
 </pre>
+
 </section>
 </section>
 			<section>
@@ -163,39 +165,6 @@ assert(value == value2);
 							</a>
 						</td>
 						<td> Lazy input range of JSON parser nodes.
-</td>
-					</tr>
-				</table>
-			</section>
-			<section>
-				<h2>Enum values</h2>
-				<table>
-					<col class="caption"/>
-					<tr>
-						<th>Name</th>
-						<th>Type</th>
-						<th>Description</th>
-					</tr>
-					<tr>
-						<td>
-							<a id="isJSONParserNodeInputRange" class="public" href="../../../stdx/data/json/parser/is_json_parser_node_input_range.html">
-								<code>isJSONParserNodeInputRange</code>
-							</a>
-						</td>
-						<td>
-						</td>
-						<td>Tests if a given type is an input range of <a href="../../../stdx/data/json/parser/json_parser_node.html"><code class="prettyprint lang-d">JSONParserNode</code></a>.
-</td>
-					</tr>
-					<tr>
-						<td>
-							<a id="isJSONTokenInputRange" class="public" href="../../../stdx/data/json/parser/is_json_token_input_range.html">
-								<code>isJSONTokenInputRange</code>
-							</a>
-						</td>
-						<td>
-						</td>
-						<td>Tests if a given type is an input range of JSONToken.
 </td>
 					</tr>
 				</table>

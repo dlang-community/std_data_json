@@ -69,6 +69,7 @@ $('#symbolSearchPane').show();
 <section>
 <p> See <a href="../../../../stdx/data/json/generator/to_json.html"><code class="prettyprint lang-d">toJSON</code></a> for more information.
 </p>
+
 </section>
 
 					<section>
@@ -77,26 +78,22 @@ $('#symbolSearchPane').show();
 void writeJSON(stdx.data.json.generator.GeneratorOptions options, Output)(
 &nbsp;&nbsp;<a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> value,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char));
+);
 
 void writeJSON(stdx.data.json.generator.GeneratorOptions options, Output, Input)(
 &nbsp;&nbsp;Input nodes,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char) &amp;&amp; isJSONParserNodeInputRange!Input);
+);
 
 void writeJSON(stdx.data.json.generator.GeneratorOptions options, Output, Input)(
 &nbsp;&nbsp;Input tokens,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char) &amp;&amp; isJSONTokenInputRange!Input);
+);
 
 void writeJSON(stdx.data.json.generator.GeneratorOptions options, Output)(
 &nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/json_token.html">JSONToken</a> token,
 &nbsp;&nbsp;Output output
-)
-if (isOutputRange!(Output, char));</pre>
+);</pre>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
@@ -106,7 +103,8 @@ if (isOutputRange!(Output, char));</pre>
      must be in valid document order, or the parser result will be undefined.</td></tr>
 <tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/write_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/write_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
      occur in any order and are simply appended in order to the final string.</td></tr>
-<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/write_json.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
+<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/write_json.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string
+</td></tr>
 </table>
 </section>
 <section><h3>See also</h3>

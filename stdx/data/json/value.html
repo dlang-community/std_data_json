@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<meta charset="UTF-8"/>
 		<title>Module stdx.data.json.value</title>
 		<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
@@ -11,7 +10,7 @@
 		<script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
 	</head>
 	<body onload="prettyPrint(); setupDdox();">
-		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">stdx</a>
@@ -61,33 +60,24 @@ var symbolSearchRootDir = "../../../";
 $('#symbolSearchPane').show();
 	</script>
 				</div>
-				<script type="text/javascript" src="../../../scripts/mousetrap.js"></script>
-				<script type="text/javascript">
-$(document).ready(function() {
-	Mousetrap.bind('s', function(e) {
-		$("#symbolSearch").focus();
-		return false;
-	});
-});
-				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Module stdx.data.json.value</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<h1>Module stdx.data.json.value</h1>
 			<p> Defines a generic value type for builing and holding JSON documents in memory.
 </p>
 <section></section>
-<!-- using block ddox.sections in ddox.layout.dt-->
+
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// build a simple JSON document
-auto aa = ["a": <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>("hello"), "b": <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(true)];
-auto obj = <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(aa);
+auto aa = ["a": <a href="../../../stdx/data/json/value/json_value.html">JSONValue</a>("hello"), "b": <a href="../../../stdx/data/json/value/json_value.html">JSONValue</a>(true)];
+auto obj = <a href="../../../stdx/data/json/value/json_value.html">JSONValue</a>(aa);
 
 // Algebraic currently doesn't allow the desired syntax: obj["a"]
-assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string])["a"] == "hello");
-assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string])["b"] == true);
+assert(obj.get!(<a href="../../../stdx/data/json/value/json_value.html">JSONValue</a>[string])["a"] == "hello");
+assert(obj.get!(<a href="../../../stdx/data/json/value/json_value.html">JSONValue</a>[string])["b"] == true);
 </pre>
 </section>
-</section><!-- using block ddox.members in ddox.layout.dt-->
+</section>
 			<section>
 				<h2>Structs</h2>
 				<table>
@@ -98,7 +88,7 @@ assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONValue" class="public" href="../../../stdx/data/json/value/JSONValue.html">
+							<a id="JSONValue" class="public" href="../../../stdx/data/json/value/json_value.html">
 								<code>JSONValue</code>
 							</a>
 						</td>
@@ -108,19 +98,19 @@ assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue
 				</table>
 			</section>
 			<section>
-				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+				<h2>Authors</h2>
 <p>Sönke Ludwig
 </p>
 
 			</section>
 			<section>
-				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+				<h2>Copyright</h2>
 <p>Copyright 2012 - 2014, Sönke Ludwig.
 </p>
 
 			</section>
 			<section>
-				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+				<h2>License</h2>
 <p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 

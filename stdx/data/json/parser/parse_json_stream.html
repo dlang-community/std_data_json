@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function parseJSONStream</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function parseJSONStream</h1>
+			<section>
+				<p> Parses a JSON document using a lazy parser node range.
+</p>
+<section>
+<p> This mode parsing mode is similar to a streaming XML (StAX) parser. It can
+ be used to parse JSON documents of unlimited size. The memory consumption
+ grows linearly with the nesting level (about 4 bytes per level), but is
+ independent of the number of values in the JSON document.
+</p>
+
+<p> The resulting range of nodes is guaranteed to be ordered according to the
+ following grammar, where uppercase terminals correspond to the node kind
+ (See <a href="../../../../stdx/data/json/parser/json_parser_node.kind.html"><code class="prettyprint lang-d">JSONParserNode.Kind</code></a>).
+</p>
+
+<p> <ul><li>list → value*</li>
+   <li>value → LITERAL | array | object</li>
+   <li>array → ARRAYSTART (value)* ARRAYEND</li>
+   <li>object → OBJECTSTART (KEY value)* OBJECTEND</li>
+ </ul>
+</p>
+</section>
+
+					<section>
+						<h3>Prototypes</h3>
+						<pre class="code prettyprint lang-d prototype">
+<a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!(JSONLexerRange!(Input,options)) parseJSONStream(stdx.data.json.lexer.LexOptions options, Input)(
+&nbsp;&nbsp;Input input,
+&nbsp;&nbsp;string filename = null
+)
+if (isStringInputRange!Input || isIntegralInputRange!Input);
+
+<a href="../../../../stdx/data/json/parser/json_parser_range.html">JSONParserRange</a>!Input parseJSONStream(Input)(
+&nbsp;&nbsp;Input tokens
+)
+if (isJSONTokenInputRange!Input);</pre>
+					</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">import std.algorithm;
+
+auto rng1 = parseJSONStream(<code class="prettyprint lang-d">{ "a": 1, "b": [null] }</code>);
+with (<a href="../../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>)
+{
+    assert(rng1.map!(n => n.kind).equal(
+        [objectStart, key, literal, key, arrayStart, literal, arrayEnd,
+        objectEnd]));
+}
+
+auto rng2 = parseJSONStream(<code class="prettyprint lang-d">1 {"a": 2} null</code>);
+with (<a href="../../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>)
+{
+    assert(rng2.map!(n => n.kind).equal(
+        [literal, objectStart, key, literal, objectEnd, literal]));
+}
+
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

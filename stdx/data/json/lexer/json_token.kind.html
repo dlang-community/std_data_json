@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>json_token.kind - multiple declarations</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>json_token.kind - multiple declarations</h1>
+			<ul>
+				<li>Function JSONToken.kind</li>
+				<li>Enum JSONToken.Kind</li>
+			</ul>
+			<section>
+				<h2>Function JSONToken.kind</h2>
+				<p> Gets/sets the <code class="prettyprint lang-d">kind</code> of the represented token.
+</p>
+<section>
+<p> Setting the token <code class="prettyprint lang-d">kind</code> is not allowed for any of the kinds that have
+ additional data associated (<a href="../../../../stdx/data/json/lexer/json_token.boolean.html"><code class="prettyprint lang-d">boolean</code></a>, <a href="../../../../stdx/data/json/lexer/json_token.number.html"><code class="prettyprint lang-d">number</code></a> and <a href="../../../../stdx/data/json/lexer/json_token.string.html"><code class="prettyprint lang-d">string</code></a>).
+</p>
+</section>
+
+					<section>
+						<h3>Prototypes</h3>
+						<pre class="code prettyprint lang-d prototype">
+<a href="../../../../stdx/data/json/lexer/json_token.kind.html">JSONToken.<wbr/>Kind</a> kind() nothrow @property @nogc @safe const;
+
+<a href="../../../../stdx/data/json/lexer/json_token.kind.html">JSONToken.<wbr/>Kind</a> kind(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/json_token.kind.html">JSONToken.<wbr/>Kind</a> value
+) nothrow @property @nogc @safe;</pre>
+					</section>
+
+			</section>
+			<section>
+				<h2>Enum JSONToken.Kind</h2>
+				<p> The <a href="../../../../stdx/data/json/lexer/json_token.kind.html"><code class="prettyprint lang-d">kind</code></a> of token represented.
+</p>
+
+					<p>The enum base type is
+						<code class="prettyprint lang-d"><code class="prettyprint lang-d">int</code></code>
+.
+					</p>
+					<section>
+						<h3>Enum members</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.array_end.html">
+										<code>arrayEnd</code>
+									</a>
+								</td>
+								<td>The "]" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.array_start.html">
+										<code>arrayStart</code>
+									</a>
+								</td>
+								<td>The "[" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.boolean.html">
+										<code>boolean</code>
+									</a>
+								</td>
+								<td>"true" or "false" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.colon.html">
+										<code>colon</code>
+									</a>
+								</td>
+								<td>The ":" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.comma.html">
+										<code>comma</code>
+									</a>
+								</td>
+								<td>The "," token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.error.html">
+										<code>error</code>
+									</a>
+								</td>
+								<td>Malformed token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.none.html">
+										<code>none</code>
+									</a>
+								</td>
+								<td>Used internally, never returned from the lexer
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.null_.html">
+										<code>null_</code>
+									</a>
+								</td>
+								<td>The "null" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.number.html">
+										<code>number</code>
+									</a>
+								</td>
+								<td>Numeric token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.object_end.html">
+										<code>objectEnd</code>
+									</a>
+								</td>
+								<td>The "}" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.object_start.html">
+										<code>objectStart</code>
+									</a>
+								</td>
+								<td>The "{" token
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/json_token.kind.string.html">
+										<code>string</code>
+									</a>
+								</td>
+								<td>String token, stored in escaped form
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function toJSON</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class="selected module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function toJSON</h1>
+			<section>
+				<p> Converts the given JSON document(s) to a compact string representation.
+</p>
+<section>
+<p> The input can be a JSONValue, or an input range of either JSONToken
+ or JSONParserNode elements.
+</p>
+</section>
+
+					<section>
+						<h3>Prototypes</h3>
+						<pre class="code prettyprint lang-d prototype">
+string toJSON(stdx.data.json.generator.GeneratorOptions options)(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> value
+);
+
+string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
+&nbsp;&nbsp;Input nodes
+)
+if (isJSONParserNodeInputRange!Input);
+
+string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
+&nbsp;&nbsp;Input tokens
+)
+if (isJSONTokenInputRange!Input);
+
+string toJSON(stdx.data.json.generator.GeneratorOptions options)(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/json_token.html">JSONToken</a> token
+);</pre>
+					</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="value">value</td><td> A single JSON document</td></tr>
+<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser <a href="../../../../stdx/data/json/generator/to_json.html#nodes"><code class="prettyprint lang-d">nodes</code></a>. The <a href="../../../../stdx/data/json/generator/to_json.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
+     must be in valid document order, or the parser result will be undefined.</td></tr>
+<tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/to_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/to_json.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
+     occur in any order and are simply appended in order to the final string.</td></tr>
+<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/to_json.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string</td></tr>
+</table>
+</section>
+<section><h3>Returns</h3>
+<p>   Returns a JSON formatted string.
+</p>
+</section>
+<section><h3>See also</h3>
+<p><a href="../../../../stdx/data/json/generator/write_json.html"><code class="prettyprint lang-d">writeJSON</code></a>, <a href="../../../../stdx/data/json/generator/to_pretty_json.html"><code class="prettyprint lang-d">toPrettyJSON</code></a>
+</p>
+</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">JSONValue <a href="../../../../stdx/data/json/generator/to_json.html#value">value</a> = true;
+assert(value.toJSON() == "true");
+
+</pre>
+</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">auto a = toJSONValue(<code class="prettyprint lang-d">{"a": [], "b": [1, {}]}</code>);
+
+// write compact JSON
+assert(a.toJSON() == <code class="prettyprint lang-d">{"a":[],"b":[1,{}]}</code>, a.toJSON());
+
+// pretty print:
+// {
+//     "a": [],
+//     "b": [
+//         1,
+//         {},
+//     ]
+// }
+assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

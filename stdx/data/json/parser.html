@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<meta charset="UTF-8"/>
 		<title>Module stdx.data.json.parser</title>
 		<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
@@ -11,7 +10,7 @@
 		<script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
 	</head>
 	<body onload="prettyPrint(); setupDdox();">
-		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">stdx</a>
@@ -61,18 +60,9 @@ var symbolSearchRootDir = "../../../";
 $('#symbolSearchPane').show();
 	</script>
 				</div>
-				<script type="text/javascript" src="../../../scripts/mousetrap.js"></script>
-				<script type="text/javascript">
-$(document).ready(function() {
-	Mousetrap.bind('s', function(e) {
-		$("#symbolSearch").focus();
-		return false;
-	});
-});
-				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Module stdx.data.json.parser</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<h1>Module stdx.data.json.parser</h1>
 			<p> Provides various means for parsing JSON documents.
 </p>
 <section>
@@ -83,25 +73,25 @@ $(document).ready(function() {
  deserializing with few allocations or for processing large documents.
 </p>
 </section>
-<!-- using block ddox.sections in ddox.layout.dt-->
+
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Parse a JSON string to a single value
-JSONValue value = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(`{"name": "D", "kind": "language"}`);
+JSONValue value = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
 
 // Parse a JSON string to a node stream
-auto nodes = <a href="../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(`{"name": "D", "kind": "language"}`);
-with (<a href="../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONParserNode.Kind</a>) {
+auto nodes = <a href="../../../stdx/data/json/parser/parse_json_stream.html">parseJSONStream</a>(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+with (<a href="../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>) {
     assert(nodes.map!(n => n.kind).equal(
         [objectStart, key, literal, key, literal, objectEnd]));
 }
 
 // Parse a list of tokens instead of a string
-auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
-JSONValue value2 = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(tokens);
+auto tokens = lexJSON(<code class="prettyprint lang-d">{"name": "D", "kind": "language"}</code>);
+JSONValue value2 = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(tokens);
 assert(value == value2);
 </pre>
 </section>
-</section><!-- using block ddox.members in ddox.layout.dt-->
+</section>
 			<section>
 				<h2>Functions</h2>
 				<table>
@@ -112,7 +102,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONStream" class="public" href="../../../stdx/data/json/parser/parseJSONStream.html">
+							<a id="parseJSONStream" class="public" href="../../../stdx/data/json/parser/parse_json_stream.html">
 								<code>parseJSONStream</code>
 							</a>
 						</td>
@@ -121,7 +111,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parseJSONValue.html">
+							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parse_json_value.html">
 								<code>parseJSONValue</code>
 							</a>
 						</td>
@@ -130,16 +120,16 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parseJSONValue.html">
+							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parse_json_value.html">
 								<code>parseJSONValue</code>
 							</a>
 						</td>
-						<td> Parses a stream of JSON <a href="../../../stdx/data/json/parser/parseJSONValue.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
+						<td> Parses a stream of JSON <a href="../../../stdx/data/json/parser/parse_json_value.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="toJSONValue" class="public" href="../../../stdx/data/json/parser/toJSONValue.html">
+							<a id="toJSONValue" class="public" href="../../../stdx/data/json/parser/to_json_value.html">
 								<code>toJSONValue</code>
 							</a>
 						</td>
@@ -159,7 +149,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONParserNode" class="public" href="../../../stdx/data/json/parser/JSONParserNode.html">
+							<a id="JSONParserNode" class="public" href="../../../stdx/data/json/parser/json_parser_node.html">
 								<code>JSONParserNode</code>
 							</a>
 						</td>
@@ -168,7 +158,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONParserRange" class="public" href="../../../stdx/data/json/parser/JSONParserRange.html">
+							<a id="JSONParserRange" class="public" href="../../../stdx/data/json/parser/json_parser_range.html">
 								<code>JSONParserRange</code>
 							</a>
 						</td>
@@ -178,19 +168,52 @@ assert(value == value2);
 				</table>
 			</section>
 			<section>
-				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="isJSONParserNodeInputRange" class="public" href="../../../stdx/data/json/parser/is_json_parser_node_input_range.html">
+								<code>isJSONParserNodeInputRange</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td>Tests if a given type is an input range of <a href="../../../stdx/data/json/parser/json_parser_node.html"><code class="prettyprint lang-d">JSONParserNode</code></a>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="isJSONTokenInputRange" class="public" href="../../../stdx/data/json/parser/is_json_token_input_range.html">
+								<code>isJSONTokenInputRange</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td>Tests if a given type is an input range of JSONToken.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2>
 <p>Sönke Ludwig
 </p>
 
 			</section>
 			<section>
-				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+				<h2>Copyright</h2>
 <p>Copyright 2012 - 2014, Sönke Ludwig.
 </p>
 
 			</section>
 			<section>
-				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+				<h2>License</h2>
 <p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 

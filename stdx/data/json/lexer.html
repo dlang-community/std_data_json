@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<meta charset="UTF-8"/>
 		<title>Module stdx.data.json.lexer</title>
 		<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
@@ -11,7 +10,7 @@
 		<script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
 	</head>
 	<body onload="prettyPrint(); setupDdox();">
-		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">stdx</a>
@@ -61,27 +60,18 @@ var symbolSearchRootDir = "../../../";
 $('#symbolSearchPane').show();
 	</script>
 				</div>
-				<script type="text/javascript" src="../../../scripts/mousetrap.js"></script>
-				<script type="text/javascript">
-$(document).ready(function() {
-	Mousetrap.bind('s', function(e) {
-		$("#symbolSearch").focus();
-		return false;
-	});
-});
-				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Module stdx.data.json.lexer</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<h1>Module stdx.data.json.lexer</h1>
 			<p> Provides JSON lexing facilities.
 </p>
 <section></section>
-<!-- using block ddox.sections in ddox.layout.dt-->
+
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Lex a JSON string into a lazy range of tokens
-auto tokens = <a href="../../../stdx/data/json/lexer/lexJSON.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
+auto tokens = <a href="../../../stdx/data/json/lexer/lex_json.html">lexJSON</a>(<code class="prettyprint lang-d">{"name": "Peter", "age": 42}</code>);
 
-with (<a href="../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>) {
+with (<a href="../../../stdx/data/json/lexer/json_token.html">JSONToken</a>) {
     assert(tokens.map!(t => t.kind).equal(
         [Kind.objectStart, Kind.string, Kind.colon, Kind.string, Kind.comma,
         Kind.string, Kind.colon, Kind.number, Kind.objectEnd]));
@@ -104,7 +94,7 @@ assert(tokens.front.location.column == 9);
    module draft.
 </p>
 </section>
-</section><!-- using block ddox.members in ddox.layout.dt-->
+</section>
 			<section>
 				<h2>Functions</h2>
 				<table>
@@ -115,11 +105,11 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lexJSON.html">
+							<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lex_json.html">
 								<code>lexJSON</code>
 							</a>
 						</td>
-						<td> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> string.
+						<td> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../stdx/data/json/lexer/lex_json.html#input"><code class="prettyprint lang-d">input</code></a> string.
 </td>
 					</tr>
 				</table>
@@ -134,16 +124,16 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/JSONLexerRange.html">
+							<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/json_lexer_range.html">
 								<code>JSONLexerRange</code>
 							</a>
 						</td>
-						<td> A lazy <a href="../../../stdx/data/json/lexer/JSONLexerRange.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
+						<td> A lazy <a href="../../../stdx/data/json/lexer/json_lexer_range.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/JSONNumber.html">
+							<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/json_number.html">
 								<code>JSONNumber</code>
 							</a>
 						</td>
@@ -152,7 +142,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/JSONString.html">
+							<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/json_string.html">
 								<code>JSONString</code>
 							</a>
 						</td>
@@ -161,7 +151,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/JSONToken.html">
+							<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/json_token.html">
 								<code>JSONToken</code>
 							</a>
 						</td>
@@ -180,7 +170,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/LexOptions.html">
+							<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/lex_options.html">
 								<code>LexOptions</code>
 							</a>
 						</td>
@@ -190,19 +180,19 @@ assert(tokens.front.location.column == 9);
 				</table>
 			</section>
 			<section>
-				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+				<h2>Authors</h2>
 <p>Sönke Ludwig
 </p>
 
 			</section>
 			<section>
-				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+				<h2>Copyright</h2>
 <p>Copyright 2012 - 2014, Sönke Ludwig.
 </p>
 
 			</section>
 			<section>
-				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+				<h2>License</h2>
 <p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>parse_json_value - multiple declarations</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>parse_json_value - multiple declarations</h1>
+			<ul>
+				<li>Function parseJSONValue</li>
+				<li>Function parseJSONValue</li>
+			</ul>
+			<section>
+				<h2>Function parseJSONValue</h2>
+				<p> Parses a JSON string and returns the result as a JSONValue.
+</p>
+<section>
+<p> The <a href="../../../../stdx/data/json/parser/parse_json_value.html#input"><code class="prettyprint lang-d">input</code></a> string must start with a valid JSON document. Any characters
+ occurring after this document will be left in the <a href="../../../../stdx/data/json/parser/parse_json_value.html#input"><code class="prettyprint lang-d">input</code></a> range.
+</p>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+<a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> parseJSONValue(stdx.data.json.lexer.LexOptions options, Input)(
+&nbsp;&nbsp;Input input,
+&nbsp;&nbsp;string filename = ""
+)
+if (isStringInputRange!Input || isIntegralInputRange!Input);</pre>
+					</section>
+<section><h3>Example</h3>
+<p>Parse an object
+</p>
+<pre class="code prettyprint lang-d">// parse an object
+string str = <code class="prettyprint lang-d">{"a": true, "b": "test"}</code>;
+JSONValue v = parseJSONValue(str);
+assert(!str.length); // the <a href="../../../../stdx/data/json/parser/parse_json_value.html#input">input</a> has been consumed
+
+auto obj = v.get!(JSONValue[string]);
+assert(obj.length == 2);
+assert(obj["a"] == true);
+assert(obj["b"] == "test");
+
+</pre>
+</section>
+<section><h3>Example</h3>
+<p>Parse multiple consecutive values
+</p>
+<pre class="code prettyprint lang-d">string str = <code class="prettyprint lang-d">1.0 2.0</code>;
+JSONValue v1 = parseJSONValue(str);
+assert(v1 == 1.0);
+JSONValue v2 = parseJSONValue(str);
+assert(v2 == 2.0);
+
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Function parseJSONValue</h2>
+				<p> Parses a stream of JSON <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
+</p>
+<section>
+<p> All <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens"><code class="prettyprint lang-d">tokens</code></a> belonging to the document will be consumed from the input range.
+ Any <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens"><code class="prettyprint lang-d">tokens</code></a> after the end of the first JSON document will be left in the
+ input token range for possible later consumption.
+</p>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+<a href="../../../../stdx/data/json/value/json_value.html">JSONValue</a> parseJSONValue(Input)(
+&nbsp;&nbsp;Input tokens
+)
+if (isJSONTokenInputRange!Input);</pre>
+					</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">// lex
+auto <a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens">tokens</a> = lexJSON(<code class="prettyprint lang-d">[1, 2, 3]</code>);
+
+// parse
+auto doc = <a href="../../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(<a href="../../../../stdx/data/json/parser/parse_json_value.html#tokens">tokens</a>);
+
+auto arr = doc.get!(JSONValue[]);
+assert(arr.length == 3);
+assert(arr[0] == 1.0);
+assert(arr[1] == 2.0);
+assert(arr[2] == 3.0);
+
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<meta charset="UTF-8"/>
 		<title>Struct Location</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
@@ -11,7 +10,7 @@
 		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
 	<body onload="prettyPrint(); setupDdox();">
-		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">stdx</a>
@@ -61,23 +60,14 @@ var symbolSearchRootDir = "../../../../";
 $('#symbolSearchPane').show();
 	</script>
 				</div>
-				<script type="text/javascript" src="../../../../scripts/mousetrap.js"></script>
-				<script type="text/javascript">
-$(document).ready(function() {
-	Mousetrap.bind('s', function(e) {
-		$("#symbolSearch").focus();
-		return false;
-	});
-});
-				</script>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct Location</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Struct Location</h1>
 			<section>
-				<p> Represents a location in an input range/<a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
+				<p> Represents a location in an input range/<a href="../../../../stdx/data/json/foundation/location.file.html"><code class="prettyprint lang-d">file</code></a>.
 </p>
 <section>
-<p> The indices are zero based and the <a href="../../../../stdx/data/json/foundation/Location.column.html"><code class="prettyprint lang-d">column</code></a> is represented in code units of
+<p> The indices are zero based and the <a href="../../../../stdx/data/json/foundation/location.column.html"><code class="prettyprint lang-d">column</code></a> is represented in code units of
  the input (i.e. in bytes in case of a UTF-8 input string).
 </p>
 </section>
@@ -93,15 +83,15 @@ $(document).ready(function() {
 							</tr>
 							<tr>
 								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.column.html" class="public"><code>column</code></a>
+									<a href="../../../../stdx/data/json/foundation/location.column.html" class="public"><code>column</code></a>
 								</td>
 								<td class="typecol"><code class="prettyprint lang-d">uint</code></td>
-								<td>The zero based code unit index of the referenced <a href="../../../../stdx/data/json/foundation/Location.line.html"><code class="prettyprint lang-d">line</code></a>.
+								<td>The zero based code unit index of the referenced <a href="../../../../stdx/data/json/foundation/location.line.html"><code class="prettyprint lang-d">line</code></a>.
 </td>
 							</tr>
 							<tr>
 								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.file.html" class="public"><code>file</code></a>
+									<a href="../../../../stdx/data/json/foundation/location.file.html" class="public"><code>file</code></a>
 								</td>
 								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
 								<td>Optional <code class="prettyprint lang-d">file</code> name.
@@ -109,10 +99,10 @@ $(document).ready(function() {
 							</tr>
 							<tr>
 								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.line.html" class="public"><code>line</code></a>
+									<a href="../../../../stdx/data/json/foundation/location.line.html" class="public"><code>line</code></a>
 								</td>
 								<td class="typecol"><code class="prettyprint lang-d">uint</code></td>
-								<td>The zero based <code class="prettyprint lang-d">line</code> of the input <a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
+								<td>The zero based <code class="prettyprint lang-d">line</code> of the input <a href="../../../../stdx/data/json/foundation/location.file.html"><code class="prettyprint lang-d">file</code></a>.
 </td>
 							</tr>
 						</table>
@@ -127,7 +117,7 @@ $(document).ready(function() {
 							</tr>
 							<tr>
 								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.toString.html" class="public">
+									<a href="../../../../stdx/data/json/foundation/location.to_string.html" class="public">
 										<code>toString</code>
 									</a>
 								</td>
@@ -139,19 +129,19 @@ $(document).ready(function() {
 
 			</section>
 			<section>
-				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+				<h2>Authors</h2>
 <p>Sönke Ludwig
 </p>
 
 			</section>
 			<section>
-				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+				<h2>Copyright</h2>
 <p>Copyright 2012 - 2014, Sönke Ludwig.
 </p>
 
 			</section>
 			<section>
-				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+				<h2>License</h2>
 <p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 

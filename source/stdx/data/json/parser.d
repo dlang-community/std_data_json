@@ -757,3 +757,6 @@ static assert(isJSONTokenInputRange!(JSONLexerRange!string));
 enum isJSONParserNodeInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONParserNode);
 
 static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!string)));
+
+// Workaround for https://issues.dlang.org/show_bug.cgi?id=14425
+private alias Workaround_14425 = JSONParserRange!(JSONLexerRange!string);

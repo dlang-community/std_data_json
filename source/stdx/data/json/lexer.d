@@ -274,7 +274,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         ensureFrontValid();
 
         // make sure an error token is the last token in the range
-        if (_front.kind == JSONToken.Kind.error)
+        if (_front.kind == JSONToken.Kind.error && !_input.empty)
         {
             // clear the input
             _input = InternalInput.init;
@@ -299,32 +299,19 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
     private void readToken()
     {
-        import std.algorithm : skipOver;
-        import std.string : representation;
-
-        void skipChar()
-        {
-            _input.popFront();
-            static if (!(options & LexOptions.noTrackLocation)) _loc.column++;
-        }
-
-
         skipWhitespace();
 
         assert(!_input.empty, "Reading JSON token from empty input stream.");
 
-        _front.location = _loc;
-
-        string kw;
+        static if (!(options & LexOptions.noTrackLocation))
+            _front.location = _loc;
 
         switch (_input.front)
         {
-            default:
-                setError("Malformed token");
-                return;
-            case 'f': kw = "false"; _front.boolean = false; goto parse_kw;
-            case 't': kw = "true"; _front.boolean = true; goto parse_kw;
-            case 'n': kw = "null"; _front.kind = JSONToken.Kind.null_; goto parse_kw;
+            default: setError("Malformed token"); break;
+            case 'f': _front.boolean = false; skipKeyword("false"); break;
+            case 't': _front.boolean = true; skipKeyword("true"); break;
+            case 'n': _front.kind = JSONToken.Kind.null_; skipKeyword("null"); break;
             case '"': parseString(); break;
             case '0': .. case '9': case '-': parseNumber(); break;
             case '[': skipChar(); _front.kind = JSONToken.Kind.arrayStart; break;
@@ -341,14 +328,19 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         }
 
         skipWhitespace();
-        return;
+    }
 
-		parse_kw:
-            if (_input.skipOver(kw.representation))
-            {
-                static if (!(options & LexOptions.noTrackLocation)) _loc.column += kw.length;
-            }
-            else setError("Invalid keyord");
+    private void skipChar()
+    {
+        _input.popFront();
+        static if (!(options & LexOptions.noTrackLocation)) _loc.column++;
+    }
+
+    private void skipKeyword(string kw)
+    {
+        import std.algorithm : skipOver;
+        if (!_input.skipOver(kw)) setError("Invalid keyord");
+        else static if (!(options & LexOptions.noTrackLocation)) _loc.column += kw.length;
     }
 
     private void skipWhitespace()
@@ -455,10 +447,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
         static if (options & (LexOptions.useBigInt/*|LexOptions.useDecimal*/))
             BigInt int_part = 0;
-        else static if (options & LexOptions.useLong)
-            long int_part = 0;
         else
-            double int_part = 0;
+            long int_part = 0;
         bool neg = false;
 
         void setInt()
@@ -552,7 +542,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         {
             if (neg) int_part = -int_part;
             /*static if (options & LexOptions.useDecimal) _front.number = Decimal(int_part, exponent);
-            else*/ _front.number = int_part * 10.0 ^^ exponent;
+            else*/ _front.number = exponent ? int_part * 10.0 ^^ exponent : int_part;
         }
 
         // post decimal point part
@@ -569,15 +559,18 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
             while (true)
             {
+                uint digit = _input.front - '0';
+                if (digit > 9) break;
+
+                int_part = int_part * 10 + digit;
+                exponent--;
+                skipChar();
+
                 if (_input.empty)
                 {
                     setFloat();
                     return;
                 }
-                if (!isDigit(_input.front)) break;
-                int_part = int_part * 10 + (_input.front - '0');
-                exponent--;
-                skipChar();
             }
         }
 
@@ -625,7 +618,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         setFloat();
     }
 
-    void setError(string err)
+    private void setError(string err)
     {
         _front.kind = JSONToken.Kind.error;
         _error = err;

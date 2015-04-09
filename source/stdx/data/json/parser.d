@@ -761,3 +761,190 @@ static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!string
 
 // Workaround for https://issues.dlang.org/show_bug.cgi?id=14425
 private alias Workaround_14425 = JSONParserRange!(JSONLexerRange!string);
+
+
+/**
+ * Skips a single JSON value in a parser stream.
+ *
+ * The value pointed to by `nodes.front` will be skipped. All JSON types will
+ * be skipped, which means in particular that arrays and objects will be
+ * skipped recursively.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ */
+void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", nodes.front.literal.location);
+
+    auto k = nodes.front.kind;
+    nodes.popFront();
+
+    with (JSONParserNode.Kind) {
+        if (k != arrayStart && k != objectStart) return;
+
+        int depth = 1;
+        while (!nodes.empty) {
+            k = nodes.front.kind;
+            nodes.popFront();
+            if (k == arrayStart || k == objectStart) depth++;
+            else if (k == arrayEnd || k == objectEnd) {
+                if (--depth == 0) break;
+            }
+        }
+    }
+}
+
+/**
+ * Skips all entries in an object until a certain key is reached.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *   key = Name of the key to find
+ *
+ * Returns:
+ *   `true` is returned if and only if the specified key has been found.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ */
+bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.objectStart,
+        "Expected object", nodes.front.literal.location);
+    nodes.popFront();
+
+    while (true) {
+        auto k = nodes.front.kind;
+        if (k == JSONParserNode.Kind.objectEnd) {
+            nodes.popFront();
+            return false;
+        }
+
+        assert(k == JSONParserNode.Kind.key);
+        if (nodes.front.key == key) {
+            nodes.popFront();
+            return true;
+        }
+
+        nodes.popFront();
+
+        nodes.skipValue();
+    }
+}
+
+
+/**
+ * Reads an array and issues a callback for each entry.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *   del = The callback to invoke for each array entry
+ */
+void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.arrayStart,
+        "Expected array", nodes.front.literal.location);
+    nodes.popFront();
+
+    while (true) {
+        auto k = nodes.front.kind;
+        if (k == JSONParserNode.Kind.arrayEnd) {
+          nodes.popFront();
+          return;
+        }
+        del();
+    }
+}
+
+/**
+ * Reads an object and issues a callback for each field.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *   del = The callback to invoke for each object field
+ */
+void readObject(R)(ref R nodes, scope void delegate(string key) @safe del) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.objectStart,
+        "Expected object", nodes.front.literal.location);
+    nodes.popFront();
+
+    while (true) {
+        auto k = nodes.front.kind;
+        if (k == JSONParserNode.Kind.objectEnd) {
+          nodes.popFront();
+          return;
+        }
+        auto key = nodes.front.key;
+        nodes.popFront();
+        del(key);
+    }
+}
+
+/**
+ * Reads a single double value.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *
+ * Throws: Throws a `JSONException` is the node range is empty or `nodes.front` is not a number.
+ */
+double readDouble(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
+        && nodes.front.literal.kind == JSONToken.Kind.number,
+        "Expected numeric value", nodes.front.literal.location);
+    double ret = nodes.front.literal.number;
+    nodes.popFront();
+    return ret;
+}
+
+/**
+ * Reads a single double value.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *
+ * Throws: Throws a `JSONException` is the node range is empty or `nodes.front` is not a string.
+ */
+string readString(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
+        && nodes.front.literal.kind == JSONToken.Kind.string,
+        "Expected string value", nodes.front.literal.location);
+    string ret = nodes.front.literal.string;
+    nodes.popFront();
+    return ret;
+}
+
+/**
+ * Reads a single double value.
+ *
+ * Params:
+ *   nodes = An input range of JSON parser nodes
+ *
+ * Throws: Throws a `JSONException` is the node range is empty or `nodes.front` is not a boolean.
+ */
+bool readBool(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
+{
+    import stdx.data.json.foundation;
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
+        && nodes.front.literal.kind == JSONToken.Kind.boolean,
+        "Expected boolean value", nodes.front.literal.location);
+    bool ret = nodes.front.literal.boolean;
+    nodes.popFront();
+    return ret;
+}

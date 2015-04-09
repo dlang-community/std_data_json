@@ -642,7 +642,9 @@ unittest
             auto ret = parseStringHelper(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
-            assert(&ret.rawValue[0] is &str[0]); // string[] must always slice string literals
+            auto sval = ret.anyValue;
+            // string[] must always slice string literals
+            assert(sval[1] && sval[0].ptr is &str[1] || !sval[1] && sval[0].ptr is &str[0]);
             if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
@@ -654,7 +656,9 @@ unittest
             auto ret = parseStringHelper(scopy, loc);
             assert(ret == expected, ret);
             assert(scopy == remaining);
-            assert(&ret.rawValue[0] is &str[0]); // immutable(ubyte)[] must always slice string literals
+            auto sval = ret.anyValue;
+            // immutable(ubyte)[] must always slice string literals
+            assert(sval[1] && sval[0].ptr is &str[1] || !sval[1] && sval[0].ptr is &str[0]);
             if (slice_expected) assert(&ret[0] is &str[1]);
             assert(loc.line == 0);
             assert(loc.column == str.length - remaining.length, format("%s col %s", str, loc.column));
@@ -1990,7 +1994,7 @@ static assert(isInputRange!(CastRange!(char, uint[])));
 
 
 double exp10(int exp)
-pure @trusted {
+pure @trusted @nogc {
     enum min = -19;
     enum max = 19;
     static __gshared immutable expmuls = {

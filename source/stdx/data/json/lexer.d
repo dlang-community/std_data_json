@@ -326,8 +326,6 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                 case 'N', 'I': parseNumber(); break;
             }
         }
-
-        skipWhitespace();
     }
 
     private void skipChar()

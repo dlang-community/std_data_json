@@ -235,6 +235,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     {
         _input = cast(InternalInput)input;
         _front.location.file = filename;
+        skipWhitespace();
     }
 
     /**
@@ -253,8 +254,6 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     @property bool empty()
     {
         if (_front.kind != JSONToken.Kind.none) return false;
-        if (_input.empty) return true;
-        skipWhitespace();
         return _input.empty;
     }
 
@@ -300,8 +299,6 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
     private void readToken()
     {
-        skipWhitespace();
-
         assert(!_input.empty, "Reading JSON token from empty input stream.");
 
         static if (!(options & LexOptions.noTrackLocation))
@@ -327,6 +324,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                 case 'N', 'I': parseNumber(); break;
             }
         }
+    
+        skipWhitespace();
     }
 
     private void skipChar()
@@ -436,13 +435,6 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         import std.traits;
 
         assert(!_input.empty, "Passed empty range to parseNumber");
-
-        void skipChar()
-        {
-            _input.popFront();
-            static if (!(options & LexOptions.noTrackLocation)) _loc.column++;
-        }
-
 
         static if (options & (LexOptions.useBigInt/*|LexOptions.useDecimal*/))
             BigInt int_part = 0;
@@ -1075,9 +1067,13 @@ struct JSONString {
     /// ditto
     @property string rawValue(string val) nothrow @nogc
     {
+        import std.algorithm : canFind;
+        import std.string : representation;
         assert(isValidStringLiteral(val), "Invalid raw string literal");
         _rawValue = val;
-        _value = null;
+        if (!_rawValue.representation.canFind('\\'))
+            _value = val[1 .. $-1];
+        else _value = null;
         return val;
     }
 
@@ -1365,8 +1361,10 @@ struct JSONNumber {
             case Type.double_: _double = other._double; break;
             case Type.long_: _long = other._long; break;
             case Type.bigInt/*, Type.decimal*/:
-                try _decimal = other._decimal;
-                catch (Exception) assert(false);
+                {
+                    scope (failure) assert(false);
+                    _decimal = other._decimal;
+                }
                 break;
         }
     }
@@ -1794,58 +1792,60 @@ package bool skipStringLiteral(bool track_location = true, Array)(
         auto ch = input.front;
         input.popFront();
 
-        switch (ch)
-        {
-            default: break;
-            case 0x00: .. case 0x19:
-                error = "Illegal control character in string literal";
+        static assert(typeof(ch).min == 0);
+
+        if (ch <= 0x19) {
+            error = "Illegal control character in string literal";
+            return false;
+        }
+
+        if (ch == '"') {
+            size_t len = destination.length - input.length;
+            static if (track_location) column += len;
+            destination = destination[0 .. len];
+            return true;
+        }
+
+        if (ch == '\\') {
+            if (input.empty)
+            {
+                error = "Unterminated string escape sequence.";
                 return false;
-            case '"':
-                size_t len = destination.length - input.length;
-                static if (track_location) column += len;
-                destination = destination[0 .. len];
-                return true;
-            case '\\':
-                if (input.empty)
-                {
-                    error = "Unterminated string escape sequence.";
+            }
+
+            auto ech = input.front;
+            input.popFront();
+
+            switch (ech)
+            {
+                default:
+                    error = "Invalid string escape sequence.";
                     return false;
-                }
+                case '"', '\\', '/', 'b', 'f', 'n', 'r', 't': break;
+                case 'u': // \uXXXX
+                    dchar uch = decodeUTF16CP(input, error);
+                    if (uch == dchar.max) return false;
 
-                auto ech = input.front;
-                input.popFront();
-
-                switch (ech)
-                {
-                    default:
-                        error = "Invalid string escape sequence.";
-                        return false;
-                    case '"', '\\', '/', 'b', 'f', 'n', 'r', 't': break;
-                    case 'u': // \uXXXX
-                        dchar uch = decodeUTF16CP(input, error);
-                        if (uch == dchar.max) return false;
-
-                        // detect UTF-16 surrogate pairs
-                        if (0xD800 <= uch && uch <= 0xDBFF)
+                    // detect UTF-16 surrogate pairs
+                    if (0xD800 <= uch && uch <= 0xDBFF)
+                    {
+                        if (!input.skipOver("\\u".representation))
                         {
-                            if (!input.skipOver("\\u".representation))
-                            {
-                                error = "Missing second UTF-16 surrogate";
-                                return false;
-                            }
-
-                            auto uch2 = decodeUTF16CP(input, error);
-                            if (uch2 == dchar.max) return false;
-
-                            if (0xDC00 > uch2 || uch2 > 0xDFFF)
-                            {
-                                error = "Invalid UTF-16 surrogate sequence";
-                                return false;
-                            }
+                            error = "Missing second UTF-16 surrogate";
+                            return false;
                         }
-                        break;
-                }
-                break;
+
+                        auto uch2 = decodeUTF16CP(input, error);
+                        if (uch2 == dchar.max) return false;
+
+                        if (0xDC00 > uch2 || uch2 > 0xDFFF)
+                        {
+                            error = "Invalid UTF-16 surrogate sequence";
+                            return false;
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

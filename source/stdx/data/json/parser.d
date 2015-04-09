@@ -564,15 +564,8 @@ struct JSONParserRange(Input)
         }
     }
 
-    void readNextValue()
+    private void readNextValue()
     {
-        void pushContainer(JSONToken.Kind kind)
-        {
-            if (_containerStackFill >= _containerStack.length)
-                _containerStack.length++;
-            _containerStack[_containerStackFill++] = kind;
-        }
-
         switch (_input.front.kind)
         {
             default:
@@ -594,6 +587,14 @@ struct JSONParserRange(Input)
                 _input.popFront();
                 break;
         }
+    }
+
+    private void pushContainer(JSONToken.Kind kind)
+    {
+        import std.algorithm : max;
+        if (_containerStackFill >= _containerStack.length)
+            _containerStack.length = max(32, _containerStack.length*3/2);
+        _containerStack[_containerStackFill++] = kind;
     }
 }
 

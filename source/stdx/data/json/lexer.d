@@ -386,7 +386,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         static if (is(Input == string) || is(Input == immutable(ubyte)[]))
         {
             InternalInput lit;
-            if (skipStringLiteral!(!(options & LexOptions.noTrackLocation))(_input, lit, _error, _loc.column))
+            bool has_escapes = false;
+            if (skipStringLiteral!(!(options & LexOptions.noTrackLocation))(_input, lit, _error, _loc.column, has_escapes))
             {
                 auto litstr = cast(string)lit;
                 static if (!isSomeChar!(typeof(Input.init.front))) {
@@ -397,7 +398,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                     }
                 }
                 JSONString js;
-                js.rawValue = litstr;
+                if (has_escapes) js.rawValue = litstr;
+                else js.value = litstr[1 .. $-1];
                 _front.string = js;
             }
             else _front.kind = JSONToken.Kind.error;
@@ -533,7 +535,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         {
             if (neg) int_part = -int_part;
             /*static if (options & LexOptions.useDecimal) _front.number = Decimal(int_part, exponent);
-            else*/ _front.number = exponent ? int_part * 10.0 ^^ exponent : int_part;
+            else*/ if (exponent == 0) _front.number = int_part;
+            else _front.number = exp10(exponent) * int_part;
         }
 
         // post decimal point part
@@ -1071,9 +1074,7 @@ struct JSONString {
         import std.string : representation;
         assert(isValidStringLiteral(val), "Invalid raw string literal");
         _rawValue = val;
-        if (!_rawValue.representation.canFind('\\'))
-            _value = val[1 .. $-1];
-        else _value = null;
+        _value = null;
         return val;
     }
 
@@ -1199,7 +1200,13 @@ struct JSONNumber {
             {
                 case Type.double_: return _double;
                 case Type.long_: return cast(double)_long;
-                case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
+                case Type.bigInt:
+                    {
+                        scope (failure) assert(false);
+                        // FIXME: directly convert to double
+                        return cast(double)_decimal.integer.toLong();
+                    }
+                    break;
                 //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
             }
         }
@@ -1212,7 +1219,12 @@ struct JSONNumber {
             {
                 case Type.double_: return _double;
                 case Type.long_: return cast(double)_long;
-                case Type.bigInt: try return cast(double)_decimal.integer.toLong(); catch(Exception) assert(false); // FIXME: directly convert to double
+                case Type.bigInt:
+                    {
+                        scope (failure) assert(false);
+                        // FIXME: directly convert to double
+                        return cast(double)_decimal.integer.toLong();
+                    }
                 //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
             }
         }
@@ -1242,7 +1254,11 @@ struct JSONNumber {
             {
                 case Type.double_: return rndtol(_double);
                 case Type.long_: return _long;
-                case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
+                case Type.bigInt:
+                    {
+                        scope (failure) assert(false);
+                        return _decimal.integer.toLong();
+                    }
                 /*case Type.decimal:
                     try
                     {
@@ -1264,7 +1280,11 @@ struct JSONNumber {
             {
                 case Type.double_: return rndtol(_double);
                 case Type.long_: return _long;
-                case Type.bigInt: try return _decimal.integer.toLong(); catch(Exception) assert(false);
+                case Type.bigInt: 
+                    {
+                        scope (failure) assert(false);
+                        return _decimal.integer.toLong();
+                    }
                 /*case Type.decimal:
                     try
                     {
@@ -1732,12 +1752,12 @@ nothrow {
     void initAppender() @safe nothrow { app = appenderFactory(); appender_init = true; }
 
     auto rep = str_lit.representation;
-    try // Appender.put and skipOver are not nothrow
     {
+        // Appender.put and skipOver are not nothrow
+        scope (failure) assert(false);
         if (!unescapeStringLiteral!(false, true)(rep, app, slice, &initAppender, error, col))
             return false;
     }
-    catch (Exception e) return false;
 
     dst = appender_init ? app.data : slice;
     return true;
@@ -1753,10 +1773,8 @@ nothrow @nogc {
     string slice, error;
     size_t col;
 
-    try
-        return unescapeStringLiteral!(false, true)(rep, nullSink, slice, {}, error, col);
-    catch(Exception)
-        return false;
+    scope (failure) assert(false);
+    return unescapeStringLiteral!(false, true)(rep, nullSink, slice, {}, error, col);
 }
 
 
@@ -1764,7 +1782,8 @@ package bool skipStringLiteral(bool track_location = true, Array)(
         ref Array input,
         ref Array destination,
         ref string error, // target for error message
-        ref size_t column // counter to use for tracking the current column
+        ref size_t column, // counter to use for tracking the current column
+        ref bool has_escapes
     )
 {
     import std.algorithm : skipOver;
@@ -1807,6 +1826,8 @@ package bool skipStringLiteral(bool track_location = true, Array)(
         }
 
         if (ch == '\\') {
+            has_escapes = true;
+
             if (input.empty)
             {
                 error = "Unterminated string escape sequence.";
@@ -1918,11 +1939,11 @@ nothrow {
 
     auto rep = str.representation;
     auto ret = appender!string();
-    try // Appender.put is not nothrow
     {
+        // Appender.put it not nothrow
+        scope (failure) assert(false);
         escapeStringLiteral(rep, ret);
     }
-    catch (Exception e) assert(false);
     return ret.data;
 }
 
@@ -1966,3 +1987,20 @@ private struct CastRange(T, R)
 }
 private CastRange!(T, R) castRange(T, R)(ref R range) @trusted { return CastRange!(T, R)(&range); }
 static assert(isInputRange!(CastRange!(char, uint[])));
+
+
+double exp10(int exp)
+pure @trusted {
+    enum min = -19;
+    enum max = 19;
+    static __gshared immutable expmuls = {
+        double[max - min + 1] ret;
+        double m = 0.1;
+        foreach_reverse (i; min .. 0) { ret[i-min] = m; m *= 0.1; }
+        m = 1.0;
+        foreach (i; 0 .. max) { ret[i-min] = m; m *= 10.0; }
+        return ret;
+    }();
+    if (exp >= min && exp <= max) return expmuls[exp-min];
+    return 10.0 ^^ exp;
+}

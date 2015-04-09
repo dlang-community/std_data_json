@@ -164,6 +164,7 @@ unittest { // test built-in UTF validation
     testw_valid(['"', '\\', 't', 0xE000,'x','"']);
 }
 
+static if (__VERSION__ >= 2067)
 unittest { // test for @nogc interface
     static struct MyAppender {
         @nogc:

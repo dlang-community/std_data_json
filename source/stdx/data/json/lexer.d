@@ -343,9 +343,10 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
     private void skipWhitespace()
     {
-        while (!_input.empty)
+        import std.traits;
+        static if (!(options & LexOptions.noTrackLocation))
         {
-            static if (!(options & LexOptions.noTrackLocation))
+            while (!_input.empty)
             {
                 switch (_input.front)
                 {
@@ -368,7 +369,20 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                         break;
                 }
             }
-            else
+        }
+        else static if (isDynamicArray!InternalInput && is(Unqual!(ElementType!InternalInput) == ubyte))
+        {
+            () @trusted {
+                while (true) {
+                    auto idx = skip!(true, '\r', '\n', ' ', '\t')(_input.ptr);
+                    if (idx == 0) break;
+                    _input.popFrontN(idx);
+                }
+            } ();
+        }
+        else
+        {
+            while (!_input.empty)
             {
                 switch (_input.front)
                 {
@@ -1991,8 +2005,8 @@ private CastRange!(T, R) castRange(T, R)(ref R range) @trusted { return CastRang
 static assert(isInputRange!(CastRange!(char, uint[])));
 
 
-double exp10(int exp)
-pure @trusted @nogc {
+private double exp10(int exp) pure @trusted @nogc
+{
     enum min = -19;
     enum max = 19;
     static __gshared immutable expmuls = {
@@ -2005,4 +2019,48 @@ pure @trusted @nogc {
     }();
     if (exp >= min && exp <= max) return expmuls[exp-min];
     return 10.0 ^^ exp;
+}
+
+
+// derived from libdparse
+private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow
+    @trusted @nogc if (chars.length <= 8)
+{
+    version (Windows) {
+        // TODO: implement ASM version (Win64 ABI)!
+        import std.algorithm;
+        const(ubyte)* pc = p;
+        while ((*pc).among!chars) pc++;
+        return pc - p;
+    } else {
+        enum constant = ByteCombine!chars;
+        enum charsLength = chars.length;
+        
+        static if (matching)
+            enum flags = 0b0001_0000;
+        else
+            enum flags = 0b0000_0000;
+        
+        asm pure @nogc nothrow
+        {
+            naked;
+            movdqu XMM1, [RDI];
+            mov R10, constant;
+            movq XMM2, R10;
+            mov RAX, charsLength;
+            mov RDX, 16;
+            pcmpestri XMM2, XMM1, flags;
+            mov RAX, RCX;
+            ret;
+        }
+    }
+}
+
+private template ByteCombine(c...)
+{
+    static assert (c.length <= 8);
+    static if (c.length > 1)
+        enum ulong ByteCombine = c[0] | (ByteCombine!(c[1..$]) << 8);
+    else
+        enum ulong ByteCombine = c[0];
 }

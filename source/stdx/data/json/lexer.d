@@ -1210,7 +1210,6 @@ struct JSONNumber {
                         // FIXME: directly convert to double
                         return cast(double)_decimal.integer.toLong();
                     }
-                    break;
                 //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
             }
         }

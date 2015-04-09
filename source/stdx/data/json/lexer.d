@@ -570,7 +570,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
         // exponent
         assert(!_input.empty);
-        if (_input.front.among('e', 'E'))
+        if (_input.front.among!('e', 'E'))
         {
             skipChar();
             if (_input.empty)
@@ -851,12 +851,11 @@ struct JSONToken
     /// The location of the token in the input.
     Location location;
 
-    ref JSONToken opAssign(JSONToken other) nothrow @trusted @nogc
+    ref JSONToken opAssign(ref JSONToken other) nothrow @trusted @nogc
     {
         _kind = other._kind;
-        final switch (_kind) with (Kind) {
-            case none, error, null_, objectStart, objectEnd, arrayStart, arrayEnd, colon, comma:
-                break;
+        switch (_kind) with (Kind) {
+            default: break;
             case boolean: _boolean = other._boolean; break;
             case number: _number = other._number; break;
             case string: _string = other._string; break;
@@ -875,7 +874,7 @@ struct JSONToken
     @property Kind kind() const pure nothrow @nogc { return _kind; }
     /// ditto
     @property Kind kind(Kind value) nothrow @nogc
-        in { assert(!value.among(Kind.boolean, Kind.number, Kind.string)); }
+        in { assert(!value.among!(Kind.boolean, Kind.number, Kind.string)); }
         body { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.

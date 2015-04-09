@@ -2041,7 +2041,7 @@ private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow
         else
             enum flags = 0b0000_0000;
         
-        asm pure @nogc nothrow
+        asm //pure @nogc nothrow
         {
             naked;
             movdqu XMM1, [RDI];

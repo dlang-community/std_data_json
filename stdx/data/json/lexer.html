@@ -70,9 +70,9 @@ $('#symbolSearchPane').show();
 
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Lex a JSON string into a lazy range of tokens
-auto tokens = <a href="../../../stdx/data/json/lexer/lex_json.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
+auto tokens = <a href="../../../stdx/data/json/lexer/lexJSON.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
 
-with (<a href="../../../stdx/data/json/lexer/json_token.html">JSONToken</a>) {
+with (<a href="../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>) {
     assert(tokens.map!(t => t.kind).equal(
         [Kind.objectStart, Kind.string, Kind.colon, Kind.string, Kind.comma,
         Kind.string, Kind.colon, Kind.number, Kind.objectEnd]));
@@ -108,11 +108,11 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lex_json.html">
+							<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lexJSON.html">
 								<code>lexJSON</code>
 							</a>
 						</td>
-						<td> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../stdx/data/json/lexer/lex_json.html#input"><code class="prettyprint lang-d">input</code></a> string.
+						<td> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> string.
 </td>
 					</tr>
 				</table>
@@ -127,16 +127,16 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/json_lexer_range.html">
+							<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/JSONLexerRange.html">
 								<code>JSONLexerRange</code>
 							</a>
 						</td>
-						<td> A lazy <a href="../../../stdx/data/json/lexer/json_lexer_range.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
+						<td> A lazy <a href="../../../stdx/data/json/lexer/JSONLexerRange.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/json_number.html">
+							<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/JSONNumber.html">
 								<code>JSONNumber</code>
 							</a>
 						</td>
@@ -145,7 +145,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/json_string.html">
+							<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/JSONString.html">
 								<code>JSONString</code>
 							</a>
 						</td>
@@ -154,7 +154,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/json_token.html">
+							<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/JSONToken.html">
 								<code>JSONToken</code>
 							</a>
 						</td>
@@ -173,7 +173,7 @@ assert(tokens.front.location.column == 9);
 					</tr>
 					<tr>
 						<td>
-							<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/lex_options.html">
+							<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/LexOptions.html">
 								<code>LexOptions</code>
 							</a>
 						</td>

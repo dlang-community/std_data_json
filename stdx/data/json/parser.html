@@ -77,18 +77,18 @@ $('#symbolSearchPane').show();
 
 			<section><section><h2>Synopsis</h2>
 <pre class="code prettyprint lang-d">// Parse a JSON string to a single value
-JSONValue value = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(`{"name": "D", "kind": "language"}`);
+JSONValue value = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(`{"name": "D", "kind": "language"}`);
 
 // Parse a JSON string to a node stream
-auto nodes = <a href="../../../stdx/data/json/parser/parse_json_stream.html">parseJSONStream</a>(`{"name": "D", "kind": "language"}`);
-with (<a href="../../../stdx/data/json/parser/json_parser_node.kind.html">JSONParserNode.Kind</a>) {
+auto nodes = <a href="../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(`{"name": "D", "kind": "language"}`);
+with (<a href="../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONParserNode.Kind</a>) {
     assert(nodes.map!(n => n.kind).equal(
         [objectStart, key, literal, key, literal, objectEnd]));
 }
 
 // Parse a list of tokens instead of a string
 auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
-JSONValue value2 = <a href="../../../stdx/data/json/parser/parse_json_value.html">parseJSONValue</a>(tokens);
+JSONValue value2 = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(tokens);
 assert(value == value2);
 </pre>
 
@@ -104,7 +104,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONStream" class="public" href="../../../stdx/data/json/parser/parse_json_stream.html">
+							<a id="parseJSONStream" class="public" href="../../../stdx/data/json/parser/parseJSONStream.html">
 								<code>parseJSONStream</code>
 							</a>
 						</td>
@@ -113,7 +113,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parse_json_value.html">
+							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parseJSONValue.html">
 								<code>parseJSONValue</code>
 							</a>
 						</td>
@@ -122,16 +122,79 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parse_json_value.html">
+							<a id="parseJSONValue" class="public" href="../../../stdx/data/json/parser/parseJSONValue.html">
 								<code>parseJSONValue</code>
 							</a>
 						</td>
-						<td> Parses a stream of JSON <a href="../../../stdx/data/json/parser/parse_json_value.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
+						<td> Parses a stream of JSON <a href="../../../stdx/data/json/parser/parseJSONValue.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="toJSONValue" class="public" href="../../../stdx/data/json/parser/to_json_value.html">
+							<a id="readArray" class="public" href="../../../stdx/data/json/parser/readArray.html">
+								<code>readArray</code>
+							</a>
+						</td>
+						<td> Reads an array and issues a callback for each entry.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="readBool" class="public" href="../../../stdx/data/json/parser/readBool.html">
+								<code>readBool</code>
+							</a>
+						</td>
+						<td> Reads a single double value.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="readDouble" class="public" href="../../../stdx/data/json/parser/readDouble.html">
+								<code>readDouble</code>
+							</a>
+						</td>
+						<td> Reads a single double value.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="readObject" class="public" href="../../../stdx/data/json/parser/readObject.html">
+								<code>readObject</code>
+							</a>
+						</td>
+						<td> Reads an object and issues a callback for each field.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="readString" class="public" href="../../../stdx/data/json/parser/readString.html">
+								<code>readString</code>
+							</a>
+						</td>
+						<td> Reads a single double value.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="skipToKey" class="public" href="../../../stdx/data/json/parser/skipToKey.html">
+								<code>skipToKey</code>
+							</a>
+						</td>
+						<td> Skips all entries in an object until a certain <a href="../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> is reached.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="skipValue" class="public" href="../../../stdx/data/json/parser/skipValue.html">
+								<code>skipValue</code>
+							</a>
+						</td>
+						<td> Skips a single JSON value in a parser stream.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="toJSONValue" class="public" href="../../../stdx/data/json/parser/toJSONValue.html">
 								<code>toJSONValue</code>
 							</a>
 						</td>
@@ -151,7 +214,7 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONParserNode" class="public" href="../../../stdx/data/json/parser/json_parser_node.html">
+							<a id="JSONParserNode" class="public" href="../../../stdx/data/json/parser/JSONParserNode.html">
 								<code>JSONParserNode</code>
 							</a>
 						</td>
@@ -160,11 +223,44 @@ assert(value == value2);
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONParserRange" class="public" href="../../../stdx/data/json/parser/json_parser_range.html">
+							<a id="JSONParserRange" class="public" href="../../../stdx/data/json/parser/JSONParserRange.html">
 								<code>JSONParserRange</code>
 							</a>
 						</td>
 						<td> Lazy input range of JSON parser nodes.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="isJSONParserNodeInputRange" class="public" href="../../../stdx/data/json/parser/isJSONParserNodeInputRange.html">
+								<code>isJSONParserNodeInputRange</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td>Tests if a given type is an input range of <a href="../../../stdx/data/json/parser/JSONParserNode.html"><code class="prettyprint lang-d">JSONParserNode</code></a>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="isJSONTokenInputRange" class="public" href="../../../stdx/data/json/parser/isJSONTokenInputRange.html">
+								<code>isJSONTokenInputRange</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td>Tests if a given type is an input range of JSONToken.
 </td>
 					</tr>
 				</table>

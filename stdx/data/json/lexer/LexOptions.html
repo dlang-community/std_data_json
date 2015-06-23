@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Enum LexOptions</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Enum LexOptions</h1>
+			<section>
+				<p> Flags for configuring the JSON lexer.
+</p>
+<section>
+<p> These flags can be combined using a bitwise or operation.
+</p>
+</section>
+
+					<p>The enum base type is
+						<code class="prettyprint lang-d"><code class="prettyprint lang-d">int</code></code>
+.
+					</p>
+					<section>
+						<h3>Enum members</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.init.html">
+										<code>init</code>
+									</a>
+								</td>
+								<td>Default options - track token location and only use double to represent numbers
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.noThrow.html">
+										<code>noThrow</code>
+									</a>
+								</td>
+								<td>Uses <a href="../../../../stdx/data/json/lexer/JSONToken.Kind.error.html"><code class="prettyprint lang-d">JSONToken.Kind.error</code></a> instead of throwing exceptions
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.noTrackLocation.html">
+										<code>noTrackLocation</code>
+									</a>
+								</td>
+								<td>Counts lines and columns while lexing the source
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.specialFloatLiterals.html">
+										<code>specialFloatLiterals</code>
+									</a>
+								</td>
+								<td>Support "NaN", "Infinite" and "-Infinite" as valid number literals
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.useBigInt.html">
+										<code>useBigInt</code>
+									</a>
+								</td>
+								<td>Use BigInt to represent integers (if larger than long or <a href="../../../../stdx/data/json/lexer/LexOptions.useLong.html"><code class="prettyprint lang-d">useLong</code></a> is not given)
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/LexOptions.useLong.html">
+										<code>useLong</code>
+									</a>
+								</td>
+								<td>Use long to represent integers
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

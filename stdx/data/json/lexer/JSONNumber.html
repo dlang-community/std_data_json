@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Struct JSONNumber</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Struct JSONNumber</h1>
+			<section>
+				<p> Represents a JSON number literal with lazy conversion.
+</p>
+
+					<section>
+						<h3>Constructors</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.this.html" class="public">
+										<code>this</code>
+									</a>
+								</td>
+								<td> Constructs a <a href="../../../../stdx/data/json/lexer/JSONNumber.html"><code class="prettyprint lang-d">JSONNumber</code></a> from a raw number.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Properties</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.bigIntValue.html" class="public property"><code>bigIntValue</code></a>
+									<span class="tableEntryAnnotation">[get, set]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">std.<wbr/>bigint.<wbr/>BigInt</code></td>
+								<td> Returns the number as a BigInt <a href="../../../../stdx/data/json/lexer/JSONNumber.bigIntValue.html#value"><code class="prettyprint lang-d">value</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.doubleValue.html" class="public property"><code>doubleValue</code></a>
+									<span class="tableEntryAnnotation">[get, set]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">double</code></td>
+								<td> Returns the number as a double <a href="../../../../stdx/data/json/lexer/JSONNumber.doubleValue.html#value"><code class="prettyprint lang-d">value</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.longValue.html" class="public property"><code>longValue</code></a>
+									<span class="tableEntryAnnotation">[get, set]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">long</code></td>
+								<td> Returns the number as a long <a href="../../../../stdx/data/json/lexer/JSONNumber.longValue.html#value"><code class="prettyprint lang-d">value</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.type.html" class="public property"><code>type</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">stdx.<wbr/>data.<wbr/>json.<wbr/>lexer.<wbr/>JSONNumber.<wbr/>Type</code></td>
+								<td> The native <code class="prettyprint lang-d">type</code> of the stored number.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.opAssign.html" class="public">
+										<code>opAssign</code>
+									</a>
+								</td>
+								<td> Support assignment of numbers.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.opCmp.html" class="public">
+										<code>opCmp</code>
+									</a>
+								</td>
+								<td>Support relational comparisons
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.opEquals.html" class="public">
+										<code>opEquals</code>
+									</a>
+								</td>
+								<td>Support equality comparisons
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/lexer/JSONNumber.toHash.html" class="public">
+										<code>toHash</code>
+									</a>
+								</td>
+								<td>Support use as hash key
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

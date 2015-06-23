@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Struct JSONValue</title>
+		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">stdx</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">data</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">json</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json/value.html" class="selected module">value</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../../../stdx/data/json.html" class=" module">json</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Struct JSONValue</h1>
+			<section>
+				<p> Represents a generic JSON value.
+</p>
+<section>
+<p> The <code class="prettyprint lang-d">JSONValue</code> type is based on std.variant.Algebraic and as such
+ provides the usual binary and unary operators for handling the contained
+ raw value.
+</p>
+
+<p> Raw values can be either null, bool, double, string,
+ <code class="prettyprint lang-d">JSONValue</code>[] or <code class="prettyprint lang-d">JSONValue</code>[string].
+</p>
+</section>
+
+					<section>
+						<h3>Constructors</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.this.html" class="public">
+										<code>this</code>
+									</a>
+								</td>
+								<td> Constructs a <a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a> from the given raw <a href="../../../../stdx/data/json/value/JSONValue.this.html#value"><code class="prettyprint lang-d">value</code></a>.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Fields</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.location.html" class="public"><code>location</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/foundation/Location.html">Location</a></code></td>
+								<td> Optional <code class="prettyprint lang-d">location</code> of the corresponding token in the source document.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.payload.html" class="public"><code>payload</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">std.<wbr/>variant.<wbr/>VariantN!(12,,bool,double,long,std.bigint.BigInt,string,stdx.data.json.value.JSONValue[],stdx.data.json.value.JSONValue[string])</code></td>
+								<td> Holds the data contained in this value.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.opt.html" class="public">
+										<code>opt</code>
+									</a>
+								</td>
+								<td> Gets a descendant of this value.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Aliases</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.Payload.html" class="public">
+										<code>Payload</code>
+									</a>
+								</td>
+								<td> Alias for a std.variant.Algebraic able to hold all possible JSON
+ value types.
+</td>
+							</tr>
+						</table>
+					</section>
+<section><h3>Example</h3>
+<p>Shows the basic construction and operations on JSON values.
+</p>
+<pre class="code prettyprint lang-d">JSONValue a = 12;
+JSONValue b = 13;
+
+assert(a == 12.0);
+assert(b == 13.0);
+static if (__VERSION__ >= 2067)
+    assert(a + b == 25.0);
+
+auto c = JSONValue([a, b]);
+assert(c.get!(JSONValue[])[0] == 12.0);
+assert(c.get!(JSONValue[])[1] == 13.0);
+assert(c[0] == a);
+assert(c[1] == b);
+static if (__VERSION__ < 2067) {
+    assert(c[0] == 12.0);
+    assert(c[1] == 13.0);
+}
+
+auto d = JSONValue(["a": a, "b": b]);
+assert(d.get!(JSONValue[string])["a"] == 12.0);
+assert(d.get!(JSONValue[string])["b"] == 13.0);
+assert(d["a"] == a);
+assert(d["b"] == b);
+static if (__VERSION__ < 2067) {
+    assert(d["a"] == 12.0);
+    assert(d["b"] == 13.0);
+}
+</pre>
+</section>
+<section><h3>Example</h3>
+<p>Using <a href="../../../../stdx/data/json/value/JSONValue.opt.html"><code class="prettyprint lang-d">opt</code></a> to quickly access a descendant value.
+</p>
+<pre class="code prettyprint lang-d">JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
+JSONValue obj = ["a": subobj];
+
+assert(obj.opt("x").isNull);
+assert(obj.opt("a", "b") == 1.0);
+assert(obj.opt("a", "c") == 2.0);
+assert(obj.opt("a", "x").isNull);
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Sönke Ludwig
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>Copyright 2012 - 2014, Sönke Ludwig.
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

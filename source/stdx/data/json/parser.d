@@ -819,7 +819,8 @@ unittest
     // skips the whole [1, 2, 3] array
     j.skipValue();
 
-    assert(j.readString == "foo");
+    string value = j.readString;
+    assert(value == "foo");
 
     assert(j.front.kind == JSONParserNode.Kind.arrayEnd);
     j.popFront();
@@ -833,7 +834,7 @@ unittest
  *
  * The node range must either point to the start of an object
  * (`JSONParserNode.Kind.objectStart`), or to a key within an object
- * (`JsonParserNode.Kind.key`).
+ * (`JSONParserNode.Kind.key`).
  *
  * Params:
  *   nodes = An input range of JSON parser nodes
@@ -883,15 +884,18 @@ unittest
             {
                 "foo": 2,
                 "bar": 3,
-                "baz": 4,
-                "qux": 5
+                "baz": false,
+                "qux": "str"
             }
         });
 
     j.skipToKey("bar");
-    assert(j.readDouble == 3);
+    double v1 = j.readDouble;
+    assert(v1 == 3);
+
     j.skipToKey("qux");
-    assert(j.readDouble == 5);
+    string v2 = j.readString;
+    assert(v2 == "str");
 
     assert(j.front.kind == JSONParserNode.Kind.objectEnd);
     j.popFront();
@@ -937,10 +941,11 @@ unittest
 
     size_t i = 0;
     j.readArray({
+        auto value = j.readString();
         switch (i++) {
             default: assert(false);
-            case 0: assert(j.readString == "foo"); break;
-            case 1: assert(j.readString == "bar"); break;
+            case 0: assert(value == "foo"); break;
+            case 1: assert(value == "bar"); break;
         }
     });
 
@@ -986,10 +991,11 @@ unittest
         });
 
     j.readObject((key) {
+        auto value = j.readDouble;
         switch (key) {
             default: assert(false);
-            case "foo": assert(j.readDouble == 1); break;
-            case "bar": assert(j.readDouble == 2); break;
+            case "foo": assert(value == 1); break;
+            case "bar": assert(value == 2); break;
         }
     });
 
@@ -1021,7 +1027,8 @@ double readDouble(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 unittest
 {
     auto j = parseJSONStream(`1.0`);
-    assert(j.readDouble == 1.0);
+    double value = j.readDouble;
+    assert(value == 1.0);
     assert(j.empty);
 }
 
@@ -1050,7 +1057,8 @@ string readString(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 unittest
 {
     auto j = parseJSONStream(`"foo"`);
-    assert(j.readString == "foo");
+    string value = j.readString;
+    assert(value == "foo");
     assert(j.empty);
 }
 
@@ -1079,6 +1087,7 @@ bool readBool(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 unittest
 {
     auto j = parseJSONStream(`true`);
-    assert(j.readBool == true);
+    bool value = j.readBool;
+    assert(value == true);
     assert(j.empty);
 }

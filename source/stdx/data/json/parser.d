@@ -591,7 +591,7 @@ struct JSONParserRange(Input)
 
     private void pushContainer(JSONToken.Kind kind)
     {
-        import std.algorithm : max;
+        import std.algorithm.comparison : max;
         if (_containerStackFill >= _containerStack.length)
             _containerStack.length = max(32, _containerStack.length*3/2);
         _containerStack[_containerStackFill++] = kind;
@@ -607,7 +607,8 @@ struct JSONParserRange(Input)
 struct JSONParserNode
 {
     @safe:
-    import std.algorithm : among;
+    import std.algorithm.comparison : among;
+    import stdx.data.json.foundation : Location;
 
     /**
      * Determines the kind of a parser node.
@@ -674,6 +675,12 @@ struct JSONParserNode
     {
         _kind = Kind.literal;
         return _literal = literal;
+    }
+
+    @property Location location()
+    const @trusted nothrow {
+        if (_kind == Kind.literal) return _literal.location;
+        return Location.init;
     }
 
     /**
@@ -796,8 +803,37 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     }
 }
 
+///
+unittest
+{
+    auto j = parseJSONStream(q{
+            [
+                [1, 2, 3],
+                "foo"
+            ]
+        });
+
+    assert(j.front.kind == JSONParserNode.Kind.arrayStart);
+    j.popFront();
+    
+    // skips the whole [1, 2, 3] array
+    j.skipValue();
+
+    assert(j.readString == "foo");
+
+    assert(j.front.kind == JSONParserNode.Kind.arrayEnd);
+    j.popFront();
+
+    assert(j.empty);
+}
+
+
 /**
  * Skips all entries in an object until a certain key is reached.
+ *
+ * The node range must either point to the start of an object
+ * (`JSONParserNode.Kind.objectStart`), or to a key within an object
+ * (`JsonParserNode.Kind.key`).
  *
  * Params:
  *   nodes = An input range of JSON parser nodes
@@ -811,11 +847,15 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
  */
 bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
 {
+    import std.algorithm.comparison : among;
     import stdx.data.json.foundation;
+
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.objectStart,
-        "Expected object", nodes.front.literal.location);
-    nodes.popFront();
+    enforceJson(nodes.front.kind.among!(JSONParserNode.Kind.objectStart, JSONParserNode.Kind.key) > 0,
+        "Expected object or object key", nodes.front.location);
+
+    if (nodes.front.kind == JSONParserNode.Kind.objectStart)
+        nodes.popFront();
 
     while (true) {
         auto k = nodes.front.kind;
@@ -834,6 +874,29 @@ bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
 
         nodes.skipValue();
     }
+}
+
+///
+unittest
+{
+    auto j = parseJSONStream(q{
+            {
+                "foo": 2,
+                "bar": 3,
+                "baz": 4,
+                "qux": 5
+            }
+        });
+
+    j.skipToKey("bar");
+    assert(j.readDouble == 3);
+    j.skipToKey("qux");
+    assert(j.readDouble == 5);
+
+    assert(j.front.kind == JSONParserNode.Kind.objectEnd);
+    j.popFront();
+
+    assert(j.empty);
 }
 
 
@@ -862,6 +925,29 @@ void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParser
     }
 }
 
+///
+unittest
+{
+    auto j = parseJSONStream(q{
+            [
+                "foo",
+                "bar"
+            ]
+        });
+
+    size_t i = 0;
+    j.readArray({
+        switch (i++) {
+            default: assert(false);
+            case 0: assert(j.readString == "foo"); break;
+            case 1: assert(j.readString == "bar"); break;
+        }
+    });
+
+    assert(j.empty);
+}
+
+
 /**
  * Reads an object and issues a callback for each field.
  *
@@ -889,6 +975,28 @@ void readObject(R)(ref R nodes, scope void delegate(string key) @safe del) if (i
     }
 }
 
+///
+unittest
+{
+    auto j = parseJSONStream(q{
+            {
+                "foo": 1,
+                "bar": 2
+            }
+        });
+
+    j.readObject((key) {
+        switch (key) {
+            default: assert(false);
+            case "foo": assert(j.readDouble == 1); break;
+            case "bar": assert(j.readDouble == 2); break;
+        }
+    });
+
+    assert(j.empty);
+}
+
+
 /**
  * Reads a single double value.
  *
@@ -908,6 +1016,15 @@ double readDouble(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     nodes.popFront();
     return ret;
 }
+
+///
+unittest
+{
+    auto j = parseJSONStream(`1.0`);
+    assert(j.readDouble == 1.0);
+    assert(j.empty);
+}
+
 
 /**
  * Reads a single double value.
@@ -929,6 +1046,15 @@ string readString(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     return ret;
 }
 
+///
+unittest
+{
+    auto j = parseJSONStream(`"foo"`);
+    assert(j.readString == "foo");
+    assert(j.empty);
+}
+
+
 /**
  * Reads a single double value.
  *
@@ -947,4 +1073,12 @@ bool readBool(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     bool ret = nodes.front.literal.boolean;
     nodes.popFront();
     return ret;
+}
+
+///
+unittest
+{
+    auto j = parseJSONStream(`true`);
+    assert(j.readBool == true);
+    assert(j.empty);
 }

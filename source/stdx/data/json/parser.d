@@ -916,7 +916,7 @@ void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParser
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
     enforceJson(nodes.front.kind == JSONParserNode.Kind.arrayStart,
-        "Expected array", nodes.front.literal.location);
+        "Expected array", nodes.front.location);
     nodes.popFront();
 
     while (true) {
@@ -950,6 +950,102 @@ unittest
     });
 
     assert(j.empty);
+}
+
+/** Reads an array and returns a lazy range of parser node ranges.
+  *
+  * The given parser node range must point to a node of kind
+  * `JSONParserNode.Kind.arrayStart`. Each of the returned sub ranges
+  * corresponds to the contents of a single array entry.
+  *
+  * Params:
+  *   nodes = An input range of JSON parser nodes
+  *
+  * Throws:
+  *   A `JSONException` is thrown if the input range does not point to the
+  *   start of an array.
+*/
+auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
+{
+    static struct VR {
+        R* nodes;
+        size_t depth = 0;
+
+        @property bool empty() { return !nodes || nodes.empty; }
+
+        @property ref const(JSONParserNode) front() { return nodes.front; }
+
+        void popFront()
+        {
+            switch (nodes.front.kind) with (JSONParserNode.Kind)
+            {
+                default: break;
+                case objectStart, arrayStart: depth++; break;
+                case objectEnd, arrayEnd: depth--; break;
+            }
+
+            nodes.popFront();
+
+            if (depth == 0) nodes = null;
+        }
+    }
+
+    static struct ARR {
+        R* nodes;
+        VR value;
+
+        @property bool empty() { return !nodes || nodes.empty; }
+
+        @property ref inout(VR) front() inout { return value; }
+
+        void popFront()
+        {
+            while (!value.empty) value.popFront();
+            if (nodes.front.kind == JSONParserNode.Kind.arrayEnd) {
+                nodes.popFront();
+                nodes = null;
+            } else {
+                value = VR(nodes);
+            }
+        }
+    }
+
+    import stdx.data.json.foundation;
+
+    enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
+    enforceJson(nodes.front.kind == JSONParserNode.Kind.arrayStart,
+        "Expected array", nodes.front.location);
+    nodes.popFront();
+
+    ARR ret;
+
+    if (nodes.front.kind != JSONParserNode.Kind.arrayEnd) {
+        ret.nodes = &nodes;
+        ret.value = VR(&nodes);
+    } else nodes.popFront();
+
+    return ret;
+}
+
+///
+@system unittest {
+    auto j = parseJSONStream(q{
+            [
+                "foo",
+                "bar"
+            ]
+        });
+
+    size_t i = 0;
+    foreach (entry; j.readArray) {
+        auto value = entry.readString;
+        assert(entry.empty);
+        switch (i++) {
+            default: assert(false);
+            case 0: assert(value == "foo"); break;
+            case 1: assert(value == "bar"); break;
+        }
+    }
 }
 
 

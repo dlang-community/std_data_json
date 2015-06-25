@@ -971,6 +971,8 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
         R* nodes;
         size_t depth = 0;
 
+        @disable this(this);
+
         @property bool empty() { return !nodes || nodes.empty; }
 
         @property ref const(JSONParserNode) front() { return nodes.front; }
@@ -1037,7 +1039,7 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
         });
 
     size_t i = 0;
-    foreach (entry; j.readArray) {
+    foreach (ref entry; j.readArray) {
         auto value = entry.readString;
         assert(entry.empty);
         switch (i++) {
@@ -1046,6 +1048,7 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
             case 1: assert(value == "bar"); break;
         }
     }
+    assert(i == 2);
 }
 
 

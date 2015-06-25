@@ -137,6 +137,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/parser/parseJSONValue.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/parseJSONValue.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/readArray.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/parser/readArray.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/readBool.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/readDouble.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/parser/readObject.html</loc></url>

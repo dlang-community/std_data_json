@@ -94,10 +94,11 @@ if (isJSONParserNodeInputRange!R);</pre>
     });
 
 j.readObject((key) {
+    auto value = j.readDouble;
     switch (key) {
         default: assert(false);
-        case "foo": assert(j.readDouble == 1); break;
-        case "bar": assert(j.readDouble == 2); break;
+        case "foo": assert(value == 1); break;
+        case "bar": assert(value == 2); break;
     }
 });
 

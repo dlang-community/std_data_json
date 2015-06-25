@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function readArray</title>
+		<title>readArray - multiple declarations</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -62,8 +62,13 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Function readArray</h1>
+			<h1>readArray - multiple declarations</h1>
+			<ul>
+				<li>Function readArray</li>
+				<li>Function readArray</li>
+			</ul>
 			<section>
+				<h2>Function readArray</h2>
 				<p> Reads an array and issues a callback for each entry.
 </p>
 <section>
@@ -95,14 +100,69 @@ if (isJSONParserNodeInputRange!R);</pre>
 
 size_t i = 0;
 j.readArray({
+    auto value = j.readString();
     switch (i++) {
         default: assert(false);
-        case 0: assert(j.readString == "foo"); break;
-        case 1: assert(j.readString == "bar"); break;
+        case 0: assert(value == "foo"); break;
+        case 1: assert(value == "bar"); break;
     }
 });
 
 assert(j.empty);
+</pre>
+</section>
+
+			</section>
+			<section>
+				<h2>Function readArray</h2>
+				<p> Reads an array and returns a lazy range of parser node ranges.
+</p>
+<section>
+<p> The given parser node range must point to a node of kind
+ <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayStart.html"><code class="prettyprint lang-d">JSONParserNode.Kind.arrayStart</code></a></code>. Each of the returned sub ranges
+ corresponds to the contents of a single array entry.
+</p>
+
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+auto readArray(R)(
+&nbsp;&nbsp;ref R nodes
+) @system
+if (isJSONParserNodeInputRange!R);</pre>
+					</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/readArray.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
+</td></tr>
+</table>
+</section>
+<section><h3>Throws</h3>
+<p>   A <code class="prettyprint lang-d">JSONException</code> is thrown if the input range does not point to the
+   start of an array.
+</p>
+</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+        [
+            "foo",
+            "bar"
+        ]
+    });
+
+size_t i = 0;
+foreach (entry; j.readArray) {
+    auto value = entry.readString;
+    assert(entry.empty);
+    switch (i++) {
+        default: assert(false);
+        case 0: assert(value == "foo"); break;
+        case 1: assert(value == "bar"); break;
+    }
+}
 </pre>
 </section>
 

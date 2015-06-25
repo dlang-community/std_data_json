@@ -69,7 +69,7 @@ $('#symbolSearchPane').show();
 <section>
 <p> The node range must either point to the start of an object
  (<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectStart.html"><code class="prettyprint lang-d">JSONParserNode.Kind.objectStart</code></a></code>), or to a <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> within an object
- (<code class="prettyprint lang-d">JsonParserNode.Kind.key</code>).
+ (<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.key.html"><code class="prettyprint lang-d">JSONParserNode.Kind.key</code></a></code>).
 </p>
 
 </section>
@@ -106,15 +106,18 @@ if (isJSONParserNodeInputRange!R);</pre>
         {
             "foo": 2,
             "bar": 3,
-            "baz": 4,
-            "qux": 5
+            "baz": false,
+            "qux": "str"
         }
     });
 
 j.skipToKey("bar");
-assert(j.readDouble == 3);
+double v1 = j.readDouble;
+assert(v1 == 3);
+
 j.skipToKey("qux");
-assert(j.readDouble == 5);
+string v2 = j.readString;
+assert(v2 == "str");
 
 assert(j.front.kind == <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectEnd.html">JSONParserNode.Kind.objectEnd</a>);
 j.popFront();

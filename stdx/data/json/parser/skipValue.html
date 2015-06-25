@@ -87,6 +87,29 @@ if (isJSONParserNodeInputRange!R);</pre>
 <tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/skipValue.html#nodes"><code class="prettyprint lang-d">nodes</code></a></td></tr>
 </table>
 </section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+        [
+            [1, 2, 3],
+            "foo"
+        ]
+    });
+
+assert(j.front.kind == <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayStart.html">JSONParserNode.Kind.arrayStart</a>);
+j.popFront();
+
+// skips the whole [1, 2, 3] array
+j.skipValue();
+
+assert(j.readString == "foo");
+
+assert(j.front.kind == <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayEnd.html">JSONParserNode.Kind.arrayEnd</a>);
+j.popFront();
+
+assert(j.empty);
+</pre>
+</section>
 
 			</section>
 			<section>

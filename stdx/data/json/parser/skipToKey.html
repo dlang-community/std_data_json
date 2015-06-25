@@ -67,6 +67,11 @@ $('#symbolSearchPane').show();
 				<p> Skips all entries in an object until a certain <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> is reached.
 </p>
 <section>
+<p> The node range must either point to the start of an object
+ (<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectStart.html"><code class="prettyprint lang-d">JSONParserNode.Kind.objectStart</code></a></code>), or to a <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> within an object
+ (<code class="prettyprint lang-d">JsonParserNode.Kind.key</code>).
+</p>
+
 </section>
 
 					<section>
@@ -94,6 +99,28 @@ if (isJSONParserNodeInputRange!R);</pre>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
 <tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/skipToKey.html#nodes"><code class="prettyprint lang-d">nodes</code></a></td></tr>
 </table>
+</section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+        {
+            "foo": 2,
+            "bar": 3,
+            "baz": 4,
+            "qux": 5
+        }
+    });
+
+j.skipToKey("bar");
+assert(j.readDouble == 3);
+j.skipToKey("qux");
+assert(j.readDouble == 5);
+
+assert(j.front.kind == <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectEnd.html">JSONParserNode.Kind.objectEnd</a>);
+j.popFront();
+
+assert(j.empty);
+</pre>
 </section>
 
 			</section>

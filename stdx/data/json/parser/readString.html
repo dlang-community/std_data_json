@@ -87,6 +87,13 @@ if (isJSONParserNodeInputRange!R);</pre>
 <p>Throws a <code class="prettyprint lang-d">JSONException</code> is the node range is empty or <code class="prettyprint lang-d">nodes.front</code> is not a string.
 </p>
 </section>
+<section><h3>Example</h3>
+
+<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(`"foo"`);
+assert(j.readString == "foo");
+assert(j.empty);
+</pre>
+</section>
 
 			</section>
 			<section>

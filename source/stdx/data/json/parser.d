@@ -591,7 +591,7 @@ struct JSONParserRange(Input)
 
     private void pushContainer(JSONToken.Kind kind)
     {
-        import std.algorithm.comparison : max;
+        import std.algorithm/*.comparison*/ : max;
         if (_containerStackFill >= _containerStack.length)
             _containerStack.length = max(32, _containerStack.length*3/2);
         _containerStack[_containerStackFill++] = kind;
@@ -607,7 +607,7 @@ struct JSONParserRange(Input)
 struct JSONParserNode
 {
     @safe:
-    import std.algorithm.comparison : among;
+    import std.algorithm/*.comparison*/ : among;
     import stdx.data.json.foundation : Location;
 
     /**
@@ -847,7 +847,7 @@ unittest
  */
 bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
 {
-    import std.algorithm.comparison : among;
+    import std.algorithm/*.comparison*/ : among;
     import stdx.data.json.foundation;
 
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);

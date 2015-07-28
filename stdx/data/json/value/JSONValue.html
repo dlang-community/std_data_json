@@ -124,25 +124,6 @@ $('#symbolSearchPane').show();
 						</table>
 					</section>
 					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.opt.html" class="public">
-										<code>opt</code>
-									</a>
-								</td>
-								<td> Gets a descendant of this value.
-</td>
-							</tr>
-						</table>
-					</section>
-					<section>
 						<h3>Aliases</h3>
 						<table>
 							<col class="caption"/>
@@ -192,18 +173,6 @@ static if (__VERSION__ < 2067) {
     assert(d["a"] == 12.0);
     assert(d["b"] == 13.0);
 }
-</pre>
-</section>
-<section><h3>Example</h3>
-<p>Using <a href="../../../../stdx/data/json/value/JSONValue.opt.html"><code class="prettyprint lang-d">opt</code></a> to quickly access a descendant value.
-</p>
-<pre class="code prettyprint lang-d">JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
-JSONValue obj = ["a": subobj];
-
-assert(obj.opt("x").isNull);
-assert(obj.opt("a", "b") == 1.0);
-assert(obj.opt("a", "c") == 2.0);
-assert(obj.opt("a", "x").isNull);
 </pre>
 </section>
 

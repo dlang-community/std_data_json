@@ -154,7 +154,7 @@ if (isJSONParserNodeInputRange!R);</pre>
     });
 
 size_t i = 0;
-foreach (entry; j.readArray) {
+foreach (ref entry; j.readArray) {
     auto value = entry.readString;
     assert(entry.empty);
     switch (i++) {
@@ -163,6 +163,7 @@ foreach (entry; j.readArray) {
         case 1: assert(value == "bar"); break;
     }
 }
+assert(i == 2);
 </pre>
 </section>
 

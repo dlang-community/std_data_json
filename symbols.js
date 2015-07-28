@@ -111,9 +111,9 @@ var symbols = [
 {name: 'stdx.data.json.value', kind: "module", path: './stdx/data/json/value.html', attributes: []},
 {name: 'stdx.data.json.value.JSONValue', kind: "structdeclaration", path: './stdx/data/json/value/JSONValue.html', attributes: []},
 {name: 'stdx.data.json.value.JSONValue.location', kind: "variabledeclaration", path: './stdx/data/json/value/JSONValue.location.html', attributes: []},
-{name: 'stdx.data.json.value.JSONValue.opt', kind: "functiondeclaration", path: './stdx/data/json/value/JSONValue.opt.html', attributes: ["safe"]},
 {name: 'stdx.data.json.value.JSONValue.Payload', kind: "aliasdeclaration", path: './stdx/data/json/value/JSONValue.Payload.html', attributes: []},
 {name: 'stdx.data.json.value.JSONValue.payload', kind: "variabledeclaration", path: './stdx/data/json/value/JSONValue.payload.html', attributes: []},
 {name: 'stdx.data.json.value.JSONValue.this', kind: "functiondeclaration", path: './stdx/data/json/value/JSONValue.this.html', attributes: ["ref", "safe"]},
+{name: 'stdx.data.json.value.opt', kind: "functiondeclaration", path: './stdx/data/json/value/opt.html', attributes: []},
 {name: 'stdx.data.json', kind: "module", path: './stdx/data/json.html', attributes: []},
 ];

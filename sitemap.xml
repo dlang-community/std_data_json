@@ -149,7 +149,6 @@
 <url><loc>http://127.0.0.1/stdx/data/json/value.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.location.html</loc></url>
-<url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.opt.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.Payload.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.payload.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.this.html</loc></url>
@@ -160,5 +159,6 @@
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.this.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.this.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.this.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/value/opt.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json.html</loc></url>
 </urlset>

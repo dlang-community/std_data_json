@@ -21,6 +21,7 @@ module stdx.data.json.value;
 @safe
 
 import stdx.data.json.foundation;
+import std.typecons : Nullable;
 
 
 /**
@@ -38,7 +39,6 @@ struct JSONValue
     @safe:
     import std.bigint;
     import std.exception : enforce;
-    import std.typecons : Nullable;
     import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
 
@@ -93,25 +93,6 @@ struct JSONValue
     this(JSONValue[] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
     this(JSONValue[string] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-
-    /**
-     * Gets a descendant of this value.
-     *
-     * If any encountered JSONValue along the path is not an object or does not
-     * have a machting field, a null value is returned.
-     */
-    Nullable!JSONValue opt(scope string[] path...)
-    {
-        JSONValue cur = this;
-        foreach (name; path) {
-            auto obj = cur.peek!(JSONValue[string]);
-            if (!obj) return Nullable!JSONValue.init;
-            auto pv = name in *obj;
-            if (pv is null) return Nullable!JSONValue.init;
-            cur = *pv;
-        }
-        return Nullable!JSONValue(cur);
-    }
 
     static if (__VERSION__ < 2067)
     {
@@ -171,14 +152,54 @@ unittest
     }
 }
 
-/// Using $(D opt) to quickly access a descendant value.
+
+/**
+ * Gets a descendant of this value.
+ *
+ * If any encountered `JSONValue` along the path is not an object or does not
+ * have a machting field, a `null` value is returned.
+ */
+Nullable!JSONValue opt(KEYS...)(JSONValue val, KEYS keys)
+    if (KEYS.length > 0)
+{
+    foreach (i, T; KEYS)
+    {
+        static if (is(T : string))
+        {
+            auto obj = val.peek!(JSONValue[string]);
+            if (!obj) return Nullable!JSONValue.init;
+            auto pv = keys[i] in *obj;
+            if (pv is null) return Nullable!JSONValue.init;
+            val = *pv;
+        }
+        else static if (is(T : size_t))
+        {
+            size_t idx = keys[i]; // convert to unsigned first
+            auto arr = val.peek!(JSONValue[]);
+            if (!arr || idx >= (*arr).length)
+                return Nullable!JSONValue.init;
+            val = (*arr)[idx];
+        }
+        else
+        {
+            static assert(false, "Only strings and integer indices are allowed as keys, not "~T.stringof);
+        }
+    }
+    return Nullable!JSONValue(val);
+}
+
+///
 unittest
 {
     JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
-    JSONValue obj = ["a": subobj];
+    JSONValue subarr = [JSONValue(3.0), JSONValue(4.0)];
+    JSONValue obj = ["a": subobj, "b": subarr];
 
     assert(obj.opt("x").isNull);
     assert(obj.opt("a", "b") == 1.0);
     assert(obj.opt("a", "c") == 2.0);
-    assert(obj.opt("a", "x").isNull);
+    assert(obj.opt("a", "x", "y").isNull);
+    assert(obj.opt("b", 0) == 3.0);
+    assert(obj.opt("b", 1) == 4.0);
+    assert(obj.opt("b", 2).isNull);
 }

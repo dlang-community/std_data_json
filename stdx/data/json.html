@@ -76,10 +76,10 @@ assert(fields["name"] == "D");
 assert(fields["kind"] == "language");
 
 // Convert a value back to a JSON string
-assert(value.toJSONString() == `{"name":"D","kind":"language"}`);
+assert(value.toJSON() == `{"name":"D","kind":"language"}`);
 
 // Convert a value to a formatted JSON string
-assert(value.toJSONString!true() ==
+assert(value.toPrettyJSON() ==
 `{
     "name": "D",
     "kind": "language"

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function JSONParserNode.toHash</title>
+		<title>Variable Location.column</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -22,7 +22,7 @@
 								<a href="#" class="package">json</a>
 						<ul class="tree-view">
 							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+								<a href="../../../../stdx/data/json/foundation.html" class="selected module">foundation</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
@@ -31,7 +31,7 @@
 								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
@@ -62,15 +62,20 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Function JSONParserNode.toHash</h1>
+			<h1>Variable Location.column</h1>
 			<section>
-				<p> Enables usage of JSONToken as an associative array <a href="../../../../stdx/data/json/parser/JSONParserNode.key.html"><code class="prettyprint lang-d">key</code></a>.
+				<p>The zero based code unit index of the referenced <a href="../../../../stdx/data/json/foundation/Location.line.html"><code class="prettyprint lang-d">line</code></a>.
 </p>
 
 					<section>
-						<h3>Prototype</h3>
+						<h3>Declaration</h3>
 						<pre class="code prettyprint lang-d prototype">
-ulong toHash() nothrow @trusted const;</pre>
+struct <a href="../../../../stdx/data/json/foundation/Location.html">Location</a>
+{
+	// ...
+	<code class="prettyprint lang-d">ulong</code> column = 0LU;
+	// ...
+}</pre>
 					</section>
 
 			</section>

@@ -84,7 +84,7 @@ if (KEYS.length &gt; 0);</pre>
 <section><h3>Example</h3>
 
 <pre class="code prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> subobj = ["b": <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(1.0), "c": <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(2.0)];
-<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> subarr = [<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(3.0), <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(4.0), <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(null)];
+<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> subarr = [<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(3.0), <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(4.0)];
 <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> obj = ["a": subobj, "b": subarr];
 
 assert(obj.opt("x").isNull);
@@ -93,9 +93,7 @@ assert(obj.opt("a", "c") == 2.0);
 assert(obj.opt("a", "x", "y").isNull);
 assert(obj.opt("b", 0) == 3.0);
 assert(obj.opt("b", 1) == 4.0);
-assert(!obj.opt("b", 2).isNull);
-assert(obj.opt("b", 2) == null);
-assert(obj.opt("b", 3).isNull);
+assert(obj.opt("b", 2).isNull);
 </pre>
 </section>
 

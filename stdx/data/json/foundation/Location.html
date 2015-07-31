@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Enum JSONToken.Kind</title>
+		<title>Struct Location</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -22,13 +22,13 @@
 								<a href="#" class="package">json</a>
 						<ul class="tree-view">
 							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
+								<a href="../../../../stdx/data/json/foundation.html" class="selected module">foundation</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
+								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
@@ -62,17 +62,53 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Enum JSONToken.Kind</h1>
+			<h1>Struct Location</h1>
 			<section>
-				<p> The <a href="../../../../stdx/data/json/lexer/JSONToken.kind.html"><code class="prettyprint lang-d">kind</code></a> of token represented.
+				<p> Represents a location in an input range/<a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
 </p>
+<section>
+<p> The indices are zero based and the <a href="../../../../stdx/data/json/foundation/Location.column.html"><code class="prettyprint lang-d">column</code></a> is represented in code units of
+ the input (i.e. in bytes in case of a UTF-8 input string).
+</p>
+</section>
 
-					<p>The enum base type is
-						<code class="prettyprint lang-d"><code class="prettyprint lang-d">int</code></code>
-.
-					</p>
 					<section>
-						<h3>Enum members</h3>
+						<h3>Fields</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/foundation/Location.column.html" class="public"><code>column</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">ulong</code></td>
+								<td>The zero based code unit index of the referenced <a href="../../../../stdx/data/json/foundation/Location.line.html"><code class="prettyprint lang-d">line</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/foundation/Location.file.html" class="public"><code>file</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
+								<td>Optional <code class="prettyprint lang-d">file</code> name.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/foundation/Location.line.html" class="public"><code>line</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">ulong</code></td>
+								<td>The zero based <code class="prettyprint lang-d">line</code> of the input <a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
 						<table>
 							<col class="caption"/>
 							<tr>
@@ -81,110 +117,11 @@ $('#symbolSearchPane').show();
 							</tr>
 							<tr>
 								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.arrayEnd.html">
-										<code>arrayEnd</code>
+									<a href="../../../../stdx/data/json/foundation/Location.toString.html" class="public">
+										<code>toString</code>
 									</a>
 								</td>
-								<td>The "]" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.arrayStart.html">
-										<code>arrayStart</code>
-									</a>
-								</td>
-								<td>The "[" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.boolean.html">
-										<code>boolean</code>
-									</a>
-								</td>
-								<td>"true" or "false" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.colon.html">
-										<code>colon</code>
-									</a>
-								</td>
-								<td>The ":" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.comma.html">
-										<code>comma</code>
-									</a>
-								</td>
-								<td>The "," token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.error.html">
-										<code>error</code>
-									</a>
-								</td>
-								<td>Malformed token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.none.html">
-										<code>none</code>
-									</a>
-								</td>
-								<td>Used internally, never returned from the lexer
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.null_.html">
-										<code>null_</code>
-									</a>
-								</td>
-								<td>The "null" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.number.html">
-										<code>number</code>
-									</a>
-								</td>
-								<td>Numeric token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.objectEnd.html">
-										<code>objectEnd</code>
-									</a>
-								</td>
-								<td>The "}" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.objectStart.html">
-										<code>objectStart</code>
-									</a>
-								</td>
-								<td>The "{" token
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.string.html">
-										<code>string</code>
-									</a>
-								</td>
-								<td>String token, stored in escaped form
+								<td>Returns a string representation of the location.
 </td>
 							</tr>
 						</table>

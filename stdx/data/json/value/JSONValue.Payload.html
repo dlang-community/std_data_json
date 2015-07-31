@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable JSONValue.payload</title>
+		<title>Alias JSONValue.Payload</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -62,15 +62,11 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable JSONValue.payload</h1>
+			<h1>Alias JSONValue.Payload</h1>
 			<section>
-				<p> Holds the data contained in this value.
+				<p> Alias for a std.variant.Algebraic able to hold all possible JSON
+ value types.
 </p>
-<section>
-<p> Note that this is available using alias this, so there is usually no
- need to access this field directly.
-</p>
-</section>
 
 					<section>
 						<h3>Declaration</h3>
@@ -78,7 +74,7 @@ $('#symbolSearchPane').show();
 struct <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>
 {
 	// ...
-	<code class="prettyprint lang-d">std.<wbr/>variant.<wbr/>VariantN!(12,,bool,double,long,std.bigint.BigInt,string,stdx.data.json.value.JSONValue[],stdx.data.json.value.JSONValue[string])</code> payload;
+	alias Payload = <code class="prettyprint lang-d">std.<wbr/>variant.<wbr/>VariantN!(24L,,bool,double,long,std.bigint.BigInt,string,stdx.data.json.value.JSONValue[],stdx.data.json.value.JSONValue[string])</code>;
 	// ...
 }</pre>
 					</section>

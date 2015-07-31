@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function JSONParserNode.toHash</title>
+		<title>Function JSONToken.kind</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -28,10 +28,10 @@
 								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
+								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
 							</li>
 							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
+								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
 							</li>
 							<li>
 								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
@@ -62,15 +62,24 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Function JSONParserNode.toHash</h1>
+			<h1>Function JSONToken.kind</h1>
 			<section>
-				<p> Enables usage of JSONToken as an associative array <a href="../../../../stdx/data/json/parser/JSONParserNode.key.html"><code class="prettyprint lang-d">key</code></a>.
+				<p> Gets/sets the <code class="prettyprint lang-d">kind</code> of the represented token.
 </p>
+<section>
+<p> Setting the token <code class="prettyprint lang-d">kind</code> is not allowed for any of the kinds that have
+ additional data associated (<a href="../../../../stdx/data/json/lexer/JSONToken.boolean.html"><code class="prettyprint lang-d">boolean</code></a>, <a href="../../../../stdx/data/json/lexer/JSONToken.number.html"><code class="prettyprint lang-d">number</code></a> and <a href="../../../../stdx/data/json/lexer/JSONToken.string.html"><code class="prettyprint lang-d">string</code></a>).
+</p>
+</section>
 
 					<section>
-						<h3>Prototype</h3>
+						<h3>Prototypes</h3>
 						<pre class="code prettyprint lang-d prototype">
-ulong toHash() nothrow @trusted const;</pre>
+<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.html">JSONToken.<wbr/>Kind</a> kind() pure nothrow @property @nogc @safe const;
+
+<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.html">JSONToken.<wbr/>Kind</a> kind(
+&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.Kind.html">JSONToken.<wbr/>Kind</a> value
+) nothrow @property @nogc @safe;</pre>
 					</section>
 
 			</section>

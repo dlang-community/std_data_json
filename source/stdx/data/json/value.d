@@ -75,6 +75,10 @@ struct JSONValue
 
     alias payload this;
 
+    // workaround DMD 2.068.0 regression w.r.t. Algebraic @safety
+    @trusted void opAssign(T)(T val) { payload = val; }
+    @trusted void opAssign()(JSONValue val) { payload = val.payload; }
+
     /**
      * Constructs a JSONValue from the given raw value.
      */

@@ -247,13 +247,15 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
         foreach (tab; 0 .. depth) output.put('\t');
     }
 
-    if (value.peek!(typeof(null))) output.put("null");
-    else if (auto pv = value.peek!bool) output.put(*pv ? "true" : "false");
-    else if (auto pv = value.peek!double) output.writeNumber!options(*pv);
-    else if (auto pv = value.peek!long) output.writeNumber(*pv);
-    else if (auto pv = value.peek!BigInt) output.writeNumber(*pv);
-    else if (auto pv = value.peek!string) { output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(*pv); output.put('"'); }
-    else if (auto pv = value.peek!(JSONValue[string]))
+    T* trustedPeek(T)() @trusted { return value.peek!T; }
+
+    if (trustedPeek!(typeof(null))) output.put("null");
+    else if (auto pv = trustedPeek!bool) output.put(*pv ? "true" : "false");
+    else if (auto pv = trustedPeek!double) output.writeNumber!options(*pv);
+    else if (auto pv = trustedPeek!long) output.writeNumber(*pv);
+    else if (auto pv = trustedPeek!BigInt) output.writeNumber(*pv);
+    else if (auto pv = trustedPeek!string) { output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(*pv); output.put('"'); }
+    else if (auto pv = trustedPeek!(JSONValue[string]))
     {
         output.put('{');
         bool first = true;
@@ -273,7 +275,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
         }
         output.put('}');
     }
-    else if (auto pv = value.peek!(JSONValue[]))
+    else if (auto pv = trustedPeek!(JSONValue[]))
     {
         output.put('[');
         foreach (i, ref e; *pv)
@@ -416,7 +418,7 @@ private void writeNumber(R)(ref R dst, BigInt num) @trusted
     num.toString(str => dst.put(str), null);
 }
 
-unittest
+@trusted /* DMD 2.068 @safety workaround */ unittest
 {
     import std.math;
     import std.string;

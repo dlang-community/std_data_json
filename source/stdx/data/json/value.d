@@ -196,7 +196,7 @@ Nullable!JSONValue opt(KEYS...)(JSONValue val, KEYS keys)
 unittest
 {
     JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
-    JSONValue subarr = [JSONValue(3.0), JSONValue(4.0)];
+    JSONValue subarr = [JSONValue(3.0), JSONValue(4.0), JSONValue(null)];
     JSONValue obj = ["a": subobj, "b": subarr];
 
     assert(obj.opt("x").isNull);
@@ -205,5 +205,7 @@ unittest
     assert(obj.opt("a", "x", "y").isNull);
     assert(obj.opt("b", 0) == 3.0);
     assert(obj.opt("b", 1) == 4.0);
-    assert(obj.opt("b", 2).isNull);
+    assert(!obj.opt("b", 2).isNull);
+    assert(obj.opt("b", 2) == null);
+    assert(obj.opt("b", 3).isNull);
 }

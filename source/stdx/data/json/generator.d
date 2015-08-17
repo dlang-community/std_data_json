@@ -22,36 +22,12 @@ import std.range;
 
 
 /**
- * Converts the given JSON document(s) to a formatted string representation.
- *
- * Pretty printed strings are indented multi-line strings suitable for human
- * consumption.
- *
- * See_also: $(D writePrettyJSON), $(D toJSON)
- */
-string toPrettyJSON(GeneratorOptions options = GeneratorOptions.init)(JSONValue value)
-{
-    import std.array;
-    auto dst = appender!string();
-    value.writePrettyJSON!options(dst);
-    return dst.data;
-}
-/// ditto
-string toPrettyJSON(GeneratorOptions options = GeneratorOptions.init, Input)(Input nodes)
-    if (isJSONParserNodeInputRange!Input)
-{
-    import std.array;
-    auto dst = appender!string();
-    nodes.writePrettyJSON!options(dst);
-    return dst.data;
-}
-
-
-/**
- * Converts the given JSON document(s) to a compact string representation.
+ * Converts the given JSON document(s) to its string representation.
  *
  * The input can be a $(D JSONValue), or an input range of either $(D JSONToken)
- * or $(D JSONParserNode) elements.
+ * or $(D JSONParserNode) elements. By default, the generator will use newlines
+ * and tabs to pretty-print the result. Use the `options` template parameter
+ * to customize this.
  *
  * Params:
  *   value = A single JSON document
@@ -112,12 +88,6 @@ unittest
 {
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
-    // write compact JSON (order of object fields is undefined)
-    assert(
-        a.toJSON() == `{"a":[],"b":[1,{}]}` ||
-        a.toJSON() == `{"b":[1,{}],"a":[]}`
-    );
-
     // pretty print:
     // {
     //     "a": [],
@@ -127,19 +97,25 @@ unittest
     //     ]
     // }
     assert(
-        a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" ||
-        a.toPrettyJSON() == "{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
+        a.toJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" ||
+        a.toJSON() == "{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
+    );
+
+    // write compact JSON (order of object fields is undefined)
+    assert(
+        a.toJSON!(GeneratorOptions.compact)() == `{"a":[],"b":[1,{}]}` ||
+        a.toJSON!(GeneratorOptions.compact)() == `{"b":[1,{}],"a":[]}`
     );
 }
 
 unittest
 {
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
-    assert(nodes.toJSON() == `{"a":[],"b":[1,{}]}`);
-    assert(nodes.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(nodes.toJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(nodes.toJSON!(GeneratorOptions.compact)() == `{"a":[],"b":[1,{}]}`);
 
     auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
-    assert(tokens.toJSON() == `{"a":[],"b":[1,{},null,true,false]}`);
+    assert(tokens.toJSON!(GeneratorOptions.compact)() == `{"a":[],"b":[1,{},null,true,false]}`);
 
     JSONToken tok;
     tok.string = "Hello World";
@@ -148,28 +124,8 @@ unittest
 
 
 /**
- * Formats the given JSON document(s) as an indented multi-line string.
- *
- * This function produces output suitable for human consumption by properly
- * indenting based on the nesting level.
- *
- * See_also: $(D toPrettyJSON), $(D writeJSON)
- */
-void writePrettyJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output)
-    if (isOutputRange!(Output, char))
-{
-    writeAsStringImpl!(true, options)(value, output);
-}
-/// ditto
-void writePrettyJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
-    if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
-{
-    writeAsStringImpl!(true, options)(nodes, output);
-}
-
-
-/**
- * Formats the given JSON document(s)/tokens as a compact string.
+ * Writes the string representation of the given JSON document(s)/tokens to an
+ * output range.
  *
  * See $(D toJSON) for more information.
  *
@@ -187,13 +143,13 @@ void writePrettyJSON(GeneratorOptions options = GeneratorOptions.init, Output, I
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output)
     if (isOutputRange!(Output, char))
 {
-    writeAsStringImpl!(false, options)(value, output);
+    writeAsStringImpl!options(value, output);
 }
 /// ditto
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
-    writeAsStringImpl!(false, options)(nodes, output);
+    writeAsStringImpl!options(nodes, output);
 }
 /// ditto
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input tokens, ref Output output)
@@ -236,6 +192,9 @@ enum GeneratorOptions {
 	/// Default value - enable none of the supported options
     init = 0,
 
+    /// Avoid outputting whitespace to get a compact string representation
+    compact = 1<<0,
+
 	/// Output special float values as 'NaN' or 'Infinity' instead of 'null'
     specialFloatLiterals = 1<<1,
 
@@ -244,10 +203,12 @@ enum GeneratorOptions {
 }
 
 
-private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
+private void writeAsStringImpl(GeneratorOptions options, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
     import taggedalgebraic : get;
+
+    enum pretty_print = (options & GeneratorOptions.compact) == 0;
 
     void indent(size_t depth)
     {
@@ -273,7 +234,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
                 output.put('\"');
                 output.escapeString!(options & GeneratorOptions.escapeUnicode)(k);
                 output.put(pretty_print ? `": ` : `":`);
-                e.writeAsStringImpl!pretty_print(output, nesting_level+1);
+                e.writeAsStringImpl!options(output, nesting_level+1);
             }
             static if (pretty_print)
             {
@@ -287,7 +248,7 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
             {
                 if (i > 0) output.put(',');
                 static if (pretty_print) indent(nesting_level+1);
-                e.writeAsStringImpl!pretty_print(output, nesting_level+1);
+                e.writeAsStringImpl!options(output, nesting_level+1);
             }
             static if (pretty_print)
             {
@@ -298,12 +259,13 @@ private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions optio
     }
 }
 
-private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
+private void writeAsStringImpl(GeneratorOptions options, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
     size_t nesting = 0;
     bool first = false;
     bool is_object_field = false;
+    enum pretty_print = (options & GeneratorOptions.compact) == 0;
 
     void indent(size_t depth)
     {

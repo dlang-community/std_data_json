@@ -65,7 +65,7 @@ import stdx.data.json.foundation;
 JSONLexerRange!(Input, options, appenderFactory) lexJSON
     (LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
     (Input input, string filename = null)
-    if (isCharInputRange!Input || isIntegralInputRange!Input)
+    if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     return JSONLexerRange!(Input, options, appenderFactory)(input, filename);
 }
@@ -205,7 +205,7 @@ static if (__VERSION__ >= 2067)
  * See $(D lexJSON) for more information.
 */
 struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string())
-    if (isCharInputRange!Input || isIntegralInputRange!Input)
+    if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     import std.string : representation;
 
@@ -1568,9 +1568,6 @@ enum LexOptions {
     specialFloatLiterals = 1<<5, /// Support "NaN", "Infinite" and "-Infinite" as valid number literals
 }
 
-
-package enum bool isCharInputRange(R) = isInputRange!R && isSomeChar!(typeof(R.init.front));
-package enum bool isIntegralInputRange(R) = isInputRange!R && isIntegral!(typeof(R.init.front));
 
 // returns true for success
 package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output, OutputInitFunc)(

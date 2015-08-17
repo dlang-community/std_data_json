@@ -35,7 +35,7 @@ module stdx.data.json.parser;
 import stdx.data.json.lexer;
 import stdx.data.json.value;
 import std.array : appender;
-import std.range : isInputRange;
+import std.range : ElementType, isInputRange;
 
 
 /**
@@ -49,7 +49,7 @@ import std.range : isInputRange;
  * See_also: `parseJSONValue`
  */
 JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "")
-    if (isCharInputRange!Input || isIntegralInputRange!Input)
+    if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     auto tokens = lexJSON!options(input, filename);
     return toJSONValue(tokens);
@@ -114,7 +114,7 @@ JSONValue toJSONValue(Input)(Input tokens)
  * See_also: `toJSONValue`
  */
 JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "")
-    if (isCharInputRange!Input || isIntegralInputRange!Input)
+    if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     import stdx.data.json.foundation;
 
@@ -299,7 +299,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
 JSONParserRange!(JSONLexerRange!(Input, options, appenderFactory))
     parseJSONStream(LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
         (Input input, string filename = null)
-    if (isCharInputRange!Input || isIntegralInputRange!Input)
+    if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     return parseJSONStream(lexJSON!(options, appenderFactory)(input, filename));
 }

@@ -290,13 +290,17 @@ unittest
     JSONValue subarr = [JSONValue(3.0), JSONValue(4.0), JSONValue(null)];
     JSONValue obj = ["a": subobj, "b": subarr];
 
+    // access nested fields using member access syntax
     assert(obj.opt2.a.b == 1.0);
     assert(obj.opt2.a.c == 2.0);
+
+    // get can be used with a default value
     assert(obj.opt2.a.c.get(-1.0) == 2.0); // matched path and type
     assert(obj.opt2.a.c.get(null) == null); // mismatched type -> return default value
     assert(obj.opt2.a.d.get(-1.0) == -1.0); // mismatched path -> return default value
 
-    assert(!obj.opt2.x.exists); // explicit existence check
+    // explicit existence check
+    assert(!obj.opt2.x.exists);
     assert(!obj.opt2.a.x.y.exists); // works for nested missing paths, too
 
     // instead of using member syntax, index syntax can be used
@@ -309,5 +313,6 @@ unittest
     assert(obj.opt2.b[2] == null);
     assert(!obj.opt2.b[3].exists);
 
-    assertThrown(obj.opt2.b[3] == 3); // accessing a missing path throws an exception
+    // accessing a missing path throws an exception
+    assertThrown(obj.opt2.b[3] == 3);
 }

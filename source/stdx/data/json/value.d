@@ -44,14 +44,14 @@ struct JSONValue
       * Defines the possible types contained in a `JSONValue`
       */
     union PayloadUnion {
-        typeof(null) null_;
-        bool boolean;
-        double double_;
-        long integer;
-        WrappedBigInt bigInt;
-        @disableIndex .string string;
-        JSONValue[] array;
-        JSONValue[.string] object;
+        typeof(null) null_; /// A JSON `null` value
+        bool boolean; /// JSON `true` or `false` values
+        double double_; /// The default field for storing numbers
+        long integer; /// Only used if `LexOptions.useLong` was set for parsing
+        WrappedBigInt bigInt; /// Only used if `LexOptions.useBigInt` was set for parsing
+        @disableIndex .string string; /// String value
+        JSONValue[] array; /// Array or JSON values
+        JSONValue[.string] object; /// Dictionary of JSON values (object)
     }
 
     /**
@@ -76,6 +76,7 @@ struct JSONValue
      */
     Location location;
 
+    ///
     alias payload this;
 
     /**
@@ -85,7 +86,15 @@ struct JSONValue
     /// ditto
     void opAssign(T)(T value) { payload = value; }
 
+    /// Tests if the stored value is of a given type.
     bool hasType(T)() const { return .hasType!T(payload); }
+
+    /**
+      * Returns the raw contained value.
+      *
+      * This must only be called if the type of the stored value matches `T`.
+      * Use `.hasType!T` or `.typeID` for that purpose.
+      */
     ref inout(T) get(T)() inout { return .get!T(payload); }
 
     static if (__VERSION__ < 2067)
@@ -143,7 +152,9 @@ unittest
 static struct WrappedBigInt {
     import std.bigint;
     private BigInt* _pvalue;
+    ///
     this(BigInt value) { _pvalue = new BigInt(value); }
+    ///
     @property ref inout(BigInt) value() inout { return *_pvalue; }
 }
 

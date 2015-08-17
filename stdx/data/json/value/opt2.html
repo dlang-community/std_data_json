@@ -82,13 +82,17 @@ auto stdx.<wbr/>data.<wbr/>json.<wbr/>value.<wbr/>opt2 opt2(
 <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> subarr = [<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(3.0), <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(4.0), <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(null)];
 <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> obj = ["a": subobj, "b": subarr];
 
+// access nested fields using member access syntax
 assert(obj.opt2.a.b == 1.0);
 assert(obj.opt2.a.c == 2.0);
+
+// get can be used with a default value
 assert(obj.opt2.a.c.get(-1.0) == 2.0); // matched path and type
 assert(obj.opt2.a.c.get(null) == null); // mismatched type -> return default value
 assert(obj.opt2.a.d.get(-1.0) == -1.0); // mismatched path -> return default value
 
-assert(!obj.opt2.x.exists); // explicit existence check
+// explicit existence check
+assert(!obj.opt2.x.exists);
 assert(!obj.opt2.a.x.y.exists); // works for nested missing paths, too
 
 // instead of using member syntax, index syntax can be used
@@ -101,7 +105,8 @@ assert(obj.opt2.b[2].exists);
 assert(obj.opt2.b[2] == null);
 assert(!obj.opt2.b[3].exists);
 
-assertThrown(obj.opt2.b[3] == 3); // accessing a missing path throws an exception
+// accessing a missing path throws an exception
+assertThrown(obj.opt2.b[3] == 3);
 </pre>
 </section>
 

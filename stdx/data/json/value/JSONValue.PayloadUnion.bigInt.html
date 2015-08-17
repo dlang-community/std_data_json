@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Struct WrappedBigInt</title>
+		<title>Variable JSONValue.PayloadUnion.bigInt</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -62,47 +62,20 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct WrappedBigInt</h1>
+			<h1>Variable JSONValue.PayloadUnion.bigInt</h1>
 			<section>
-				<p>Proxy structure that stores BigInt as a pointer to save space in <a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a>
+				<p>Only used if <code class="prettyprint lang-d">LexOptions.useBigInt</code> was set for parsing
 </p>
 
 					<section>
-						<h3>Constructors</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/WrappedBigInt.this.html" class="public">
-										<code>this</code>
-									</a>
-								</td>
-								<td></td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Properties</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/WrappedBigInt.value.html" class="public property"><code>value</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">inout(std.<wbr/>bigint.<wbr/>BigInt)</code></td>
-								<td></td>
-							</tr>
-						</table>
+						<h3>Declaration</h3>
+						<pre class="code prettyprint lang-d prototype">
+union <a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.html">JSONValue.PayloadUnion</a>
+{
+	// ...
+	<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/WrappedBigInt.html">WrappedBigInt</a></code> bigInt;
+	// ...
+}</pre>
 					</section>
 
 			</section>

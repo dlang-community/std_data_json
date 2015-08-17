@@ -67,6 +67,81 @@ $('#symbolSearchPane').show();
 				<p> Defines the possible types contained in a <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a></code>
 </p>
 
+					<section>
+						<h3>Fields</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.array.html" class="public"><code>array</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[]</code></td>
+								<td>Array or JSON values
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.bigInt.html" class="public"><code>bigInt</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/WrappedBigInt.html">WrappedBigInt</a></code></td>
+								<td>Only used if <code class="prettyprint lang-d">LexOptions.useBigInt</code> was set for parsing
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.boolean.html" class="public"><code>boolean</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
+								<td>JSON <code class="prettyprint lang-d">true</code> or <code class="prettyprint lang-d">false</code> values
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.double_.html" class="public"><code>double_</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">double</code></td>
+								<td>The default field for storing numbers
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.integer.html" class="public"><code>integer</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">long</code></td>
+								<td>Only used if <code class="prettyprint lang-d">LexOptions.useLong</code> was set for parsing
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.null_.html" class="public"><code>null_</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">typeof(null)</code></td>
+								<td>A JSON <code class="prettyprint lang-d">null</code> value
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.object.html" class="public"><code>object</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string]</code></td>
+								<td>Dictionary of JSON values (<code class="prettyprint lang-d">object</code>)
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.string.html" class="public"><code>string</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
+								<td>String value
+</td>
+							</tr>
+						</table>
+					</section>
 
 			</section>
 			<section>

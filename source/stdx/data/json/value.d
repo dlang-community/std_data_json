@@ -1,17 +1,6 @@
 /**
  * Defines a generic value type for builing and holding JSON documents in memory.
  *
- * Synopsis:
- * ---
- * // build a simple JSON document
- * auto aa = ["a": JSONValue("hello"), "b": JSONValue(true)];
- * auto obj = JSONValue(aa);
- *
- * // Algebraic currently doesn't allow the desired syntax: obj["a"]
- * assert(obj.get!(JSONValue[string])["a"] == "hello");
- * assert(obj.get!(JSONValue[string])["b"] == true);
- * ---
- *
  * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
@@ -19,6 +8,17 @@
  */
 module stdx.data.json.value;
 @safe:
+
+///
+unittest {
+    // build a simple JSON document
+    auto aa = ["a": JSONValue("hello"), "b": JSONValue(true)];
+    auto obj = JSONValue(aa);
+
+    // JSONValue behaves almost as the contained native D types
+    assert(obj["a"] == "hello");
+    assert(obj["b"] == true);
+}
 
 import stdx.data.json.foundation;
 import std.typecons : Nullable;

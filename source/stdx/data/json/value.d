@@ -212,3 +212,102 @@ unittest
     assert(obj.opt("b", 2) == null);
     assert(obj.opt("b", 3).isNull);
 }
+
+
+/**
+  * Alternative version of `opt` that works using dot and index notation.index
+  */
+auto opt2(JSONValue val)
+{
+    alias NJ = Nullable!JSONValue;
+
+    static struct S(string path) {
+        private NJ _val;
+
+        @property bool exists() const { return !_val.isNull; }
+
+        inout(JSONValue) get() inout
+        {
+            if (_val.isNull())
+                throw new .Exception("Missing JSON value at "~path~".");
+            return _val.get();
+        }
+
+        inout(T) get(T)(T def_value) inout
+        {
+            if (_val.isNull || !_val.hasType!T)
+                return def_value;
+            return _val.get.get!T;
+        }
+
+        alias get this;
+
+        auto opDispatch(string name)()
+        {
+            enum newpath = path ~ "." ~ name;
+            alias SR = S!newpath;
+            if (_val.isNull()) return SR.init;
+            if (_val.typeID != JSONValue.Type.object)
+                return SR.init;
+            if (auto pv = name in _val)
+                return SR(NJ(*pv));
+            return SR.init;
+        }
+
+        auto opIndex()(size_t idx)
+        {
+            enum newpath = path ~ "[]";
+            alias SR = S!newpath;
+            if (_val.isNull()) return SR.init;
+            if (_val.typeID != JSONValue.Type.array)
+                return SR.init;
+            if (idx >= _val.length)
+                return SR.init;
+            return SR(NJ(_val[idx]));
+        }
+
+        auto opIndex()(string name)
+        {
+            enum newpath = path ~ "[$]";
+            alias SR = S!newpath;
+            if (_val.isNull()) return SR.init;
+            if (_val.typeID != JSONValue.Type.object)
+                return SR.init;
+            if (auto pv = name in _val)
+                return SR(NJ(*pv));
+            return SR.init;
+        }
+    }
+    return S!""(NJ(val));
+}
+
+///
+unittest
+{
+    import std.exception : assertThrown;
+
+    JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
+    JSONValue subarr = [JSONValue(3.0), JSONValue(4.0), JSONValue(null)];
+    JSONValue obj = ["a": subobj, "b": subarr];
+
+    assert(obj.opt2.a.b == 1.0);
+    assert(obj.opt2.a.c == 2.0);
+    assert(obj.opt2.a.c.get(-1.0) == 2.0); // matched path and type
+    assert(obj.opt2.a.c.get(null) == null); // mismatched type -> return default value
+    assert(obj.opt2.a.d.get(-1.0) == -1.0); // mismatched path -> return default value
+
+    assert(!obj.opt2.x.exists); // explicit existence check
+    assert(!obj.opt2.a.x.y.exists); // works for nested missing paths, too
+
+    // instead of using member syntax, index syntax can be used
+    assert(obj.opt2["a"]["b"] == 1.0);
+
+    // integer indices work, too
+    assert(obj.opt2.b[0] == 3.0);
+    assert(obj.opt2.b[1] == 4.0);
+    assert(obj.opt2.b[2].exists);
+    assert(obj.opt2.b[2] == null);
+    assert(!obj.opt2.b[3].exists);
+
+    assertThrown(obj.opt2.b[3] == 3); // accessing a missing path throws an exception
+}

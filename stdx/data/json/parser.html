@@ -75,9 +75,12 @@ $('#symbolSearchPane').show();
 
 </section>
 
-			<section><section><h2>Synopsis</h2>
-<pre class="code prettyprint lang-d">// Parse a JSON string to a single value
-JSONValue value = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(`{"name": "D", "kind": "language"}`);
+			<section><section><h2>Example</h2>
+
+<pre class="code prettyprint lang-d">import std.algorithm : equal, map;
+
+// Parse a JSON string to a single value
+JSONValue value = <a href="../../../stdx/data/json/parser/toJSONValue.html">toJSONValue</a>(`{"name": "D", "kind": "language"}`);
 
 // Parse a JSON string to a node stream
 auto nodes = <a href="../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(`{"name": "D", "kind": "language"}`);
@@ -88,10 +91,9 @@ with (<a href="../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONPars
 
 // Parse a list of tokens instead of a string
 auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
-JSONValue value2 = <a href="../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(tokens);
+JSONValue value2 = <a href="../../../stdx/data/json/parser/toJSONValue.html">toJSONValue</a>(tokens);
 assert(value == value2);
 </pre>
-
 </section>
 </section>
 			<section>

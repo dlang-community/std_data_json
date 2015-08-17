@@ -49,7 +49,7 @@ import std.range : isInputRange;
  * See_also: `parseJSONValue`
  */
 JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "")
-    if (isStringInputRange!Input || isIntegralInputRange!Input)
+    if (isCharInputRange!Input || isIntegralInputRange!Input)
 {
     auto tokens = lexJSON!options(input, filename);
     return toJSONValue(tokens);
@@ -114,7 +114,7 @@ JSONValue toJSONValue(Input)(Input tokens)
  * See_also: `toJSONValue`
  */
 JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "")
-    if (isStringInputRange!Input || isIntegralInputRange!Input)
+    if (isCharInputRange!Input || isIntegralInputRange!Input)
 {
     import stdx.data.json.foundation;
 
@@ -299,7 +299,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
 JSONParserRange!(JSONLexerRange!(Input, options, appenderFactory))
     parseJSONStream(LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
         (Input input, string filename = null)
-    if (isStringInputRange!Input || isIntegralInputRange!Input)
+    if (isCharInputRange!Input || isIntegralInputRange!Input)
 {
     return parseJSONStream(lexJSON!(options, appenderFactory)(input, filename));
 }

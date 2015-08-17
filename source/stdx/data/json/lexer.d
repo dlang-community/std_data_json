@@ -65,7 +65,7 @@ import stdx.data.json.foundation;
 JSONLexerRange!(Input, options, appenderFactory) lexJSON
     (LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
     (Input input, string filename = null)
-    if (isStringInputRange!Input || isIntegralInputRange!Input)
+    if (isCharInputRange!Input || isIntegralInputRange!Input)
 {
     return JSONLexerRange!(Input, options, appenderFactory)(input, filename);
 }
@@ -205,7 +205,7 @@ static if (__VERSION__ >= 2067)
  * See $(D lexJSON) for more information.
 */
 struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string())
-    if (isStringInputRange!Input || isIntegralInputRange!Input)
+    if (isCharInputRange!Input || isIntegralInputRange!Input)
 {
     import std.string : representation;
 
@@ -1569,7 +1569,7 @@ enum LexOptions {
 }
 
 
-package enum bool isStringInputRange(R) = isInputRange!R && isSomeChar!(typeof(R.init.front));
+package enum bool isCharInputRange(R) = isInputRange!R && isSomeChar!(typeof(R.init.front));
 package enum bool isIntegralInputRange(R) = isInputRange!R && isIntegral!(typeof(R.init.front));
 
 // returns true for success

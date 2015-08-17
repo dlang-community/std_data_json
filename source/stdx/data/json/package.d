@@ -4,20 +4,19 @@
  * Synopsis:
  * ---
  * // Parse a JSON string
- * JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
- * auto fields = value.get!(JSONValue[string]);
- * assert(fields["name"] == "D");
- * assert(fields["kind"] == "language");
- *
- * // Convert a value back to a JSON string
- * assert(value.toJSON() == `{"name":"D","kind":"language"}`);
+ * JSONValue value = toJSONValue(`{"name": "D", "kind": "language"}`);
+ * assert(value["name"] == "D");
+ * assert(value["kind"] == "language");
  *
  * // Convert a value to a formatted JSON string
- * assert(value.toPrettyJSON() ==
+ * assert(value.toJSON() ==
  * `{
  *     "name": "D",
  *     "kind": "language"
  * }`);
+ *
+ * // Convert a value back to a JSON string
+ * assert(value.toJSON(GeneratorOptions.compact) == `{"name":"D","kind":"language"}`);
  *
  * // Lex a JSON string into a lazy range of tokens
  * auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
@@ -28,7 +27,7 @@
  * }
  *
  * // Parse the tokens to a value
- * JSONValue value2 = parseJSONValue(tokens);
+ * JSONValue value2 = toJSONValue(tokens);
  * assert(value2 == value);
  *
  * // Parse the tokens to a JSON node stream
@@ -39,7 +38,7 @@
  * }
  * ---
  *
- * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/package.d)

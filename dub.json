@@ -1,8 +1,11 @@
 {
 	"name": "std_data_json",
 	"description": "Phobos candidate JSON implementation.",
-	"copyright": "Copyright © 2014, Sönke Ludwig",
+	"copyright": "Copyright © 2014-2015, Sönke Ludwig",
 	"license": "BSL-1.0",
 	"authors": ["Sönke Ludwig"],
+	"dependencies": {
+		"taggedalgebraic": "~>0.9.3"
+	},
 	"-ddoxFilterArgs": ["--unittest-examples", "--min-protection=Protected", "--only-documented"]
 }

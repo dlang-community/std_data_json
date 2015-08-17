@@ -22,6 +22,7 @@ module stdx.data.json.value;
 
 import stdx.data.json.foundation;
 import std.typecons : Nullable;
+import taggedalgebraic;
 
 
 /**
@@ -39,23 +40,27 @@ struct JSONValue
     @safe:
     import std.bigint;
     import std.exception : enforce;
-    import std.variant : Algebraic;
     import stdx.data.json.lexer : JSONToken;
 
     /**
-     * Alias for a $(D std.variant.Algebraic) able to hold all possible JSON
+      * Defines the possible types contained in a `JSONValue`
+      */
+    union PayloadUnion {
+        typeof(null) null_;
+        bool boolean;
+        double double_;
+        long integer;
+        BigInt bigInt;
+        @disableIndex .string string;
+        JSONValue[] array;
+        JSONValue[.string] object;
+    }
+
+    /**
+     * Alias for a $(D TaggedAlgebraic) able to hold all possible JSON
      * value types.
      */
-    alias Payload = Algebraic!(
-        typeof(null),
-        bool,
-        double,
-        long,
-        BigInt,
-        string,
-        JSONValue[],
-        JSONValue[string]
-    );
+    alias Payload = TaggedAlgebraic!PayloadUnion;
 
     /**
      * Holds the data contained in this value.
@@ -97,6 +102,9 @@ struct JSONValue
     this(JSONValue[] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
     this(JSONValue[string] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
+
+    bool hasType(T)() const { return .hasType!T(payload); }
+    ref inout(T) get(T)() inout { return .get!T(payload); }
 
     static if (__VERSION__ < 2067)
     {
@@ -170,19 +178,20 @@ Nullable!JSONValue opt(KEYS...)(JSONValue val, KEYS keys)
     {
         static if (is(T : string))
         {
-            auto obj = val.peek!(JSONValue[string]);
-            if (!obj) return Nullable!JSONValue.init;
-            auto pv = keys[i] in *obj;
+            if (val.typeID != JSONValue.Type.object)
+                return Nullable!JSONValue.init;
+            auto pv = keys[i] in val;
             if (pv is null) return Nullable!JSONValue.init;
             val = *pv;
         }
         else static if (is(T : size_t))
         {
             size_t idx = keys[i]; // convert to unsigned first
-            auto arr = val.peek!(JSONValue[]);
-            if (!arr || idx >= (*arr).length)
+            if (val.typeID != JSONValue.Type.array)
                 return Nullable!JSONValue.init;
-            val = (*arr)[idx];
+            if (idx >= val.length)
+                return Nullable!JSONValue.init;
+            val = val[idx];
         }
         else
         {

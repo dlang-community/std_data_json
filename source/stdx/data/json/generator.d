@@ -112,8 +112,11 @@ unittest
 {
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
-    // write compact JSON
-    assert(a.toJSON() == `{"a":[],"b":[1,{}]}`, a.toJSON());
+    // write compact JSON (order of object fields is undefined)
+    assert(
+        a.toJSON() == `{"a":[],"b":[1,{}]}` ||
+        a.toJSON() == `{"b":[1,{}],"a":[]}`
+    );
 
     // pretty print:
     // {
@@ -123,7 +126,10 @@ unittest
     //         {},
     //     ]
     // }
-    assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+    assert(
+        a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" ||
+        a.toPrettyJSON() == "{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
+    );
 }
 
 unittest
@@ -241,56 +247,55 @@ enum GeneratorOptions {
 private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
+    import taggedalgebraic : get;
+
     void indent(size_t depth)
     {
         output.put('\n');
         foreach (tab; 0 .. depth) output.put('\t');
     }
 
-    T* trustedPeek(T)() @trusted { return value.peek!T; }
-
-    if (trustedPeek!(typeof(null))) output.put("null");
-    else if (auto pv = trustedPeek!bool) output.put(*pv ? "true" : "false");
-    else if (auto pv = trustedPeek!double) output.writeNumber!options(*pv);
-    else if (auto pv = trustedPeek!long) output.writeNumber(*pv);
-    else if (auto pv = trustedPeek!BigInt) output.writeNumber(*pv);
-    else if (auto pv = trustedPeek!string) { output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(*pv); output.put('"'); }
-    else if (auto pv = trustedPeek!(JSONValue[string]))
-    {
-        output.put('{');
-        bool first = true;
-        foreach (string k, ref e; *pv)
-        {
-            if (!first) output.put(',');
-            else first = false;
-            static if (pretty_print) indent(nesting_level+1);
-            output.put('\"');
-            output.escapeString!(options & GeneratorOptions.escapeUnicode)(k);
-            output.put(pretty_print ? `": ` : `":`);
-            e.writeAsStringImpl!pretty_print(output, nesting_level+1);
-        }
-        static if (pretty_print)
-        {
-            if (!first) indent(nesting_level);
-        }
-        output.put('}');
+    final switch (value.typeID) {
+        case JSONValue.Type.null_: output.put("null"); break;
+        case JSONValue.Type.boolean: output.put(value == true ? "true" : "false"); break;
+        case JSONValue.Type.double_: output.writeNumber!options(cast(double)value); break;
+        case JSONValue.Type.integer: output.writeNumber(cast(long)value); break;
+        case JSONValue.Type.bigInt: output.writeNumber(cast(BigInt)value); break;
+        case JSONValue.Type.string: output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(get!string(value)); output.put('"'); break;
+        case JSONValue.Type.object:
+            output.put('{');
+            bool first = true;
+            foreach (string k, ref e; get!(JSONValue[string])(value))
+            {
+                if (!first) output.put(',');
+                else first = false;
+                static if (pretty_print) indent(nesting_level+1);
+                output.put('\"');
+                output.escapeString!(options & GeneratorOptions.escapeUnicode)(k);
+                output.put(pretty_print ? `": ` : `":`);
+                e.writeAsStringImpl!pretty_print(output, nesting_level+1);
+            }
+            static if (pretty_print)
+            {
+                if (!first) indent(nesting_level);
+            }
+            output.put('}');
+            break;
+        case JSONValue.Type.array:
+            output.put('[');
+            foreach (i, ref e; get!(JSONValue[])(value))
+            {
+                if (i > 0) output.put(',');
+                static if (pretty_print) indent(nesting_level+1);
+                e.writeAsStringImpl!pretty_print(output, nesting_level+1);
+            }
+            static if (pretty_print)
+            {
+                if (get!(JSONValue[])(value).length > 0) indent(nesting_level);
+            }
+            output.put(']');
+            break;
     }
-    else if (auto pv = trustedPeek!(JSONValue[]))
-    {
-        output.put('[');
-        foreach (i, ref e; *pv)
-        {
-            if (i > 0) output.put(',');
-            static if (pretty_print) indent(nesting_level+1);
-            e.writeAsStringImpl!pretty_print(output, nesting_level+1);
-        }
-        static if (pretty_print)
-        {
-            if (pv.length > 0) indent(nesting_level);
-        }
-        output.put(']');
-    }
-    else assert(false);
 }
 
 private void writeAsStringImpl(bool pretty_print = false, GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)

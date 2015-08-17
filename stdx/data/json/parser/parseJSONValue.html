@@ -69,12 +69,16 @@ $('#symbolSearchPane').show();
 			</ul>
 			<section>
 				<h2>Function parseJSONValue</h2>
-				<p> Parses a JSON string and returns the result as a JSONValue.
+				<p> Consumes a single JSON value from the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> range and returns the result as a
+ <code class="prettyprint lang-d">JSONValue</code>.
 </p>
 <section>
 <p> The <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> string must start with a valid JSON document. Any characters
- occurring after this document will be left in the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> range.
+ occurring after this document will be left in the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> range. Use
+ <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><code class="prettyprint lang-d">toJSONValue</code></a></code> instead if you wish to perform a normal string to <code class="prettyprint lang-d">JSONValue</code>
+ conversion.
 </p>
+
 </section>
 
 					<section>
@@ -84,8 +88,12 @@ $('#symbolSearchPane').show();
 &nbsp;&nbsp;ref Input input,
 &nbsp;&nbsp;string filename = ""
 )
-if (isStringInputRange!Input || isIntegralInputRange!Input);</pre>
+if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));</pre>
 					</section>
+<section><h3>See also</h3>
+<p><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><code class="prettyprint lang-d">toJSONValue</code></a></code>
+</p>
+</section>
 <section><h3>Example</h3>
 <p>Parse an object
 </p>
@@ -106,8 +114,10 @@ assert(obj["b"] == "test");
 <pre class="code prettyprint lang-d">string str = `1.0 2.0`;
 JSONValue v1 = parseJSONValue(str);
 assert(v1 == 1.0);
+assert(str == `2.0`);
 JSONValue v2 = parseJSONValue(str);
 assert(v2 == 2.0);
+assert(str == ``);
 </pre>
 </section>
 
@@ -128,7 +138,7 @@ assert(v2 == 2.0);
 						<pre class="code prettyprint lang-d prototype">
 <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> parseJSONValue(Input)(
 &nbsp;&nbsp;ref Input tokens
-)
+) @safe
 if (isJSONTokenInputRange!Input);</pre>
 					</section>
 <section><h3>Example</h3>
@@ -156,7 +166,7 @@ assert(arr[2] == 3.0);
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

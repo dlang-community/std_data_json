@@ -65,7 +65,7 @@ $('#symbolSearchPane').show();
 			<h1>Function toJSONValue</h1>
 			<section>
 				<p> Parses a JSON string or token range and returns the result as a
- JSONValue.
+ <code class="prettyprint lang-d">JSONValue</code>.
 </p>
 <section>
 <p> The <a href="../../../../stdx/data/json/parser/toJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> string must be a valid JSON document. In particular, it must not
@@ -82,7 +82,7 @@ $('#symbolSearchPane').show();
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = ""
 )
-if (isStringInputRange!Input || isIntegralInputRange!Input);
+if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));
 
 <a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> toJSONValue(Input)(
 &nbsp;&nbsp;Input tokens
@@ -90,7 +90,7 @@ if (isStringInputRange!Input || isIntegralInputRange!Input);
 if (isJSONTokenInputRange!Input);</pre>
 					</section>
 <section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/parser/parseJSONValue.html"><code class="prettyprint lang-d">parseJSONValue</code></a>
+<p><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/parseJSONValue.html"><code class="prettyprint lang-d">parseJSONValue</code></a></code>
 </p>
 </section>
 <section><h3>Example</h3>
@@ -113,6 +113,13 @@ assert(cdoc.length == 3);
 assert(cdoc[0] == 1.0);
 assert(cdoc[1] == 2.0);
 assert(cdoc[2] == null);
+}
+
+/*unittest
+{
+import std.bigint;
+auto v = toJSONValue!(LexOptions.useBigInt)(`{"big": 12345678901234567890}`);
+assert(v["big"].value == BigInt("12345678901234567890"));
 </pre>
 </section>
 
@@ -125,7 +132,7 @@ assert(cdoc[2] == null);
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

@@ -93,7 +93,7 @@ $('#symbolSearchPane').show();
 &nbsp;&nbsp;Input input,
 &nbsp;&nbsp;string filename = null
 )
-if (isStringInputRange!Input || isIntegralInputRange!Input);
+if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));
 
 <a href="../../../../stdx/data/json/parser/JSONParserRange.html">JSONParserRange</a>!Input parseJSONStream(Input)(
 &nbsp;&nbsp;Input tokens
@@ -130,7 +130,7 @@ with (<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONP
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

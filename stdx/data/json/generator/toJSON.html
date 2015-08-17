@@ -64,11 +64,13 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function toJSON</h1>
 			<section>
-				<p> Converts the given JSON document(s) to a compact string representation.
+				<p> Converts the given JSON document(s) to its string representation.
 </p>
 <section>
 <p> The input can be a JSONValue, or an input range of either JSONToken
- or JSONParserNode elements.
+ or JSONParserNode elements. By default, the generator will use newlines
+ and tabs to pretty-print the result. Use the <code class="prettyprint lang-d">options</code> template parameter
+ to customize this.
 </p>
 
 </section>
@@ -111,7 +113,7 @@ string toJSON(stdx.data.json.generator.GeneratorOptions options)(
 
 </section>
 <section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/generator/writeJSON.html"><code class="prettyprint lang-d">writeJSON</code></a>, <a href="../../../../stdx/data/json/generator/toPrettyJSON.html"><code class="prettyprint lang-d">toPrettyJSON</code></a>
+<p><a href="../../../../stdx/data/json/generator/writeJSON.html"><code class="prettyprint lang-d">writeJSON</code></a>, toPrettyJSON
 </p>
 </section>
 <section><h3>Example</h3>
@@ -124,9 +126,6 @@ assert(value.toJSON() == "true");
 
 <pre class="code prettyprint lang-d">auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
-// write compact JSON
-assert(a.toJSON() == `{"a":[],"b":[1,{}]}`, a.toJSON());
-
 // pretty print:
 // {
 //     "a": [],
@@ -135,7 +134,16 @@ assert(a.toJSON() == `{"a":[],"b":[1,{}]}`, a.toJSON());
 //         {},
 //     ]
 // }
-assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
+assert(
+    a.toJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" ||
+    a.toJSON() == "{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
+);
+
+// write compact JSON (order of object fields is undefined)
+assert(
+    a.toJSON!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.compact.html">GeneratorOptions.compact</a>)() == `{"a":[],"b":[1,{}]}` ||
+    a.toJSON!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.compact.html">GeneratorOptions.compact</a>)() == `{"b":[1,{}],"a":[]}`
+);
 </pre>
 </section>
 
@@ -148,7 +156,7 @@ assert(a.toPrettyJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}"
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

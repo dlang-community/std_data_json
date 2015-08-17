@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function toPrettyJSON</title>
+		<title>Enum member GeneratorOptions.compact</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
@@ -62,33 +62,21 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Function toPrettyJSON</h1>
+			<h1>Enum member GeneratorOptions.compact</h1>
 			<section>
-				<p> Converts the given JSON document(s) to a formatted string representation.
+				<p>Avoid outputting whitespace to get a <code class="prettyprint lang-d">compact</code> string representation
 </p>
-<section>
-<p> Pretty printed strings are indented multi-line strings suitable for human
- consumption.
-</p>
-
-</section>
 
 					<section>
-						<h3>Prototypes</h3>
+						<h3>Declaration</h3>
 						<pre class="code prettyprint lang-d prototype">
-string toPrettyJSON(stdx.data.json.generator.GeneratorOptions options)(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value
-);
-
-string toPrettyJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
-&nbsp;&nbsp;Input nodes
-)
-if (isJSONParserNodeInputRange!Input);</pre>
+enum <a href="../../../../stdx/data/json/generator/GeneratorOptions.html">GeneratorOptions</a>
+{
+	// ...
+	compact = 1,
+	// ...
+}</pre>
 					</section>
-<section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/generator/writePrettyJSON.html"><code class="prettyprint lang-d">writePrettyJSON</code></a>, <a href="../../../../stdx/data/json/generator/toJSON.html"><code class="prettyprint lang-d">toJSON</code></a>
-</p>
-</section>
 
 			</section>
 			<section>
@@ -99,7 +87,7 @@ if (isJSONParserNodeInputRange!Input);</pre>
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

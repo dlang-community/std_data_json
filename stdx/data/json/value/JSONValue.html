@@ -117,8 +117,46 @@ $('#symbolSearchPane').show();
 								<td>
 									<a href="../../../../stdx/data/json/value/JSONValue.payload.html" class="public"><code>payload</code></a>
 								</td>
-								<td class="typecol"><code class="prettyprint lang-d">std.<wbr/>variant.<wbr/>VariantN!(24L,,bool,double,long,std.bigint.BigInt,string,stdx.data.json.value.JSONValue[],stdx.data.json.value.JSONValue[string])</code></td>
+								<td class="typecol"><code class="prettyprint lang-d">taggedalgebraic.<wbr/>TaggedAlgebraic!(stdx.data.json.value.JSONValue.PayloadUnion)</code></td>
 								<td> Holds the data contained in this value.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.opAssign.html" class="public">
+										<code>opAssign</code>
+									</a>
+								</td>
+								<td> Constructs a <a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a> from the given raw <a href="../../../../stdx/data/json/value/JSONValue.opAssign.html#value"><code class="prettyprint lang-d">value</code></a>.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Unions</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.html" class="public">
+										<code>PayloadUnion</code>
+									</a>
+								</td>
+								<td> Defines the possible types contained in a <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a></code>
 </td>
 							</tr>
 						</table>
@@ -137,7 +175,7 @@ $('#symbolSearchPane').show();
 										<code>Payload</code>
 									</a>
 								</td>
-								<td> Alias for a std.variant.Algebraic able to hold all possible JSON
+								<td> Alias for a TaggedAlgebraic able to hold all possible JSON
  value types.
 </td>
 							</tr>
@@ -185,7 +223,7 @@ static if (__VERSION__ < 2067) {
 			</section>
 			<section>
 				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 			</section>

@@ -7,30 +7,33 @@
  * of nodes. The stream based parser is particularly useful for
  * deserializing with few allocations or for processing large documents.
  *
- * Synopsis:
- * ---
- * // Parse a JSON string to a single value
- * JSONValue value = parseJSONValue(`{"name": "D", "kind": "language"}`);
- *
- * // Parse a JSON string to a node stream
- * auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
- * with (JSONParserNode.Kind) {
- *     assert(nodes.map!(n => n.kind).equal(
- *         [objectStart, key, literal, key, literal, objectEnd]));
- * }
- *
- * // Parse a list of tokens instead of a string
- * auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
- * JSONValue value2 = parseJSONValue(tokens);
- * assert(value == value2);
- * ---
- *
  * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/parser.d)
  */
 module stdx.data.json.parser;
+
+///
+unittest
+{
+    import std.algorithm : equal, map;
+
+    // Parse a JSON string to a single value
+    JSONValue value = toJSONValue(`{"name": "D", "kind": "language"}`);
+
+    // Parse a JSON string to a node stream
+    auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
+    with (JSONParserNode.Kind) {
+        assert(nodes.map!(n => n.kind).equal(
+            [objectStart, key, literal, key, literal, objectEnd]));
+    }
+
+    // Parse a list of tokens instead of a string
+    auto tokens = lexJSON(`{"name": "D", "kind": "language"}`);
+    JSONValue value2 = toJSONValue(tokens);
+    assert(value == value2);
+}
 
 import stdx.data.json.lexer;
 import stdx.data.json.value;

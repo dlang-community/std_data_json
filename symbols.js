@@ -126,6 +126,7 @@ var symbols = [
 {name: 'stdx.data.json.value.JSONValue.PayloadUnion.string', kind: "variabledeclaration", path: './stdx/data/json/value/JSONValue.PayloadUnion.string.html', attributes: []},
 {name: 'stdx.data.json.value.JSONValue.this', kind: "functiondeclaration", path: './stdx/data/json/value/JSONValue.this.html', attributes: []},
 {name: 'stdx.data.json.value.opt', kind: "functiondeclaration", path: './stdx/data/json/value/opt.html', attributes: []},
+{name: 'stdx.data.json.value.opt2', kind: "functiondeclaration", path: './stdx/data/json/value/opt2.html', attributes: ["pure", "nothrow", "nogc", "safe", "auto"]},
 {name: 'stdx.data.json.value.WrappedBigInt', kind: "structdeclaration", path: './stdx/data/json/value/WrappedBigInt.html', attributes: []},
 {name: 'stdx.data.json.value.WrappedBigInt.this', kind: "functiondeclaration", path: './stdx/data/json/value/WrappedBigInt.this.html', attributes: ["ref", "safe"]},
 {name: 'stdx.data.json.value.WrappedBigInt.value', kind: "functiondeclaration", path: './stdx/data/json/value/WrappedBigInt.value.html', attributes: ["ref", "property", "safe", "inout"]},

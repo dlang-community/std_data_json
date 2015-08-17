@@ -163,6 +163,7 @@
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.PayloadUnion.string.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/JSONValue.this.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/opt.html</loc></url>
+<url><loc>http://127.0.0.1/stdx/data/json/value/opt2.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/WrappedBigInt.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/WrappedBigInt.this.html</loc></url>
 <url><loc>http://127.0.0.1/stdx/data/json/value/WrappedBigInt.value.html</loc></url>

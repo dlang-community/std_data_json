@@ -68,16 +68,16 @@ $('#symbolSearchPane').show();
 <section>
 </section>
 
-			<section><section><h2>Synopsis</h2>
+			<section><section><h2>Example</h2>
+
 <pre class="code prettyprint lang-d">// build a simple JSON document
 auto aa = ["a": <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>("hello"), "b": <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(true)];
 auto obj = <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>(aa);
 
-// Algebraic currently doesn't allow the desired syntax: obj["a"]
-assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string])["a"] == "hello");
-assert(obj.get!(<a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string])["b"] == true);
+// <a href="../../../stdx/data/json/value/JSONValue.html">JSONValue</a> behaves almost as the contained native D types
+assert(obj["a"] == "hello");
+assert(obj["b"] == true);
 </pre>
-
 </section>
 </section>
 			<section>

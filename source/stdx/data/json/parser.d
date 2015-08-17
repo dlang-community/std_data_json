@@ -41,13 +41,13 @@ import std.range : isInputRange;
 
 /**
  * Parses a JSON string or token range and returns the result as a
- * $(D JSONValue).
+ * `JSONValue`.
  *
  * The input string must be a valid JSON document. In particular, it must not
  * contain any additional text other than whitespace after the end of the
  * JSON document.
  *
- * See_also: $(D parseJSONValue)
+ * See_also: `parseJSONValue`
  */
 JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)
@@ -97,10 +97,15 @@ unittest
 
 
 /**
- * Parses a JSON string and returns the result as a $(D JSONValue).
+ * Consumes a single JSON value from the input range and returns the result as a
+ * `JSONValue`.
  *
  * The input string must start with a valid JSON document. Any characters
- * occurring after this document will be left in the input range.
+ * occurring after this document will be left in the input range. Use
+ * `toJSONValue` instead if you wish to perform a normal string to `JSONValue`
+ * conversion.
+ *
+ * See_also: `toJSONValue`
  */
 JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "")
     if (isStringInputRange!Input || isIntegralInputRange!Input)

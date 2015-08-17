@@ -126,24 +126,16 @@ unittest
         assert(a + b == 25.0);
 
     auto c = JSONValue([a, b]);
-    assert(c.get!(JSONValue[])[0] == 12.0);
-    assert(c.get!(JSONValue[])[1] == 13.0);
+    assert(c[0] == 12.0);
+    assert(c[1] == 13.0);
     assert(c[0] == a);
     assert(c[1] == b);
-    static if (__VERSION__ < 2067) {
-        assert(c[0] == 12.0);
-        assert(c[1] == 13.0);
-    }
 
     auto d = JSONValue(["a": a, "b": b]);
-    assert(d.get!(JSONValue[string])["a"] == 12.0);
-    assert(d.get!(JSONValue[string])["b"] == 13.0);
+    assert(d["a"] == 12.0);
+    assert(d["b"] == 13.0);
     assert(d["a"] == a);
     assert(d["b"] == b);
-    static if (__VERSION__ < 2067) {
-        assert(d["a"] == 12.0);
-        assert(d["b"] == 13.0);
-    }
 }
 
 

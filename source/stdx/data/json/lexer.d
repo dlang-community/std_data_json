@@ -75,7 +75,7 @@ unittest
 {
     import std.algorithm : equal, map;
 
-    auto rng = lexJSON(`{ "hello": 1.2, "world":[1, true, null]}`);
+    auto rng = lexJSON(`{"hello": 1.2, "world": [1, true, null]}`);
     with (JSONToken)
     {
         assert(rng.map!(t => t.kind).equal(

@@ -12,13 +12,13 @@
  * assert(obj.get!(JSONValue[string])["b"] == true);
  * ---
  *
- * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/value.d)
  */
 module stdx.data.json.value;
-@safe
+@safe:
 
 import stdx.data.json.foundation;
 import std.typecons : Nullable;
@@ -37,8 +37,6 @@ import taggedalgebraic;
 */
 struct JSONValue
 {
-    @safe:
-    import std.bigint;
     import std.exception : enforce;
     import stdx.data.json.lexer : JSONToken;
 
@@ -50,7 +48,7 @@ struct JSONValue
         bool boolean;
         double double_;
         long integer;
-        BigInt bigInt;
+        WrappedBigInt bigInt;
         @disableIndex .string string;
         JSONValue[] array;
         JSONValue[.string] object;
@@ -80,28 +78,12 @@ struct JSONValue
 
     alias payload this;
 
-    // workaround DMD 2.068.0 regression w.r.t. Algebraic @safety
-    @trusted void opAssign(T)(T val) { payload = val; }
-    @trusted void opAssign()(JSONValue val) { payload = val.payload; }
-
     /**
      * Constructs a JSONValue from the given raw value.
      */
-    this(typeof(null), Location loc = Location.init) { payload = Payload(null); location = loc; }
+    this(T)(T value, Location loc = Location.init) { payload = Payload(value); location = loc; }
     /// ditto
-    this(bool value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(double value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(long value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(BigInt value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(string value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(JSONValue[] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
-    /// ditto
-    this(JSONValue[string] value, Location loc = Location.init) { payload = Payload(value); location = loc; }
+    void opAssign(T)(T value) { payload = value; }
 
     bool hasType(T)() const { return .hasType!T(payload); }
     ref inout(T) get(T)() inout { return .get!T(payload); }
@@ -162,6 +144,15 @@ unittest
         assert(d["a"] == 12.0);
         assert(d["b"] == 13.0);
     }
+}
+
+
+/// Proxy structure that stores BigInt as a pointer to save space in JSONValue
+static struct WrappedBigInt {
+    import std.bigint;
+    private BigInt* _pvalue;
+    this(BigInt value) { _pvalue = new BigInt(value); }
+    @property ref inout(BigInt) value() inout { return *_pvalue; }
 }
 
 

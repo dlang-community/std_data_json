@@ -28,13 +28,12 @@
  *   on the version contained in Andrei Alexandrescu's "std.jgrandson"
  *   module draft.
  *
- * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/lexer.d)
  */
 module stdx.data.json.lexer;
-@safe:
 
 import std.range;
 import std.array : appender;
@@ -165,7 +164,7 @@ unittest { // test built-in UTF validation
 }
 
 static if (__VERSION__ >= 2067)
-unittest { // test for @nogc interface
+@safe unittest { // test for @nogc and @safe interface
     static struct MyAppender {
         @nogc:
         void put(string s) { }
@@ -550,7 +549,14 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
             if (neg) int_part = -int_part;
             /*static if (options & LexOptions.useDecimal) _front.number = Decimal(int_part, exponent);
             else*/ if (exponent == 0) _front.number = int_part;
-            else _front.number = exp10(exponent) * int_part;
+            else
+            {
+                static if (is(typeof(int_part) == BigInt))
+                {
+                    import std.conv : to;
+                    _front.number = exp10(exponent) * int_part.toDecimalString.to!double;
+                } else _front.number = exp10(exponent) * int_part;
+            }
         }
 
         // post decimal point part
@@ -633,7 +639,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     }
 }
 
-unittest
+@safe unittest
 {
     import std.conv;
     import std.exception;
@@ -700,7 +706,7 @@ unittest
     testResult(`"\uD800\udc00"`, "\U00010000", "");
 }
 
-unittest
+@safe unittest
 {
     import std.exception;
 
@@ -730,7 +736,7 @@ unittest
     testFail(`"\uD800\u1234"`); // invalid surrogate pair
 }
 
-unittest
+@safe unittest
 {
     import std.exception;
     import std.math : approxEqual, isNaN;
@@ -787,7 +793,7 @@ unittest
     test!(LexOptions.specialFloatLiterals)("-Infinity ", -double.infinity, " ");
 }
 
-unittest
+@safe unittest
 {
     import std.exception;
 
@@ -828,9 +834,10 @@ unittest
 /**
  * A low-level JSON token as returned by $(D JSONLexer).
 */
-struct JSONToken
+@safe struct JSONToken
 {
     import std.algorithm : among;
+    import std.bigint : BigInt;
 
     /**
      * The kind of token represented.
@@ -916,6 +923,8 @@ struct JSONToken
     }
     /// ditto
     @property JSONNumber number(double value) nothrow @nogc { return this.number = JSONNumber(value); }
+    /// ditto
+    @property JSONNumber number(BigInt value) nothrow @nogc { return this.number = JSONNumber(value); }
 
     /// Gets/sets the string value of the token.
     @property JSONString string() const pure nothrow @trusted @nogc
@@ -988,7 +997,7 @@ struct JSONToken
     }
 }
 
-unittest
+@safe unittest
 {
     JSONToken tok;
 
@@ -1028,7 +1037,7 @@ unittest
 /**
  * Represents a JSON string literal with lazy (un)escaping.
  */
-struct JSONString {
+@safe struct JSONString {
     import std.typecons : Tuple, tuple;
 
     private {
@@ -1126,7 +1135,7 @@ struct JSONString {
     size_t toHash() const nothrow @trusted { auto val = this.value; return typeid(string).getHash(&val); }
 }
 
-unittest {
+@safe unittest {
     JSONString s = "test";
     assert(s == "test");
     assert(s.value == "test");
@@ -1156,7 +1165,7 @@ unittest {
 /**
  * Represents a JSON number literal with lazy conversion.
  */
-struct JSONNumber {
+@safe struct JSONNumber {
     import std.bigint;
 
     enum Type {
@@ -1438,7 +1447,7 @@ struct JSONNumber {
     }
 }
 
-unittest // assignment operator
+@safe unittest // assignment operator
 {
     import std.bigint;
 
@@ -1473,7 +1482,7 @@ unittest // assignment operator
     assert(num2.decimalValue == JSONNumber.Decimal(BigInt(1), 0));*/
 }
 
-unittest // property access
+@safe unittest // property access
 {
     import std.bigint;
 
@@ -1508,7 +1517,7 @@ unittest // property access
     assert(num.decimalValue.integer == 2 && num.decimalValue.exponent == 0);*/
 }
 
-unittest // negative numbers
+@safe unittest // negative numbers
 {
     import std.bigint;
 
@@ -1780,7 +1789,7 @@ nothrow {
 }
 
 package bool isValidStringLiteral(string str)
-nothrow @nogc {
+nothrow @nogc @safe {
     import std.range : NullSink;
     import std.string : representation;
 
@@ -1950,7 +1959,7 @@ package void escapeStringLiteral(bool use_surrogates = false, Input, Output)(
 }
 
 package string escapeStringLiteral(string str)
-nothrow {
+nothrow @safe {
     import std.string;
 
     auto rep = str.representation;

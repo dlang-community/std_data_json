@@ -6,13 +6,12 @@
  * ...
  * ---
  *
- * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/generator.d)
  */
 module stdx.data.json.generator;
-@safe:
 
 import stdx.data.json.lexer;
 import stdx.data.json.parser;
@@ -77,14 +76,14 @@ string toJSON(GeneratorOptions options = GeneratorOptions.init)(JSONToken token)
 }
 
 ///
-unittest
+@safe unittest
 {
     JSONValue value = true;
     assert(value.toJSON() == "true");
 }
 
 ///
-unittest
+@safe unittest
 {
     auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
 
@@ -108,7 +107,7 @@ unittest
     );
 }
 
-unittest
+@safe unittest
 {
     auto nodes = parseJSONStream(`{"a": [], "b": [1, {}]}`);
     assert(nodes.toJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}");
@@ -203,7 +202,7 @@ enum GeneratorOptions {
 }
 
 
-private void writeAsStringImpl(GeneratorOptions options, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
+@safe private void writeAsStringImpl(GeneratorOptions options, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
     import taggedalgebraic : get;
@@ -221,7 +220,11 @@ private void writeAsStringImpl(GeneratorOptions options, Output)(JSONValue value
         case JSONValue.Type.boolean: output.put(value == true ? "true" : "false"); break;
         case JSONValue.Type.double_: output.writeNumber!options(cast(double)value); break;
         case JSONValue.Type.integer: output.writeNumber(cast(long)value); break;
-        case JSONValue.Type.bigInt: output.writeNumber(cast(BigInt)value); break;
+        case JSONValue.Type.bigInt: () @trusted {
+            auto val = cast(BigInt*)value;
+            if (val is null) throw new Exception("Null BigInt value");
+            output.writeNumber(*val);
+            }(); break;
         case JSONValue.Type.string: output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(get!string(value)); output.put('"'); break;
         case JSONValue.Type.object:
             output.put('{');
@@ -382,10 +385,10 @@ private void writeNumber(R)(ref R dst, long num) @trusted
 
 private void writeNumber(R)(ref R dst, BigInt num) @trusted
 {
-    num.toString(str => dst.put(str), null);
+    () @trusted { num.toString(str => dst.put(str), null); } ();
 }
 
-@trusted /* DMD 2.068 @safety workaround */ unittest
+@safe unittest
 {
     import std.math;
     import std.string;
@@ -400,7 +403,7 @@ private void writeNumber(R)(ref R dst, BigInt num) @trusted
     assert(pnum.get!double.approxEqual(num.get!double));
 }
 
-unittest // special float values
+@safe unittest // special float values
 {
     static void test(GeneratorOptions options = GeneratorOptions.init)(double val, string expected)
     {
@@ -473,7 +476,7 @@ private void escapeString(bool use_surrogates = false, R)(ref R dst, string s)
     }
 }
 
-unittest
+@safe unittest
 {
     static void test(bool surrog)(string str, string expected)
     {

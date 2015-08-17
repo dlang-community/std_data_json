@@ -25,13 +25,12 @@
  * assert(value == value2);
  * ---
  *
- * Copyright: Copyright 2012 - 2014, Sönke Ludwig.
+ * Copyright: Copyright 2012 - 2015, Sönke Ludwig.
  * License:   $(WEB www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
  * Authors:   Sönke Ludwig
  * Source:    $(PHOBOSSRC std/data/json/parser.d)
  */
 module stdx.data.json.parser;
-@safe:
 
 import stdx.data.json.lexer;
 import stdx.data.json.value;
@@ -66,7 +65,7 @@ JSONValue toJSONValue(Input)(Input tokens)
 }
 
 ///
-@trusted /*2.065*/ unittest
+@safe unittest
 {
     // parse a simple number
     JSONValue a = toJSONValue(`1.0`);
@@ -88,7 +87,14 @@ JSONValue toJSONValue(Input)(Input tokens)
     assert(cdoc[2] == null);
 }
 
-unittest
+/*unittest
+{
+    import std.bigint;
+    auto v = toJSONValue!(LexOptions.useBigInt)(`{"big": 12345678901234567890}`);
+    assert(v["big"].value == BigInt("12345678901234567890"));
+}*/
+
+@safe unittest
 {
     import std.exception;
     assertNotThrown(toJSONValue("{} \t\r\n"));
@@ -119,7 +125,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
 }
 
 /// Parse an object
-@trusted /*2.065*/ unittest
+@safe unittest
 {
     // parse an object
     string str = `{"a": true, "b": "test"}`;
@@ -133,13 +139,15 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
 }
 
 /// Parse multiple consecutive values
-unittest
+@safe unittest
 {
     string str = `1.0 2.0`;
     JSONValue v1 = parseJSONValue(str);
     assert(v1 == 1.0);
+    assert(str == `2.0`);
     JSONValue v2 = parseJSONValue(str);
     assert(v2 == 2.0);
+    assert(str == ``);
 }
 
 
@@ -150,7 +158,7 @@ unittest
  * Any tokens after the end of the first JSON document will be left in the
  * input token range for possible later consumption.
 */
-JSONValue parseJSONValue(Input)(ref Input tokens)
+@safe JSONValue parseJSONValue(Input)(ref Input tokens)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
@@ -169,9 +177,9 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
         case number:
             final switch (tokens.front.number.type)
             {
-                case JSONNumber.Type.double_: ret = JSONValue(tokens.front.number.doubleValue); break;
-                case JSONNumber.Type.long_: ret = JSONValue(tokens.front.number.longValue); break;
-                case JSONNumber.Type.bigInt: ret = JSONValue(tokens.front.number.bigIntValue); break;
+                case JSONNumber.Type.double_: ret = tokens.front.number.doubleValue; break;
+                case JSONNumber.Type.long_: ret = tokens.front.number.longValue; break;
+                case JSONNumber.Type.bigInt: () @trusted { ret = WrappedBigInt(tokens.front.number.bigIntValue); } (); break;
             }
             break;
         case string: ret = JSONValue(tokens.front.string); break;
@@ -234,7 +242,7 @@ JSONValue parseJSONValue(Input)(ref Input tokens)
 }
 
 ///
-unittest
+@safe unittest
 {
     // lex
     auto tokens = lexJSON(`[1, 2, 3]`);
@@ -249,7 +257,7 @@ unittest
     assert(arr[2] == 3.0);
 }
 
-unittest
+@safe unittest
 {
     import std.exception;
 
@@ -303,7 +311,7 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
 }
 
 ///
-unittest
+@safe unittest
 {
     import std.algorithm;
 
@@ -323,7 +331,7 @@ unittest
     }
 }
 
-unittest
+@safe unittest
 {
     auto rng = parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}`);
     with (JSONParserNode.Kind)
@@ -347,7 +355,7 @@ unittest
     }
 }
 
-unittest
+@safe unittest
 {
     auto rng = parseJSONStream(`[]`);
     with (JSONParserNode.Kind)
@@ -357,7 +365,7 @@ unittest
     }
 }
 
-@trusted unittest
+@safe unittest
 {
     import std.array;
     import std.exception;
@@ -379,7 +387,7 @@ unittest
     assertThrown(parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}}`).array);
 }
 
-unittest { // test for @nogc interface
+@safe unittest { // test for @nogc interface
    static struct MyAppender
    {
         @nogc:
@@ -809,7 +817,7 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(q{
             [
@@ -883,7 +891,7 @@ bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(q{
             {
@@ -935,7 +943,7 @@ void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParser
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(q{
             [
@@ -1035,7 +1043,7 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
 }
 
 ///
-@system unittest {
+unittest {
     auto j = parseJSONStream(q{
             [
                 "foo",
@@ -1085,7 +1093,7 @@ void readObject(R)(ref R nodes, scope void delegate(string key) @safe del) if (i
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(q{
             {
@@ -1128,7 +1136,7 @@ double readDouble(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(`1.0`);
     double value = j.readDouble;
@@ -1158,7 +1166,7 @@ string readString(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(`"foo"`);
     string value = j.readString;
@@ -1188,7 +1196,7 @@ bool readBool(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 }
 
 ///
-unittest
+@safe unittest
 {
     auto j = parseJSONStream(`true`);
     bool value = j.readBool;

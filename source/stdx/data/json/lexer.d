@@ -2029,8 +2029,8 @@ private double exp10(int exp) pure @trusted @nogc
 
 
 // derived from libdparse
-private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow
-    @trusted @nogc if (chars.length <= 8)
+private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow @safe @nogc
+    if (chars.length <= 8)
 {
     version (Windows) {
         // TODO: implement ASM version (Win64 ABI)!
@@ -2047,7 +2047,7 @@ private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow
         else
             enum flags = 0b0000_0000;
         
-        asm //pure @nogc nothrow
+        asm pure @nogc nothrow
         {
             naked;
             movdqu XMM1, [RDI];

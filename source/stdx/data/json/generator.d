@@ -148,7 +148,9 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONVal
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
-    writeAsStringImpl!options(nodes, output);
+    import std.algorithm.mutation : copy;
+    auto joutput = JSONOutputRange!(Output, options)(output);
+    copy(nodes, joutput);
 }
 /// ditto
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input tokens, ref Output output)
@@ -179,6 +181,175 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(in ref 
         case colon: output.put(':'); break;
         case comma: output.put(','); break;
     }
+}
+
+/** Convenience function for creating a `JSONOutputRange` instance using IFTI.
+*/
+JSONOutputRange!(R, options) jsonOutputRange(GeneratorOptions options = GeneratorOptions.init, R)(R output)
+    if (isOutputRange!(R, char))
+{
+    return JSONOutputRange!(R, options)(output);
+}
+
+/** Output range that takes JSON primitives and outputs to a character output
+    range.
+
+    This range provides the underlying functinality for `writeJSON` and
+    `toJSON` and is well suited as a target for serialization frameworks.
+
+    Note that pretty-printing (`GeneratorOptions.compact` not set) is currently
+    only supported for primitives of type `JSONParserNode`.
+*/
+struct JSONOutputRange(R, GeneratorOptions options = GeneratorOptions.init)
+    if (isOutputRange!(R, char))
+{
+    private {
+        R m_output;
+        size_t m_nesting = 0;
+        bool m_first = false;
+        bool m_isObjectField = false;
+    }
+
+    /** Constructs the range for a given character output range.
+    */
+    this(R output)
+    {
+        m_output = output;
+    }
+
+    /** Writes a single JSON primitive to the destination character range.
+    */
+    void put(JSONParserNode node)
+    {
+        enum pretty_print = (options & GeneratorOptions.compact) == 0;
+
+        final switch (node.kind) with (JSONParserNode.Kind) {
+            case none: assert(false);
+            case key:
+                if (m_nesting > 0 && !m_first) m_output.put(',');
+                else m_first = false;
+                m_isObjectField = true;
+                static if (pretty_print) indent();
+                m_output.put('"');
+                m_output.escapeString!(options & GeneratorOptions.escapeUnicode)(node.key);
+                m_output.put(pretty_print ? `": ` : `":`);
+                break;
+            case literal:
+                preValue();
+                node.literal.writeJSON!options(m_output);
+                break;
+            case objectStart:
+                preValue();
+                m_output.put('{');
+                m_nesting++;
+                m_first = true;
+                break;
+            case objectEnd:
+                m_nesting--;
+                static if (pretty_print)
+                {
+                    if (!m_first) indent();
+                }
+                m_first = false;
+                m_output.put('}');
+                break;
+            case arrayStart:
+                preValue();
+                m_output.put('[');
+                m_nesting++;
+                m_first = true;
+                m_isObjectField = false;
+                break;
+            case arrayEnd:
+                m_nesting--;
+                static if (pretty_print)
+                {
+                    if (!m_first) indent();
+                }
+                m_first = false;
+                m_output.put(']');
+                break;
+        }
+    }
+    /// ditto
+    void put(JSONToken token)
+    {
+        final switch (token.kind) with (JSONToken.Kind) {
+            case none: assert(false);
+            case error: m_output.put("_error_"); break;
+            case null_: put(null); break;
+            case boolean: put(token.boolean); break;
+            case number: put(token.number); break;
+            case string: put(token.string); break;
+            case objectStart: m_output.put('{'); break;
+            case objectEnd: m_output.put('}'); break;
+            case arrayStart: m_output.put('['); break;
+            case arrayEnd: m_output.put(']'); break;
+            case colon: m_output.put(':'); break;
+            case comma: m_output.put(','); break;
+        }
+    }
+    /// ditto
+    void put(typeof(null)) { m_output.put("null"); }
+    /// ditto
+    void put(bool value) { m_output.put(value ? "true" : "false"); }
+    /// ditto
+    void put(long value) { m_output.writeNumber(value); }
+    /// ditto
+    void put(BigInt value) { m_output.writeNumber(value); }
+    /// ditto
+    void put(double value) { m_output.writeNumber!options(value); }
+    /// ditto
+    void put(JSONString value)
+    {
+        auto s = value.anyValue;
+        if (s[0]) put(s[1]); // decoded string
+        else m_output.put(s[1]); // raw string literal
+    }
+    /// ditto
+    void put(string value)
+    {
+        m_output.put('"');
+        m_output.escapeString!(options & GeneratorOptions.escapeUnicode)(value);
+        m_output.put('"');
+    }
+
+    private void indent()
+    {
+        m_output.put('\n');
+        foreach (tab; 0 .. m_nesting) m_output.put('\t');
+    }
+
+    private void preValue()
+    {
+        if (!m_isObjectField)
+        {
+            if (m_nesting > 0 && !m_first) m_output.put(',');
+            else m_first = false;
+            static if (!(options & GeneratorOptions.compact))
+            {
+                if (m_nesting > 0) indent();
+            }
+        }
+        else m_isObjectField = false;
+    }
+}
+
+@safe unittest {
+    auto app = appender!(char[]);
+    auto dst = jsonOutputRange(app);
+    dst.put(true);
+    dst.put(1234);
+    dst.put("hello");
+    assert(app.data == "true1234\"hello\"");
+}
+
+@safe unittest {
+    auto app = appender!(char[]);
+    auto dst = jsonOutputRange(app);
+    foreach (n; parseJSONStream(`{"foo":42, "bar":true, "baz": [null, false]}`))
+        dst.put(n);
+    assert(app.data == "{\n\t\"foo\": 42,\n\t\"bar\": true,\n\t\"baz\": [\n\t\tnull,\n\t\tfalse\n\t]\n}");
 }
 
 
@@ -259,88 +430,6 @@ enum GeneratorOptions {
             }
             output.put(']');
             break;
-    }
-}
-
-private void writeAsStringImpl(GeneratorOptions options, Output, Input)(Input nodes, ref Output output)
-    if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
-{
-    size_t nesting = 0;
-    bool first = false;
-    bool is_object_field = false;
-    enum pretty_print = (options & GeneratorOptions.compact) == 0;
-
-    void indent(size_t depth)
-    {
-        output.put('\n');
-        foreach (tab; 0 .. depth) output.put('\t');
-    }
-
-    void preValue()
-    {
-        if (!is_object_field)
-        {
-            if (nesting > 0 && !first) output.put(',');
-            else first = false;
-            static if (pretty_print)
-            {
-                if (nesting > 0) indent(nesting);
-            }
-        }
-        else is_object_field = false;
-    }
-
-    while (!nodes.empty)
-    {
-        final switch (nodes.front.kind) with (JSONParserNode.Kind)
-        {
-            case none: assert(false);
-            case key:
-                if (nesting > 0 && !first) output.put(',');
-                else first = false;
-                is_object_field = true;
-                static if (pretty_print) indent(nesting);
-                output.put('"');
-                output.escapeString!(options & GeneratorOptions.escapeUnicode)(nodes.front.key);
-                output.put(pretty_print ? `": ` : `":`);
-                break;
-            case literal:
-                preValue();
-                nodes.front.literal.writeJSON!options(output);
-                break;
-            case objectStart:
-                preValue();
-                output.put('{');
-                nesting++;
-                first = true;
-                break;
-            case objectEnd:
-                nesting--;
-                static if (pretty_print)
-                {
-                    if (!first) indent(nesting);
-                }
-                first = false;
-                output.put('}');
-                break;
-            case arrayStart:
-                preValue();
-                output.put('[');
-                nesting++;
-                first = true;
-                is_object_field = false;
-                break;
-            case arrayEnd:
-                nesting--;
-                static if (pretty_print)
-                {
-                    if (!first) indent(nesting);
-                }
-                first = false;
-                output.put(']');
-                break;
-        }
-        nodes.popFront();
     }
 }
 

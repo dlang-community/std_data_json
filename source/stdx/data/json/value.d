@@ -215,70 +215,180 @@ unittest
 
 
 /**
-  * Alternative version of `opt` that works using dot and index notation.index
+  * Alternative version of `opt` that works using dot and index notation.
   */
-auto opt2(JSONValue val)
+auto opt2()(auto ref JSONValue val)
 {
-    alias NJ = Nullable!JSONValue;
+    alias C = JSONValue; // this function is generic and could also operate on BSONValue or similar types
+    static struct S(F...) {
+        private {
+            static if (F.length > 0) {
+                S!(F[0 .. $-1])* _parent;
+                F[$-1] _field;
+            }
+            else
+            {
+                C* _container;
+            }
+        }
 
-    static struct S(string path) {
-        private NJ _val;
+        static if (F.length == 0)
+        {
+            this(ref C container)
+            {
+                () @trusted { _container = &container; } ();
+            }
+        }
+        else
+        {
+            this (ref S!(F[0 .. $-1]) s, F[$-1] field)
+            {
+                () @trusted { _parent = &s; } ();
+                _field = field;
+            }
+        }
 
-        @property bool exists() const { return !_val.isNull; }
+        @disable this(); // don't let the reference escape
+
+        @property bool exists() const { return resolve !is null; }
 
         inout(JSONValue) get() inout
         {
-            if (_val.isNull())
-                throw new .Exception("Missing JSON value at "~path~".");
-            return _val.get();
+            auto val = this.resolve();
+            if (val is null)
+                throw new .Exception("Missing JSON value at "~this.path()~".");
+            return *val;
         }
 
         inout(T) get(T)(T def_value) inout
         {
-            if (_val.isNull || !_val.hasType!T)
+            auto val = resolve();
+            if (val is null || !val.hasType!T)
                 return def_value;
-            return _val.get.get!T;
+            return val.get!T;
         }
 
         alias get this;
 
-        auto opDispatch(string name)()
+        @property auto opDispatch(string name)()
         {
-            enum newpath = path ~ "." ~ name;
-            alias SR = S!newpath;
-            if (_val.isNull()) return SR.init;
-            if (_val.typeID != JSONValue.Type.object)
-                return SR.init;
-            if (auto pv = name in _val)
-                return SR(NJ(*pv));
-            return SR.init;
+            return S!(F, string)(this, name);
+        }
+
+        @property void opDispatch(string name, T)(T value)
+        {
+            (*resolveWrite(OptWriteMode.dict))[name] = value;
         }
 
         auto opIndex()(size_t idx)
         {
-            enum newpath = path ~ "[]";
-            alias SR = S!newpath;
-            if (_val.isNull()) return SR.init;
-            if (_val.typeID != JSONValue.Type.array)
-                return SR.init;
-            if (idx >= _val.length)
-                return SR.init;
-            return SR(NJ(_val[idx]));
+            return S!(F, size_t)(this, idx);
         }
 
         auto opIndex()(string name)
         {
-            enum newpath = path ~ "[$]";
-            alias SR = S!newpath;
-            if (_val.isNull()) return SR.init;
-            if (_val.typeID != JSONValue.Type.object)
-                return SR.init;
-            if (auto pv = name in _val)
-                return SR(NJ(*pv));
-            return SR.init;
+            return S!(F, string)(this, name);
+        }
+
+        auto opIndexAssign(T)(T value, size_t idx)
+        {
+            *(this[idx].resolveWrite(OptWriteMode.any)) = value;
+        }
+
+        auto opIndexAssign(T)(T value, string name)
+        {
+            (*resolveWrite(OptWriteMode.dict))[name] = value;
+        }
+
+        private inout(C)* resolve()
+        inout {
+            static if (F.length > 0)
+            {
+                auto c = this._parent.resolve();
+                if (!c) return null;
+                static if (is(F[$-1] : long)) {
+                    if (!c.hasType!(C[])) return null;
+                    if (_field < c.length) return &c.get!(C[])[_field];
+                    return null;
+                }
+                else
+                {
+                    if (!c.hasType!(C[string])) return null;
+                    return this._field in *c;
+                }
+            }
+            else
+            {
+                return _container;
+            }
+        }
+
+        private C* resolveWrite(OptWriteMode mode)
+        {
+            C* v;
+            static if (F.length == 0)
+            {
+                v = _container;
+            }
+            else
+            {
+                auto c = _parent.resolveWrite(is(F[$-1] == string) ? OptWriteMode.dict : OptWriteMode.array);
+                static if (is(F[$-1] == string))
+                {
+                    v = _field in *c;
+                    if (!v)
+                    {
+                        (*c)[_field] = mode == OptWriteMode.dict ? C(cast(C[string])null) : C(cast(C[])null);
+                        v = _field in *c;
+                    }
+                }
+                else
+                {
+                    import std.conv : to;
+                    if (_field >= c.length)
+                        throw new Exception("Array index "~_field.to!string()~" out of bounds ("~c.length.to!string()~") for "~_parent.path()~".");
+                    v = &c.get!(C[])[_field];
+                }
+            }
+
+            final switch (mode)
+            {
+                case OptWriteMode.dict:
+                    if (!v.hasType!(C[string]))
+                        throw new .Exception(pname()~" is not a dictionary/object. Cannot set a field.");
+                    break;
+                case OptWriteMode.array:
+                    if (!v.hasType!(C[]))
+                        throw new .Exception(pname()~" is not an array. Cannot set an entry.");
+                    break;
+                case OptWriteMode.any: break;
+            }
+
+            return v;
+        }
+
+        private string path() const
+        {
+            static if (F.length > 0)
+            {
+                import std.conv : to;
+                static if (is(F[$-1] == string)) return this._parent.path() ~ "." ~ this._field;
+                else return this._parent.path() ~ "[" ~ this._field.to!string ~ "]";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private string pname() const
+        {
+            static if (F.length > 0) return "Field "~_parent.path();
+            else return "Value";
         }
     }
-    return S!""(NJ(val));
+
+    return S!()(val);
 }
 
 ///
@@ -315,4 +425,24 @@ unittest
 
     // accessing a missing path throws an exception
     assertThrown(obj.opt2.b[3] == 3);
+
+    // assignments work, too
+    obj.opt2.b[0] = 12;
+    assert(obj.opt2.b[0] == 12);
+
+    // assignments to non-existent paths automatically create all missing parents
+    obj.opt2.c.d.opDispatch!"e"( 12);
+    assert(obj.opt2.c.d.e == 12);
+
+    // writing to paths with conflicting types will throw
+    assertThrown(obj.opt2.c[2] = 12);
+
+    // writing out of array bounds will also throw
+    assertThrown(obj.opt2.b[10] = 12);
+}
+
+private enum OptWriteMode {
+    dict,
+    array,
+    any
 }

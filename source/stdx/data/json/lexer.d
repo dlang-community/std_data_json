@@ -872,6 +872,34 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     /// The location of the token in the input.
     Location location;
 
+    /// Constructs a token from a primitive data value
+    this(typeof(null)) { _kind = Kind.null_; }
+    // ditto
+    this(bool value) @trusted { _kind = Kind.boolean; _boolean = value; }
+    // ditto
+    this(JSONNumber value) { _kind = Kind.number; _number = value; }
+    // ditto
+    this(double value) @trusted { _kind = Kind.number; _number = value; }
+    // ditto
+    this(JSONString value) @trusted { _kind = Kind.string; _string = value; }
+    // ditto
+    this(.string value) @trusted { _kind = Kind.string; _string = value; }
+
+    /** Constructs a token with a specific kind.
+      *
+      * Note that only kinds that don't imply additional data are allowed.
+      */
+    this(Kind kind)
+    in
+    {
+        assert(!kind.among!(Kind.string, Kind.boolean, Kind.number));
+    }
+    body
+    {
+        _kind = kind;
+    }
+
+
     ref JSONToken opAssign(ref JSONToken other) nothrow @trusted @nogc
     {
         _kind = other._kind;

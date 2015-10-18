@@ -944,10 +944,10 @@ unittest
         // Note: order is undefined due to AA use in JSONValue
         //assert(val.toJSON() == val.toJSON().parseJSONValue().toJSON());
 
-        static bool ncmp(JSONParserNode a, JSONParserNode b)
+        static bool ncmp(JSONParserNode!string a, JSONParserNode!string b)
         {
-            if (a.kind == b.kind && a.kind == JSONParserNode.Kind.literal) {
-                if (a.literal.kind == b.literal.kind && a.literal.kind == JSONToken.Kind.number)
+            if (a.kind == b.kind && a.kind == JSONParserNodeKind.literal) {
+                if (a.literal.kind == b.literal.kind && a.literal.kind == JSONTokenKind.number)
                     return a.literal.number.approxEqual(b.literal.number);
             }
             return a == b;

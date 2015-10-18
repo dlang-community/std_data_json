@@ -24,7 +24,7 @@ unittest
 
     // Parse a JSON string to a node stream
     auto nodes = parseJSONStream(`{"name": "D", "kind": "language"}`);
-    with (JSONParserNode.Kind) {
+    with (JSONParserNodeKind) {
         assert(nodes.map!(n => n.kind).equal(
             [objectStart, key, literal, key, literal, objectEnd]));
     }
@@ -171,7 +171,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
 
     JSONValue ret;
 
-    final switch (tokens.front.kind) with (JSONToken.Kind)
+    final switch (tokens.front.kind) with (JSONTokenKind)
     {
         case none: assert(false);
         case error: enforceJson(false, "Invalid token encountered", tokens.front.location); assert(false);
@@ -290,7 +290,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
  *
  * The resulting range of nodes is guaranteed to be ordered according to the
  * following grammar, where uppercase terminals correspond to the node kind
- * (See $(D JSONParserNode.Kind)).
+ * (See $(D JSONParserNodeKind)).
  *
  * $(UL
  *   $(LI list → value*)
@@ -299,12 +299,12 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
  *   $(LI object → OBJECTSTART (KEY value)* OBJECTEND)
  * )
  */
-JSONParserRange!(JSONLexerRange!(Input, options, appenderFactory))
-    parseJSONStream(LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
+JSONParserRange!(JSONLexerRange!(Input, options, String))
+    parseJSONStream(LexOptions options = LexOptions.init, String = string, Input)
         (Input input, string filename = null)
     if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
-    return parseJSONStream(lexJSON!(options, appenderFactory)(input, filename));
+    return parseJSONStream(lexJSON!(options, String)(input, filename));
 }
 /// ditto
 JSONParserRange!Input parseJSONStream(Input)(Input tokens)
@@ -319,7 +319,7 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
     import std.algorithm;
 
     auto rng1 = parseJSONStream(`{ "a": 1, "b": [null] }`);
-    with (JSONParserNode.Kind)
+    with (JSONParserNodeKind)
     {
         assert(rng1.map!(n => n.kind).equal(
             [objectStart, key, literal, key, arrayStart, literal, arrayEnd,
@@ -327,7 +327,7 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
     }
 
     auto rng2 = parseJSONStream(`1 {"a": 2} null`);
-    with (JSONParserNode.Kind)
+    with (JSONParserNodeKind)
     {
         assert(rng2.map!(n => n.kind).equal(
             [literal, objectStart, key, literal, objectEnd, literal]));
@@ -337,14 +337,14 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
 @safe unittest
 {
     auto rng = parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}`);
-    with (JSONParserNode.Kind)
+    with (JSONParserNodeKind)
     {
         rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "a"); rng.popFront();
         assert(rng.front.kind == literal && rng.front.literal.number == 1.0); rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "b"); rng.popFront();
         assert(rng.front.kind == arrayStart); rng.popFront();
-        assert(rng.front.kind == literal && rng.front.literal.kind == JSONToken.Kind.null_); rng.popFront();
+        assert(rng.front.kind == literal && rng.front.literal.kind == JSONTokenKind.null_); rng.popFront();
         assert(rng.front.kind == literal && rng.front.literal.boolean == true); rng.popFront();
         assert(rng.front.kind == arrayEnd); rng.popFront();
         assert(rng.front.kind == key && rng.front.key == "c"); rng.popFront();
@@ -361,7 +361,7 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
 @safe unittest
 {
     auto rng = parseJSONStream(`[]`);
-    with (JSONParserNode.Kind)
+    with (JSONParserNodeKind)
     {
         import std.algorithm;
         assert(rng.map!(n => n.kind).equal([arrayStart, arrayEnd]));
@@ -390,7 +390,8 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
     assertThrown(parseJSONStream(`{"a": 1, "b": [null, true], "c": {"d": {}}}}`).array);
 }
 
-@safe unittest { // test for @nogc interface
+// Not possible to test anymore with the new String customization scheme
+/*@safe unittest { // test for @nogc interface
    static struct MyAppender
    {
         @nogc:
@@ -424,7 +425,7 @@ JSONParserRange!Input parseJSONStream(Input)(Input tokens)
     auto t2 = &test!wstring;
     auto t3 = &test!dstring;
     auto t4 = &test!EmptyStream;
-}
+}*/
 
 
 /**
@@ -437,12 +438,14 @@ struct JSONParserRange(Input)
 {
     import stdx.data.json.foundation;
 
+    alias String = typeof(Input.front).String;
+
     private {
         Input _input;
-        JSONToken.Kind[] _containerStack;
+        JSONTokenKind[] _containerStack;
         size_t _containerStackFill = 0;
-        JSONParserNode.Kind _prevKind;
-        JSONParserNode _node;
+        JSONParserNodeKind _prevKind;
+        JSONParserNode!String _node;
     }
 
     /**
@@ -461,7 +464,7 @@ struct JSONParserRange(Input)
     /**
      * Returns the current node from the stream.
      */
-    @property ref const(JSONParserNode) front()
+    @property ref const(JSONParserNode!String) front()
     {
         ensureFrontValid();
         return _node;
@@ -474,15 +477,15 @@ struct JSONParserRange(Input)
     {
         ensureFrontValid();
         _prevKind = _node.kind;
-        _node.kind = JSONParserNode.Kind.none;
+        _node.kind = JSONParserNodeKind.none;
     }
 
     private void ensureFrontValid()
     {
-        if (_node.kind == JSONParserNode.Kind.none)
+        if (_node.kind == JSONParserNodeKind.none)
         {
             readNext();
-            assert(_node.kind != JSONParserNode.Kind.none);
+            assert(_node.kind != JSONParserNodeKind.none);
         }
     }
 
@@ -490,7 +493,7 @@ struct JSONParserRange(Input)
     {
         if (_containerStackFill)
         {
-            if (_containerStack[_containerStackFill-1] == JSONToken.Kind.objectStart)
+            if (_containerStack[_containerStackFill-1] == JSONTokenKind.objectStart)
                 readNextInObject();
             else readNextInArray();
         }
@@ -503,38 +506,38 @@ struct JSONParserRange(Input)
         switch (_prevKind)
         {
             default: assert(false);
-            case JSONParserNode.Kind.objectStart:
-                if (_input.front.kind == JSONToken.Kind.objectEnd)
+            case JSONParserNodeKind.objectStart:
+                if (_input.front.kind == JSONTokenKind.objectEnd)
                 {
-                    _node.kind = JSONParserNode.Kind.objectEnd;
+                    _node.kind = JSONParserNodeKind.objectEnd;
                     _containerStackFill--;
                 }
                 else
                 {
-                    enforceJson(_input.front.kind == JSONToken.Kind.string,
+                    enforceJson(_input.front.kind == JSONTokenKind.string,
                         "Expected field name", _input.front.location);
                     _node.key = _input.front.string;
                 }
                 _input.popFront();
                 break;
-            case JSONParserNode.Kind.key:
-                enforceJson(_input.front.kind == JSONToken.Kind.colon,
+            case JSONParserNodeKind.key:
+                enforceJson(_input.front.kind == JSONTokenKind.colon,
                     "Expected ':'", _input.front.location);
                 _input.popFront();
                 readNextValue();
                 break;
-            case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
-                if (_input.front.kind == JSONToken.Kind.objectEnd)
+            case JSONParserNodeKind.literal, JSONParserNodeKind.objectEnd, JSONParserNodeKind.arrayEnd:
+                if (_input.front.kind == JSONTokenKind.objectEnd)
                 {
-                    _node.kind = JSONParserNode.Kind.objectEnd;
+                    _node.kind = JSONParserNodeKind.objectEnd;
                     _containerStackFill--;
                 }
                 else
                 {
-                    enforceJson(_input.front.kind == JSONToken.Kind.comma,
+                    enforceJson(_input.front.kind == JSONTokenKind.comma,
                         "Expected ',' or '}'", _input.front.location);
                     _input.popFront();
-                    enforceJson(!_input.empty && _input.front.kind == JSONToken.Kind.string,
+                    enforceJson(!_input.empty && _input.front.kind == JSONTokenKind.string,
                         "Expected field name", _input.front.location);
                     _node.key = _input.front.string;
                 }
@@ -549,10 +552,10 @@ struct JSONParserRange(Input)
         switch (_prevKind)
         {
             default: assert(false);
-            case JSONParserNode.Kind.arrayStart:
-                if (_input.front.kind == JSONToken.Kind.arrayEnd)
+            case JSONParserNodeKind.arrayStart:
+                if (_input.front.kind == JSONTokenKind.arrayEnd)
                 {
-                    _node.kind = JSONParserNode.Kind.arrayEnd;
+                    _node.kind = JSONParserNodeKind.arrayEnd;
                     _containerStackFill--;
                     _input.popFront();
                 }
@@ -561,16 +564,16 @@ struct JSONParserRange(Input)
                     readNextValue();
                 }
                 break;
-            case JSONParserNode.Kind.literal, JSONParserNode.Kind.objectEnd, JSONParserNode.Kind.arrayEnd:
-                if (_input.front.kind == JSONToken.Kind.arrayEnd)
+            case JSONParserNodeKind.literal, JSONParserNodeKind.objectEnd, JSONParserNodeKind.arrayEnd:
+                if (_input.front.kind == JSONTokenKind.arrayEnd)
                 {
-                    _node.kind = JSONParserNode.Kind.arrayEnd;
+                    _node.kind = JSONParserNodeKind.arrayEnd;
                     _containerStackFill--;
                     _input.popFront();
                 }
                 else
                 {
-                    enforceJson(_input.front.kind == JSONToken.Kind.comma,
+                    enforceJson(_input.front.kind == JSONTokenKind.comma,
                         "Expected ',' or ']'", _input.front.location);
                     _input.popFront();
                     enforceJson(!_input.empty, "Missing closing ']'", _input.location);
@@ -586,26 +589,26 @@ struct JSONParserRange(Input)
         {
             default:
                 throw new JSONException("Expected JSON value", _input.location);
-            case JSONToken.Kind.none: assert(false);
-            case JSONToken.Kind.null_, JSONToken.Kind.boolean,
-                    JSONToken.Kind.number, JSONToken.Kind.string:
+            case JSONTokenKind.none: assert(false);
+            case JSONTokenKind.null_, JSONTokenKind.boolean,
+                    JSONTokenKind.number, JSONTokenKind.string:
                 _node.literal = _input.front;
                 _input.popFront();
                 break;
-            case JSONToken.Kind.objectStart:
-                _node.kind = JSONParserNode.Kind.objectStart;
-                pushContainer(JSONToken.Kind.objectStart);
+            case JSONTokenKind.objectStart:
+                _node.kind = JSONParserNodeKind.objectStart;
+                pushContainer(JSONTokenKind.objectStart);
                 _input.popFront();
                 break;
-            case JSONToken.Kind.arrayStart:
-                _node.kind = JSONParserNode.Kind.arrayStart;
-                pushContainer(JSONToken.Kind.arrayStart);
+            case JSONTokenKind.arrayStart:
+                _node.kind = JSONParserNodeKind.arrayStart;
+                pushContainer(JSONTokenKind.arrayStart);
                 _input.popFront();
                 break;
         }
     }
 
-    private void pushContainer(JSONToken.Kind kind)
+    private void pushContainer(JSONTokenKind kind)
     {
         import std.algorithm/*.comparison*/ : max;
         if (_containerStackFill >= _containerStack.length)
@@ -620,33 +623,21 @@ struct JSONParserRange(Input)
  *
  * See $(D parseJSONStream) and $(D JSONParserRange) more information.
  */
-struct JSONParserNode
+struct JSONParserNode(String)
 {
     @safe:
     import std.algorithm/*.comparison*/ : among;
     import stdx.data.json.foundation : Location;
 
-    /**
-     * Determines the kind of a parser node.
-     */
-    enum Kind
-    {
-        none,        /// Used internally, never occurs in a node stream
-        key,         /// An object key
-        literal,     /// A literal value ($(D null), $(D boolean), $(D number) or $(D string))
-        objectStart, /// The start of an object value
-        objectEnd,   /// The end of an object value
-        arrayStart,  /// The start of an array value
-        arrayEnd,    /// The end of an array value
-    }
+    private alias Kind = JSONParserNodeKind; // compatibility alias
 
     private
     {
         Kind _kind = Kind.none;
         union
         {
-            string _key;
-            JSONToken _literal;
+            String _key;
+            JSONToken!String _literal;
         }
     }
 
@@ -664,13 +655,13 @@ struct JSONParserNode
      *
      * Setting the key will automatically switch the node kind.
      */
-    @property string key() const @trusted nothrow
+    @property String key() const @trusted nothrow
     {
         assert(_kind == Kind.key);
         return _key;
     }
     /// ditto
-    @property string key(string value) nothrow
+    @property String key(String value) nothrow
     {
         _kind = Kind.key;
         return _key = value;
@@ -681,13 +672,13 @@ struct JSONParserNode
      *
      * Setting the literal will automatically switch the node kind.
      */
-    @property ref inout(JSONToken) literal() inout @trusted nothrow
+    @property ref inout(JSONToken!String) literal() inout @trusted nothrow
     {
         assert(_kind == Kind.literal);
         return _literal;
     }
     /// ditto
-    @property ref JSONToken literal(JSONToken literal) nothrow
+    @property ref JSONToken!String literal(JSONToken!String literal) nothrow
     {
         _kind = Kind.literal;
         return _literal = literal;
@@ -722,12 +713,12 @@ struct JSONParserNode
 
     unittest
     {
-        JSONToken t1, t2, t3;
+        JSONToken!string t1, t2, t3;
         t1.string = "test";
         t2.string = "test".idup;
         t3.string = "other";
 
-        JSONParserNode n1, n2;
+        JSONParserNode!string n1, n2;
         n2.literal = t1; assert(n1 != n2);
         n1.literal = t1; assert(n1 == n2);
         n1.literal = t3; assert(n1 != n2);
@@ -772,13 +763,28 @@ struct JSONParserNode
 }
 
 
+/**
+ * Identifies the kind of a parser node.
+ */
+enum JSONParserNodeKind
+{
+    none,        /// Used internally, never occurs in a node stream
+    key,         /// An object key
+    literal,     /// A literal value ($(D null), $(D boolean), $(D number) or $(D string))
+    objectStart, /// The start of an object value
+    objectEnd,   /// The end of an object value
+    arrayStart,  /// The start of an array value
+    arrayEnd,    /// The end of an array value
+}
+
+
 /// Tests if a given type is an input range of $(D JSONToken).
-enum isJSONTokenInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONToken);
+enum isJSONTokenInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONToken!String, String);
 
 static assert(isJSONTokenInputRange!(JSONLexerRange!string));
 
 /// Tests if a given type is an input range of $(D JSONParserNode).
-enum isJSONParserNodeInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONParserNode);
+enum isJSONParserNodeInputRange(R) = isInputRange!R && is(typeof(R.init.front) : JSONParserNode!String, String);
 
 static assert(isJSONParserNodeInputRange!(JSONParserRange!(JSONLexerRange!string)));
 
@@ -804,7 +810,7 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     auto k = nodes.front.kind;
     nodes.popFront();
 
-    with (JSONParserNode.Kind) {
+    with (JSONParserNodeKind) {
         if (k != arrayStart && k != objectStart) return;
 
         int depth = 1;
@@ -829,7 +835,7 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
             ]
         });
 
-    assert(j.front.kind == JSONParserNode.Kind.arrayStart);
+    assert(j.front.kind == JSONParserNodeKind.arrayStart);
     j.popFront();
     
     // skips the whole [1, 2, 3] array
@@ -838,7 +844,7 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
     string value = j.readString;
     assert(value == "foo");
 
-    assert(j.front.kind == JSONParserNode.Kind.arrayEnd);
+    assert(j.front.kind == JSONParserNodeKind.arrayEnd);
     j.popFront();
 
     assert(j.empty);
@@ -849,8 +855,8 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
  * Skips all entries in an object until a certain key is reached.
  *
  * The node range must either point to the start of an object
- * (`JSONParserNode.Kind.objectStart`), or to a key within an object
- * (`JSONParserNode.Kind.key`).
+ * (`JSONParserNodeKind.objectStart`), or to a key within an object
+ * (`JSONParserNodeKind.key`).
  *
  * Params:
  *   nodes = An input range of JSON parser nodes
@@ -868,20 +874,20 @@ bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
     import stdx.data.json.foundation;
 
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind.among!(JSONParserNode.Kind.objectStart, JSONParserNode.Kind.key) > 0,
+    enforceJson(nodes.front.kind.among!(JSONParserNodeKind.objectStart, JSONParserNodeKind.key) > 0,
         "Expected object or object key", nodes.front.location);
 
-    if (nodes.front.kind == JSONParserNode.Kind.objectStart)
+    if (nodes.front.kind == JSONParserNodeKind.objectStart)
         nodes.popFront();
 
     while (true) {
         auto k = nodes.front.kind;
-        if (k == JSONParserNode.Kind.objectEnd) {
+        if (k == JSONParserNodeKind.objectEnd) {
             nodes.popFront();
             return false;
         }
 
-        assert(k == JSONParserNode.Kind.key);
+        assert(k == JSONParserNodeKind.key);
         if (nodes.front.key == key) {
             nodes.popFront();
             return true;
@@ -913,7 +919,7 @@ bool skipToKey(R)(ref R nodes, string key) if (isJSONParserNodeInputRange!R)
     string v2 = j.readString;
     assert(v2 == "str");
 
-    assert(j.front.kind == JSONParserNode.Kind.objectEnd);
+    assert(j.front.kind == JSONParserNodeKind.objectEnd);
     j.popFront();
 
     assert(j.empty);
@@ -931,13 +937,13 @@ void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParser
 {
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.arrayStart,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.arrayStart,
         "Expected array", nodes.front.location);
     nodes.popFront();
 
     while (true) {
         auto k = nodes.front.kind;
-        if (k == JSONParserNode.Kind.arrayEnd) {
+        if (k == JSONParserNodeKind.arrayEnd) {
           nodes.popFront();
           return;
         }
@@ -971,7 +977,7 @@ void readArray(R)(ref R nodes, scope void delegate() @safe del) if (isJSONParser
 /** Reads an array and returns a lazy range of parser node ranges.
   *
   * The given parser node range must point to a node of kind
-  * `JSONParserNode.Kind.arrayStart`. Each of the returned sub ranges
+  * `JSONParserNodeKind.arrayStart`. Each of the returned sub ranges
   * corresponds to the contents of a single array entry.
   *
   * Params:
@@ -991,11 +997,11 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
 
         @property bool empty() { return !nodes || nodes.empty; }
 
-        @property ref const(JSONParserNode) front() { return nodes.front; }
+        @property ref const(typeof(nodes.front)) front() { return nodes.front; }
 
         void popFront()
         {
-            switch (nodes.front.kind) with (JSONParserNode.Kind)
+            switch (nodes.front.kind) with (JSONParserNodeKind)
             {
                 default: break;
                 case objectStart, arrayStart: depth++; break;
@@ -1019,7 +1025,7 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
         void popFront()
         {
             while (!value.empty) value.popFront();
-            if (nodes.front.kind == JSONParserNode.Kind.arrayEnd) {
+            if (nodes.front.kind == JSONParserNodeKind.arrayEnd) {
                 nodes.popFront();
                 nodes = null;
             } else {
@@ -1031,13 +1037,13 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
     import stdx.data.json.foundation;
 
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.arrayStart,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.arrayStart,
         "Expected array", nodes.front.location);
     nodes.popFront();
 
     ARR ret;
 
-    if (nodes.front.kind != JSONParserNode.Kind.arrayEnd) {
+    if (nodes.front.kind != JSONParserNodeKind.arrayEnd) {
         ret.nodes = &nodes;
         ret.value = VR(&nodes);
     } else nodes.popFront();
@@ -1079,13 +1085,13 @@ void readObject(R)(ref R nodes, scope void delegate(string key) @safe del) if (i
 {
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.objectStart,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.objectStart,
         "Expected object", nodes.front.literal.location);
     nodes.popFront();
 
     while (true) {
         auto k = nodes.front.kind;
-        if (k == JSONParserNode.Kind.objectEnd) {
+        if (k == JSONParserNodeKind.objectEnd) {
           nodes.popFront();
           return;
         }
@@ -1130,8 +1136,8 @@ double readDouble(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 {
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
-        && nodes.front.literal.kind == JSONToken.Kind.number,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.literal
+        && nodes.front.literal.kind == JSONTokenKind.number,
         "Expected numeric value", nodes.front.literal.location);
     double ret = nodes.front.literal.number;
     nodes.popFront();
@@ -1160,8 +1166,8 @@ string readString(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 {
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
-        && nodes.front.literal.kind == JSONToken.Kind.string,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.literal
+        && nodes.front.literal.kind == JSONTokenKind.string,
         "Expected string value", nodes.front.literal.location);
     string ret = nodes.front.literal.string;
     nodes.popFront();
@@ -1190,8 +1196,8 @@ bool readBool(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 {
     import stdx.data.json.foundation;
     enforceJson(!nodes.empty, "Unexpected end of input", Location.init);
-    enforceJson(nodes.front.kind == JSONParserNode.Kind.literal
-        && nodes.front.literal.kind == JSONToken.Kind.boolean,
+    enforceJson(nodes.front.kind == JSONParserNodeKind.literal
+        && nodes.front.literal.kind == JSONTokenKind.boolean,
         "Expected boolean value", nodes.front.literal.location);
     bool ret = nodes.front.literal.boolean;
     nodes.popFront();

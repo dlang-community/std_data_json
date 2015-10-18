@@ -62,12 +62,12 @@ import stdx.data.json.foundation;
  *   Instead, a token with kind $(D JSONToken.Kind.error) is generated as the
  *   last token in the range.
  */
-JSONLexerRange!(Input, options, appenderFactory) lexJSON
-    (LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string(), Input)
+JSONLexerRange!(Input, options, String) lexJSON
+    (LexOptions options = LexOptions.init, String = string, Input)
     (Input input, string filename = null)
     if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
-    return JSONLexerRange!(Input, options, appenderFactory)(input, filename);
+    return JSONLexerRange!(Input, options, String)(input, filename);
 }
 
 ///
@@ -76,13 +76,13 @@ unittest
     import std.algorithm : equal, map;
 
     auto rng = lexJSON(`{"hello": 1.2, "world": [1, true, null]}`);
-    with (JSONToken)
+    with (JSONTokenKind)
     {
         assert(rng.map!(t => t.kind).equal(
-            [Kind.objectStart, Kind.string, Kind.colon, Kind.number, Kind.comma,
-            Kind.string, Kind.colon, Kind.arrayStart, Kind.number, Kind.comma,
-            Kind.boolean, Kind.comma, Kind.null_, Kind.arrayEnd,
-            Kind.objectEnd]));
+            [objectStart, string, colon, number, comma,
+            string, colon, arrayStart, number, comma,
+            boolean, comma, null_, arrayEnd,
+            objectEnd]));
     }
 }
 
@@ -94,7 +94,7 @@ unittest
     assert(rng.front.boolean == false);
     assert(rng.front.location.line == 1 && rng.front.location.column == 3);
     rng.popFront();
-    assert(rng.front.kind == JSONToken.Kind.null_);
+    assert(rng.front.kind == JSONTokenKind.null_);
     assert(rng.front.location.line == 1 && rng.front.location.column == 9);
     rng.popFront();
     assert(rng.front.number == 1.0);
@@ -163,7 +163,8 @@ unittest { // test built-in UTF validation
     testw_valid(['"', '\\', 't', 0xE000,'x','"']);
 }
 
-static if (__VERSION__ >= 2067)
+// Not possible to test anymore with the new String customization scheme
+/*static if (__VERSION__ >= 2069)
 @safe unittest { // test for @nogc and @safe interface
     static struct MyAppender {
         @nogc:
@@ -193,7 +194,7 @@ static if (__VERSION__ >= 2067)
     auto t1 = &test!string;
     auto t2 = &test!wstring;
     auto t3 = &test!dstring;
-}
+}*/
 
 
 /**
@@ -204,7 +205,7 @@ static if (__VERSION__ >= 2067)
  *
  * See $(D lexJSON) for more information.
 */
-struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appenderFactory = () => appender!string())
+struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = string)
     if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     import std.string : representation;
@@ -222,7 +223,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     private
     {
         InternalInput _input;
-        JSONToken _front;
+        JSONToken!String _front;
         Location _loc;
         string _error;
     }
@@ -252,14 +253,14 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
      */
     @property bool empty()
     {
-        if (_front.kind != JSONToken.Kind.none) return false;
+        if (_front.kind != JSONTokenKind.none) return false;
         return _input.empty;
     }
 
     /**
      * Returns the current token in the stream.
      */
-    @property ref const(JSONToken) front()
+    @property ref const(JSONToken!String) front()
     {
         ensureFrontValid();
         return _front;
@@ -273,26 +274,26 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         ensureFrontValid();
 
         // make sure an error token is the last token in the range
-        if (_front.kind == JSONToken.Kind.error && !_input.empty)
+        if (_front.kind == JSONTokenKind.error && !_input.empty)
         {
             // clear the input
             _input = InternalInput.init;
             assert(_input.empty);
         }
 
-        _front.kind = JSONToken.Kind.none;
+        _front.kind = JSONTokenKind.none;
     }
 
     private void ensureFrontValid()
     {
         assert(!empty, "Reading from an empty JSONLexerRange.");
-        if (_front.kind == JSONToken.Kind.none)
+        if (_front.kind == JSONTokenKind.none)
         {
             readToken();
-            assert(_front.kind != JSONToken.Kind.none);
+            assert(_front.kind != JSONTokenKind.none);
 
             static if (!(options & LexOptions.noThrow))
-                enforceJson(_front.kind != JSONToken.Kind.error, _error, _loc);
+                enforceJson(_front.kind != JSONTokenKind.error, _error, _loc);
         }
     }
 
@@ -308,15 +309,15 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
             default: setError("Malformed token"); break;
             case 'f': _front.boolean = false; skipKeyword("false"); break;
             case 't': _front.boolean = true; skipKeyword("true"); break;
-            case 'n': _front.kind = JSONToken.Kind.null_; skipKeyword("null"); break;
+            case 'n': _front.kind = JSONTokenKind.null_; skipKeyword("null"); break;
             case '"': parseString(); break;
             case '0': .. case '9': case '-': parseNumber(); break;
-            case '[': skipChar(); _front.kind = JSONToken.Kind.arrayStart; break;
-            case ']': skipChar(); _front.kind = JSONToken.Kind.arrayEnd; break;
-            case '{': skipChar(); _front.kind = JSONToken.Kind.objectStart; break;
-            case '}': skipChar(); _front.kind = JSONToken.Kind.objectEnd; break;
-            case ':': skipChar(); _front.kind = JSONToken.Kind.colon; break;
-            case ',': skipChar(); _front.kind = JSONToken.Kind.comma; break;
+            case '[': skipChar(); _front.kind = JSONTokenKind.arrayStart; break;
+            case ']': skipChar(); _front.kind = JSONTokenKind.arrayEnd; break;
+            case '{': skipChar(); _front.kind = JSONTokenKind.objectStart; break;
+            case '}': skipChar(); _front.kind = JSONTokenKind.objectEnd; break;
+            case ':': skipChar(); _front.kind = JSONTokenKind.colon; break;
+            case ',': skipChar(); _front.kind = JSONTokenKind.comma; break;
 
             static if (options & LexOptions.specialFloatLiterals)
             {
@@ -396,7 +397,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
     private void parseString()
     {
-        static if (is(Input == string) || is(Input == immutable(ubyte)[]))
+        static if ((is(Input == string) || is(Input == immutable(ubyte)[])) && is(String == string)) // TODO: make this work for other kinds of "String"
         {
             InternalInput lit;
             bool has_escapes = false;
@@ -410,22 +411,22 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                         return;
                     }
                 }
-                JSONString js;
+                JSONString!String js;
                 if (has_escapes) js.rawValue = litstr;
                 else js.value = litstr[1 .. $-1];
                 _front.string = js;
             }
-            else _front.kind = JSONToken.Kind.error;
+            else _front.kind = JSONTokenKind.error;
         }
         else
         {
             bool appender_init = false;
-            typeof(appenderFactory()) dst;
-            string slice;
+            Appender!String dst;
+            String slice;
 
             void initAppender()
             @safe {
-                dst = appenderFactory();
+                dst = appender!String();
                 appender_init = true;
             }
 
@@ -436,7 +437,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
                 if (!appender_init) _front.string = slice;
                 else _front.string = dst.data;
             }
-            else _front.kind = JSONToken.Kind.error;
+            else _front.kind = JSONTokenKind.error;
         }
     }
 
@@ -634,7 +635,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
     private void setError(string err)
     {
-        _front.kind = JSONToken.Kind.error;
+        _front.kind = JSONTokenKind.error;
         _error = err;
     }
 }
@@ -645,7 +646,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     import std.exception;
     import std.string : format, representation;
 
-    static JSONString parseStringHelper(R)(ref R input, ref Location loc)
+    static JSONString!string parseStringHelper(R)(ref R input, ref Location loc)
     {
         auto rng = JSONLexerRange!R(input);
         rng.parseString();
@@ -718,7 +719,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
         auto rng2 = JSONLexerRange!(string, LexOptions.noThrow)(str);
         assertNotThrown(rng2.front);
-        assert(rng2.front.kind == JSONToken.Kind.error);
+        assert(rng2.front.kind == JSONTokenKind.error);
     }
 
     testFail(`"`); // unterminated string
@@ -747,7 +748,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         rng.parseNumber();
         input = cast(R)rng._input;
         loc = rng._loc;
-        assert(rng._front.kind != JSONToken.Kind.error, rng._error);
+        assert(rng._front.kind != JSONTokenKind.error, rng._error);
         return rng._front.number;
     }
 
@@ -805,7 +806,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
         auto rng2 = JSONLexerRange!(string, options|LexOptions.noThrow)(str);
         assertNotThrown(rng2.front);
-        assert(rng2.front.kind == JSONToken.Kind.error);
+        assert(rng2.front.kind == JSONTokenKind.error);
     }
 
     testFail("+");
@@ -830,39 +831,39 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     testFail!(LexOptions.specialFloatLiterals)("-InfinitX");
 }
 
+@safe unittest
+{
+    auto tokens = lexJSON!(LexOptions.init, char[])(`{"foo": "bar"}`);
+    assert(tokens.front.kind == JSONTokenKind.objectStart);
+    tokens.popFront();
+    assert(tokens.front.kind == JSONTokenKind.string);
+    assert(tokens.front.string == "foo");
+    tokens.popFront();
+    assert(tokens.front.kind == JSONTokenKind.colon);
+    tokens.popFront();
+    assert(tokens.front.kind == JSONTokenKind.string);
+    assert(tokens.front.string == "bar");
+    tokens.popFront();
+    assert(tokens.front.kind == JSONTokenKind.objectEnd);
+    tokens.popFront();
+}
 
 /**
  * A low-level JSON token as returned by $(D JSONLexer).
 */
-@safe struct JSONToken
+@safe struct JSONToken(S)
 {
     import std.algorithm : among;
     import std.bigint : BigInt;
 
-    /**
-     * The kind of token represented.
-     */
-    enum Kind
-    {
-        none,         /// Used internally, never returned from the lexer
-        error,        /// Malformed token
-        null_,        /// The "null" token
-        boolean,      /// "true" or "false" token
-        number,       /// Numeric token
-        string,       /// String token, stored in escaped form
-        objectStart,  /// The "{" token
-        objectEnd,    /// The "}" token
-        arrayStart,   /// The "[" token
-        arrayEnd,     /// The "]" token
-        colon,        /// The ":" token
-        comma         /// The "," token
-    }
+    private alias Kind = JSONTokenKind; // compatibility alias
+    alias String = S;
 
     private
     {
         union
         {
-            JSONString _string;
+            JSONString!String _string;
             bool _boolean;
             JSONNumber _number;
         }
@@ -881,9 +882,9 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     // ditto
     this(double value) @trusted { _kind = Kind.number; _number = value; }
     // ditto
-    this(JSONString value) @trusted { _kind = Kind.string; _string = value; }
+    this(JSONString!String value) @trusted { _kind = Kind.string; _string = value; }
     // ditto
-    this(.string value) @trusted { _kind = Kind.string; _string = value; }
+    this(String value) @trusted { _kind = Kind.string; _string = value; }
 
     /** Constructs a token with a specific kind.
       *
@@ -955,18 +956,18 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     @property JSONNumber number(BigInt value) nothrow @nogc { return this.number = JSONNumber(value); }
 
     /// Gets/sets the string value of the token.
-    @property JSONString string() const pure nothrow @trusted @nogc
+    @property const(JSONString!String) string() const pure nothrow @trusted @nogc
         in { assert(_kind == Kind.string, "Token is not a string."); }
-        body { return _kind == Kind.string ? _string : JSONString.init; }
+        body { return _kind == Kind.string ? _string : JSONString!String.init; }
     /// ditto
-    @property JSONString string(JSONString value) pure nothrow @nogc
+    @property JSONString!String string(JSONString!String value) pure nothrow @nogc
     {
         _kind = Kind.string;
         _string = value;
         return value;
     }
     /// ditto
-    @property JSONString string(.string value) pure nothrow @nogc { return this.string = JSONString(value); }
+    @property JSONString!String string(String value) pure nothrow @nogc { return this.string = JSONString!String(value); }
 
     /**
      * Enables equality comparisons.
@@ -1027,50 +1028,70 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 
 @safe unittest
 {
-    JSONToken tok;
+    JSONToken!string tok;
 
     assert((tok.boolean = true) == true);
-    assert(tok.kind == JSONToken.Kind.boolean);
+    assert(tok.kind == JSONTokenKind.boolean);
     assert(tok.boolean == true);
 
     assert((tok.number = 1.0) == 1.0);
-    assert(tok.kind == JSONToken.Kind.number);
+    assert(tok.kind == JSONTokenKind.number);
     assert(tok.number == 1.0);
 
     assert((tok.string = "test") == "test");
-    assert(tok.kind == JSONToken.Kind.string);
+    assert(tok.kind == JSONTokenKind.string);
     assert(tok.string == "test");
 
-    assert((tok.kind = JSONToken.Kind.none) == JSONToken.Kind.none);
-    assert(tok.kind == JSONToken.Kind.none);
-    assert((tok.kind = JSONToken.Kind.error) == JSONToken.Kind.error);
-    assert(tok.kind == JSONToken.Kind.error);
-    assert((tok.kind = JSONToken.Kind.null_) == JSONToken.Kind.null_);
-    assert(tok.kind == JSONToken.Kind.null_);
-    assert((tok.kind = JSONToken.Kind.objectStart) == JSONToken.Kind.objectStart);
-    assert(tok.kind == JSONToken.Kind.objectStart);
-    assert((tok.kind = JSONToken.Kind.objectEnd) == JSONToken.Kind.objectEnd);
-    assert(tok.kind == JSONToken.Kind.objectEnd);
-    assert((tok.kind = JSONToken.Kind.arrayStart) == JSONToken.Kind.arrayStart);
-    assert(tok.kind == JSONToken.Kind.arrayStart);
-    assert((tok.kind = JSONToken.Kind.arrayEnd) == JSONToken.Kind.arrayEnd);
-    assert(tok.kind == JSONToken.Kind.arrayEnd);
-    assert((tok.kind = JSONToken.Kind.colon) == JSONToken.Kind.colon);
-    assert(tok.kind == JSONToken.Kind.colon);
-    assert((tok.kind = JSONToken.Kind.comma) == JSONToken.Kind.comma);
-    assert(tok.kind == JSONToken.Kind.comma);
+    assert((tok.kind = JSONTokenKind.none) == JSONTokenKind.none);
+    assert(tok.kind == JSONTokenKind.none);
+    assert((tok.kind = JSONTokenKind.error) == JSONTokenKind.error);
+    assert(tok.kind == JSONTokenKind.error);
+    assert((tok.kind = JSONTokenKind.null_) == JSONTokenKind.null_);
+    assert(tok.kind == JSONTokenKind.null_);
+    assert((tok.kind = JSONTokenKind.objectStart) == JSONTokenKind.objectStart);
+    assert(tok.kind == JSONTokenKind.objectStart);
+    assert((tok.kind = JSONTokenKind.objectEnd) == JSONTokenKind.objectEnd);
+    assert(tok.kind == JSONTokenKind.objectEnd);
+    assert((tok.kind = JSONTokenKind.arrayStart) == JSONTokenKind.arrayStart);
+    assert(tok.kind == JSONTokenKind.arrayStart);
+    assert((tok.kind = JSONTokenKind.arrayEnd) == JSONTokenKind.arrayEnd);
+    assert(tok.kind == JSONTokenKind.arrayEnd);
+    assert((tok.kind = JSONTokenKind.colon) == JSONTokenKind.colon);
+    assert(tok.kind == JSONTokenKind.colon);
+    assert((tok.kind = JSONTokenKind.comma) == JSONTokenKind.comma);
+    assert(tok.kind == JSONTokenKind.comma);
+}
+
+
+/**
+ * Identifies the kind of a JSON token.
+ */
+enum JSONTokenKind
+{
+    none,         /// Used internally, never returned from the lexer
+    error,        /// Malformed token
+    null_,        /// The "null" token
+    boolean,      /// "true" or "false" token
+    number,       /// Numeric token
+    string,       /// String token, stored in escaped form
+    objectStart,  /// The "{" token
+    objectEnd,    /// The "}" token
+    arrayStart,   /// The "[" token
+    arrayEnd,     /// The "]" token
+    colon,        /// The ":" token
+    comma         /// The "," token
 }
 
 
 /**
  * Represents a JSON string literal with lazy (un)escaping.
  */
-@safe struct JSONString {
+@safe struct JSONString(String) {
     import std.typecons : Tuple, tuple;
 
     private {
-        string _value;
-        string _rawValue;
+        String _value;
+        String _rawValue;
     }
 
     nothrow:
@@ -1078,7 +1099,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     /**
      * Constructs a JSONString from the given string value (unescaped).
      */
-    this(string value) pure nothrow @nogc
+    this(String value) pure nothrow @nogc
     {
         _value = value;
     }
@@ -1086,7 +1107,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     /**
      * The decoded (unescaped) string value.
      */
-    @property string value()
+    @property String value()
     {
         if (!_value.length && _rawValue.length) {
             auto res = unescapeStringLiteral(_rawValue, _value);
@@ -1095,10 +1116,10 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         return _value;
     }
     /// ditto
-    @property string value() const
+    @property const(String) value() const
     {
         if (!_value.length && _rawValue.length) {
-            string unescaped;
+            String unescaped;
             auto res = unescapeStringLiteral(_rawValue, unescaped);
             assert(res, "Invalid raw string literal passed to JSONString: "~_rawValue);
             return unescaped;
@@ -1106,7 +1127,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
         return _value;
     }
     /// ditto
-    @property string value(string val) nothrow @nogc
+    @property String value(String val) nothrow @nogc
     {
         _rawValue = null;
         return _value = val;
@@ -1115,14 +1136,14 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     /**
      * The raw (escaped) string literal, including the enclosing quotation marks.
      */
-    @property string rawValue()
+    @property String rawValue()
     {
         if (!_rawValue.length && _value.length)
             _rawValue = escapeStringLiteral(_value);
         return _rawValue;
     }
     /// ditto
-    @property string rawValue(string val) nothrow @nogc
+    @property String rawValue(String val) nothrow @nogc
     {
         import std.algorithm : canFind;
         import std.string : representation;
@@ -1140,21 +1161,22 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
      *   set to `true` if the returned string is in decoded form. `false` is
      *   returned otherwise.
      */
-    @property Tuple!(string, bool) anyValue() const pure @nogc
+    @property Tuple!(const(String), bool) anyValue() const pure @nogc
     {
-        return !_rawValue.length ? tuple(_value, true) : tuple(_rawValue, false);
+        alias T = Tuple!(const(String), bool); // work around "Cannot convert Tuple!(string, bool) to Tuple!(const(string), bool)" error when using tuple()
+        return !_rawValue.length ? T(_value, true) : T(_rawValue, false);
     }
 
     alias value this;
 
     /// Support equality comparisons
-    bool opEquals(JSONString other) nothrow { return value == other.value; }
+    bool opEquals(in JSONString other) nothrow { return value == other.value; }
     /// ditto
-    bool opEquals(JSONString other) const nothrow { return this.value == other.value; }
+    bool opEquals(in JSONString other) const nothrow { return this.value == other.value; }
     /// ditto
-    bool opEquals(string other) nothrow { return this.value == other; }
+    bool opEquals(in String other) nothrow { return this.value == other; }
     /// ditto
-    bool opEquals(string other) const nothrow { return this.value == other; }
+    bool opEquals(in String other) const nothrow { return this.value == other; }
 
     /// Support relational comparisons
     int opCmp(JSONString other) nothrow @trusted { import std.algorithm; return cmp(this.value, other.value); }
@@ -1164,12 +1186,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
 }
 
 @safe unittest {
-    JSONString s = "test";
+    JSONString!string s = "test";
     assert(s == "test");
     assert(s.value == "test");
     assert(s.rawValue == `"test"`);
 
-    JSONString t;
+    JSONString!string t;
     auto h = `"hello"`;
     s.rawValue = h;
     t = s; assert(s == t);
@@ -1187,6 +1209,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, alias appende
     t = s; assert(s == t);
     assert(&s.rawValue[0] is &w[0]);
     assert(&s.value[0] !is &h[1]);
+
+    JSONString!(char[]) u = "test".dup;
+    assert(u == "test");
+    assert(u.value == "test");
+    assert(u.rawValue == `"test"`);
 }
 
 
@@ -1598,10 +1625,10 @@ enum LexOptions {
 
 
 // returns true for success
-package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output, OutputInitFunc)(
+package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation, Input, Output, String, OutputInitFunc)(
     ref Input input, // input range, string and immutable(ubyte)[] can be sliced
     ref Output output, // uninitialized output range
-    ref string sliced_result, // target for possible result slice
+    ref String sliced_result, // target for possible result slice
     scope OutputInitFunc output_init, // delegate that is called before writing to output
     ref string error, // target for error message
     ref size_t column) // counter to use for tracking the current column
@@ -1625,7 +1652,7 @@ package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation
     static if (track_location) column++;
 
     // try the fast slice based route first
-    static if (is(Input == string) || is(Input == immutable(ubyte)[]))
+    static if ((is(Input == string) || is(Input == immutable(ubyte)[])) && is(String == string)) // TODO: make this work for other kinds of "String"
     {
         auto orig = input;
         size_t idx = 0;
@@ -1790,16 +1817,17 @@ package bool unescapeStringLiteral(bool track_location, bool skip_utf_validation
     }
 }
 
-package bool unescapeStringLiteral(alias appenderFactory = () => appender!string())(string str_lit, ref string dst)
+package bool unescapeStringLiteral(String)(in String str_lit, ref String dst)
 nothrow {
     import std.string;
 
     bool appender_init = false;
-    typeof(appenderFactory()) app;
-    string slice, error;
+    Appender!String app;
+    String slice;
+    string error;
     size_t col;
 
-    void initAppender() @safe nothrow { app = appenderFactory(); appender_init = true; }
+    void initAppender() @safe nothrow { app = appender!String(); appender_init = true; }
 
     auto rep = str_lit.representation;
     {
@@ -1813,7 +1841,7 @@ nothrow {
     return true;
 }
 
-package bool isValidStringLiteral(string str)
+package bool isValidStringLiteral(String)(String str)
 nothrow @nogc @safe {
     import std.range : NullSink;
     import std.string : representation;
@@ -1983,12 +2011,12 @@ package void escapeStringLiteral(bool use_surrogates = false, Input, Output)(
     output.put('"');
 }
 
-package string escapeStringLiteral(string str)
+package String escapeStringLiteral(String)(String str)
 nothrow @safe {
     import std.string;
 
     auto rep = str.representation;
-    auto ret = appender!string();
+    auto ret = appender!String();
     {
         // Appender.put it not nothrow
         scope (failure) assert(false);

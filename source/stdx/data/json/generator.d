@@ -67,7 +67,7 @@ string toJSON(GeneratorOptions options = GeneratorOptions.init, Input)(Input tok
     return dst.data;
 }
 /// ditto
-string toJSON(GeneratorOptions options = GeneratorOptions.init)(JSONToken token)
+string toJSON(GeneratorOptions options = GeneratorOptions.init, String)(JSONToken!String token)
 {
     import std.array;
     auto dst = appender!string();
@@ -116,7 +116,7 @@ string toJSON(GeneratorOptions options = GeneratorOptions.init)(JSONToken token)
     auto tokens = lexJSON(`{"a": [], "b": [1, {}, null, true, false]}`);
     assert(tokens.toJSON!(GeneratorOptions.compact)() == `{"a":[],"b":[1,{},null,true,false]}`);
 
-    JSONToken tok;
+    JSONToken!string tok;
     tok.string = "Hello World";
     assert(tok.toJSON() == `"Hello World"`);
 }
@@ -148,9 +148,10 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(JSONVal
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input nodes, ref Output output)
     if (isOutputRange!(Output, char) && isJSONParserNodeInputRange!Input)
 {
-    import std.algorithm.mutation : copy;
+    //import std.algorithm.mutation : copy;
     auto joutput = JSONOutputRange!(Output, options)(output);
-    copy(nodes, joutput);
+    foreach (n; nodes) joutput.put(n);
+    //copy(nodes, joutput);
 }
 /// ditto
 void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(Input tokens, ref Output output)
@@ -163,10 +164,10 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(
     }
 }
 /// ditto
-void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output)(in ref JSONToken token, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, String, Output)(in ref JSONToken!String token, ref Output output)
     if (isOutputRange!(Output, char))
 {
-    final switch (token.kind) with (JSONToken.Kind)
+    final switch (token.kind) with (JSONTokenKind)
     {
         case none: assert(false);
         case error: output.put("_error_"); break;
@@ -219,11 +220,11 @@ struct JSONOutputRange(R, GeneratorOptions options = GeneratorOptions.init)
 
     /** Writes a single JSON primitive to the destination character range.
     */
-    void put(JSONParserNode node)
+    void put(String)(JSONParserNode!String node)
     {
         enum pretty_print = (options & GeneratorOptions.compact) == 0;
 
-        final switch (node.kind) with (JSONParserNode.Kind) {
+        final switch (node.kind) with (JSONParserNodeKind) {
             case none: assert(false);
             case key:
                 if (m_nesting > 0 && !m_first) m_output.put(',');
@@ -272,7 +273,7 @@ struct JSONOutputRange(R, GeneratorOptions options = GeneratorOptions.init)
         }
     }
     /// ditto
-    void put(JSONToken token)
+    void put(String)(JSONToken!String token)
     {
         final switch (token.kind) with (JSONToken.Kind) {
             case none: assert(false);
@@ -300,7 +301,7 @@ struct JSONOutputRange(R, GeneratorOptions options = GeneratorOptions.init)
     /// ditto
     void put(double value) { m_output.writeNumber!options(value); }
     /// ditto
-    void put(JSONString value)
+    void put(String)(JSONString!String value)
     {
         auto s = value.anyValue;
         if (s[0]) put(s[1]); // decoded string

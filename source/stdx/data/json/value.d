@@ -160,64 +160,13 @@ static struct WrappedBigInt {
 
 
 /**
- * Gets a descendant of this value.
- *
- * If any encountered `JSONValue` along the path is not an object or does not
- * have a machting field, a `null` value is returned.
- */
-Nullable!JSONValue opt(KEYS...)(JSONValue val, KEYS keys)
-    if (KEYS.length > 0)
-{
-    foreach (i, T; KEYS)
-    {
-        static if (is(T : string))
-        {
-            if (val.typeID != JSONValue.Type.object)
-                return Nullable!JSONValue.init;
-            auto pv = keys[i] in val;
-            if (pv is null) return Nullable!JSONValue.init;
-            val = *pv;
-        }
-        else static if (is(T : size_t))
-        {
-            size_t idx = keys[i]; // convert to unsigned first
-            if (val.typeID != JSONValue.Type.array)
-                return Nullable!JSONValue.init;
-            if (idx >= val.length)
-                return Nullable!JSONValue.init;
-            val = val[idx];
-        }
-        else
-        {
-            static assert(false, "Only strings and integer indices are allowed as keys, not "~T.stringof);
-        }
-    }
-    return Nullable!JSONValue(val);
-}
-
-///
-unittest
-{
-    JSONValue subobj = ["b": JSONValue(1.0), "c": JSONValue(2.0)];
-    JSONValue subarr = [JSONValue(3.0), JSONValue(4.0), JSONValue(null)];
-    JSONValue obj = ["a": subobj, "b": subarr];
-
-    assert(obj.opt("x").isNull);
-    assert(obj.opt("a", "b") == 1.0);
-    assert(obj.opt("a", "c") == 2.0);
-    assert(obj.opt("a", "x", "y").isNull);
-    assert(obj.opt("b", 0) == 3.0);
-    assert(obj.opt("b", 1) == 4.0);
-    assert(!obj.opt("b", 2).isNull);
-    assert(obj.opt("b", 2) == null);
-    assert(obj.opt("b", 3).isNull);
-}
-
-
-/**
-  * Alternative version of `opt` that works using dot and index notation.
+  * Allows safe access of sub paths of a `JSONValue`.
+  *
+  * Missing intermediate values will not cause an error, but will instead
+  * just cause the final path node to be marked as non-existent. See the
+  * example below for the possbile use cases.
   */
-auto opt2()(auto ref JSONValue val)
+auto opt()(auto ref JSONValue val)
 {
     alias C = JSONValue; // this function is generic and could also operate on BSONValue or similar types
     static struct S(F...) {
@@ -401,44 +350,44 @@ unittest
     JSONValue obj = ["a": subobj, "b": subarr];
 
     // access nested fields using member access syntax
-    assert(obj.opt2.a.b == 1.0);
-    assert(obj.opt2.a.c == 2.0);
+    assert(opt(obj).a.b == 1.0);
+    assert(opt(obj).a.c == 2.0);
 
     // get can be used with a default value
-    assert(obj.opt2.a.c.get(-1.0) == 2.0); // matched path and type
-    assert(obj.opt2.a.c.get(null) == null); // mismatched type -> return default value
-    assert(obj.opt2.a.d.get(-1.0) == -1.0); // mismatched path -> return default value
+    assert(opt(obj).a.c.get(-1.0) == 2.0); // matched path and type
+    assert(opt(obj).a.c.get(null) == null); // mismatched type -> return default value
+    assert(opt(obj).a.d.get(-1.0) == -1.0); // mismatched path -> return default value
 
     // explicit existence check
-    assert(!obj.opt2.x.exists);
-    assert(!obj.opt2.a.x.y.exists); // works for nested missing paths, too
+    assert(!opt(obj).x.exists);
+    assert(!opt(obj).a.x.y.exists); // works for nested missing paths, too
 
     // instead of using member syntax, index syntax can be used
-    assert(obj.opt2["a"]["b"] == 1.0);
+    assert(opt(obj)["a"]["b"] == 1.0);
 
     // integer indices work, too
-    assert(obj.opt2.b[0] == 3.0);
-    assert(obj.opt2.b[1] == 4.0);
-    assert(obj.opt2.b[2].exists);
-    assert(obj.opt2.b[2] == null);
-    assert(!obj.opt2.b[3].exists);
+    assert(opt(obj).b[0] == 3.0);
+    assert(opt(obj).b[1] == 4.0);
+    assert(opt(obj).b[2].exists);
+    assert(opt(obj).b[2] == null);
+    assert(!opt(obj).b[3].exists);
 
     // accessing a missing path throws an exception
-    assertThrown(obj.opt2.b[3] == 3);
+    assertThrown(opt(obj).b[3] == 3);
 
     // assignments work, too
-    obj.opt2.b[0] = 12;
-    assert(obj.opt2.b[0] == 12);
+    opt(obj).b[0] = 12;
+    assert(opt(obj).b[0] == 12);
 
     // assignments to non-existent paths automatically create all missing parents
-    obj.opt2.c.d.opDispatch!"e"( 12);
-    assert(obj.opt2.c.d.e == 12);
+    opt(obj).c.d.opDispatch!"e"( 12);
+    assert(opt(obj).c.d.e == 12);
 
     // writing to paths with conflicting types will throw
-    assertThrown(obj.opt2.c[2] = 12);
+    assertThrown(opt(obj).c[2] = 12);
 
     // writing out of array bounds will also throw
-    assertThrown(obj.opt2.b[10] = 12);
+    assertThrown(opt(obj).b[10] = 12);
 }
 
 private enum OptWriteMode {

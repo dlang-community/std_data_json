@@ -880,6 +880,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     // ditto
     this(JSONNumber value) { _kind = Kind.number; _number = value; }
     // ditto
+    this(long value) @trusted { _kind = Kind.number; _number = value; }
+    // ditto
     this(double value) @trusted { _kind = Kind.number; _number = value; }
     // ditto
     this(JSONString!String value) @trusted { _kind = Kind.string; _string = value; }
@@ -950,6 +952,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
         _number = value;
         return value;
     }
+    /// ditto
+    @property JSONNumber number(long value) nothrow @nogc { return this.number = JSONNumber(value); }
     /// ditto
     @property JSONNumber number(double value) nothrow @nogc { return this.number = JSONNumber(value); }
     /// ditto
@@ -1500,6 +1504,13 @@ enum JSONTokenKind
         auto val = this.doubleValue;
         return typeid(double).getHash(&val);
     }
+}
+
+unittest
+{
+    auto j = lexJSON!(LexOptions.init | LexOptions.useLong)(`-3150433919248130042`);
+    long value = j.front.number.longValue;
+    assert(value == -3150433919248130042L);
 }
 
 @safe unittest // assignment operator

@@ -5,7 +5,7 @@
 	"license": "BSL-1.0",
 	"authors": ["Sönke Ludwig"],
 	"dependencies": {
-		"taggedalgebraic": "~>0.9.3"
+		"taggedalgebraic": "~>0.10.1"
 	},
 	"-ddoxFilterArgs": ["--unittest-examples", "--min-protection=Protected", "--only-documented"]
 }

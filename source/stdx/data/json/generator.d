@@ -387,18 +387,18 @@ enum GeneratorOptions {
         foreach (tab; 0 .. depth) output.put('\t');
     }
 
-    final switch (value.typeID) {
-        case JSONValue.Type.null_: output.put("null"); break;
-        case JSONValue.Type.boolean: output.put(value == true ? "true" : "false"); break;
-        case JSONValue.Type.double_: output.writeNumber!options(cast(double)value); break;
-        case JSONValue.Type.integer: output.writeNumber(cast(long)value); break;
-        case JSONValue.Type.bigInt: () @trusted {
+    final switch (value.kind) {
+        case JSONValue.Kind.null_: output.put("null"); break;
+        case JSONValue.Kind.boolean: output.put(value == true ? "true" : "false"); break;
+        case JSONValue.Kind.double_: output.writeNumber!options(cast(double)value); break;
+        case JSONValue.Kind.integer: output.writeNumber(cast(long)value); break;
+        case JSONValue.Kind.bigInt: () @trusted {
             auto val = cast(BigInt*)value;
             if (val is null) throw new Exception("Null BigInt value");
             output.writeNumber(*val);
             }(); break;
-        case JSONValue.Type.string: output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(get!string(value)); output.put('"'); break;
-        case JSONValue.Type.object:
+        case JSONValue.Kind.string: output.put('"'); output.escapeString!(options & GeneratorOptions.escapeUnicode)(get!string(value)); output.put('"'); break;
+        case JSONValue.Kind.object:
             output.put('{');
             bool first = true;
             foreach (string k, ref e; get!(JSONValue[string])(value))
@@ -417,7 +417,7 @@ enum GeneratorOptions {
             }
             output.put('}');
             break;
-        case JSONValue.Type.array:
+        case JSONValue.Kind.array:
             output.put('[');
             foreach (i, ref e; get!(JSONValue[])(value))
             {

@@ -880,6 +880,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     // ditto
     this(JSONNumber value) { _kind = Kind.number; _number = value; }
     // ditto
+    this(long value) @trusted { _kind = Kind.number; _number = value; }
+    // ditto
     this(double value) @trusted { _kind = Kind.number; _number = value; }
     // ditto
     this(JSONString!String value) @trusted { _kind = Kind.string; _string = value; }
@@ -950,6 +952,8 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
         _number = value;
         return value;
     }
+    /// ditto
+    @property JSONNumber number(long value) nothrow @nogc { return this.number = JSONNumber(value); }
     /// ditto
     @property JSONNumber number(double value) nothrow @nogc { return this.number = JSONNumber(value); }
     /// ditto
@@ -1480,18 +1484,43 @@ enum JSONTokenKind
     /// Support equality comparisons
     bool opEquals(T)(T other) const nothrow @nogc
     {
-        static if (is(T == JSONNumber)) return _double == other._double;
-        else static if (is(T : double)) return _double == other;
+        static if (is(T == JSONNumber))
+        {
+            if(_type == Type.long_ && other._type == Type.long_)
+                return _long == other._long;
+            return doubleValue == other.doubleValue;
+        }
+        else static if (is(T : double)) return doubleValue == other;
+        else static if (is(T : long)) return _type == Type.long_ ? _long == other : doubleValue == other;
         else static assert(false, "Unsupported type for comparison: "~T.stringof);
     }
 
     /// Support relational comparisons
     int opCmp(T)(T other) const nothrow @nogc
     {
-        static if (is(T == JSONNumber)) return this == other._double;
-        else static if (is(T : double)) return _double < other ? -1 : _double > other ? 1 : 0;
+        static if (is(T == JSONNumber))
+        {
+            if(other._type == Type.long_)
+                return opCmp(other._long);
+            return opCmp(other.doubleValue);
+        }
+        else static if (is(T : double))
+        {
+            auto a = doubleValue;
+            auto b = other;
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+        else static if (is(T : long))
+        {
+            if(_type == Type.long_)
+            {
+                auto a = _long;
+                auto b = other;
+                return a < b ? -1 : a > b ? 1 : 0;
+            }
+            return opCmp(cast(double)other);
+        }
         else static assert(false, "Unsupported type for comparison: "~T.stringof);
-
     }
 
     /// Support use as hash key
@@ -1500,6 +1529,13 @@ enum JSONTokenKind
         auto val = this.doubleValue;
         return typeid(double).getHash(&val);
     }
+}
+
+unittest
+{
+    auto j = lexJSON!(LexOptions.init | LexOptions.useLong)(`-3150433919248130042`);
+    long value = j.front.number.longValue;
+    assert(value == -3150433919248130042L);
 }
 
 @safe unittest // assignment operator

@@ -35,11 +35,12 @@ unittest
     assert(value == value2);
 }
 
-import stdx.data.json.lexer;
-import stdx.data.json.value;
 import std.array : appender;
 import std.range : ElementType, isInputRange;
+import std.traits : isIntegral, isSomeChar;
 
+import stdx.data.json.lexer;
+import stdx.data.json.value;
 
 /**
  * Parses a JSON string or token range and returns the result as a

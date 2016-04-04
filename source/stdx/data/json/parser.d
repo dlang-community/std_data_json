@@ -91,6 +91,12 @@ JSONValue toJSONValue(Input)(Input tokens)
     assert(cdoc[2] == null);
 }
 
+unittest { // issue #22
+    import std.conv;
+    JSONValue jv = toJSONValue(`{ "a": 1234 }`);
+    assert(jv["a"].to!int == 1234);
+}
+
 /*unittest
 {
     import std.bigint;

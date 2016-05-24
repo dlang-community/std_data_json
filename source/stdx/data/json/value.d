@@ -89,6 +89,9 @@ struct JSONValue
     /// Tests if the stored value is of a given type.
     bool hasType(T)() const { return .hasType!T(payload); }
 
+    /// Tests if the stored value is of kind `Kind.null_`.
+    bool isNull() const { return payload.kind == Kind.null_; }
+
     /**
       * Returns the raw contained value.
       *

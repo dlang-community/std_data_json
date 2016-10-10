@@ -3,8 +3,7 @@ sudo: false
 
 d:
   - dmd-2.071.2
-  - dmd-2.068.0
   - dmd-beta
-  - ldc-1.0.0
+  - ldc-1.1.0-beta3
   - dmd-2.069.0
   - dmd-2.070.1

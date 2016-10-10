@@ -466,7 +466,7 @@ struct JSONParserRange(Input)
     /**
      * Determines of the range has been exhausted.
      */
-    @property bool empty() { return _containerStackFill == 0 && _input.empty; }
+    @property bool empty() { return _containerStackFill == 0 && _input.empty && _node.kind == JSONParserNodeKind.none; }
 
     /**
      * Returns the current node from the stream.
@@ -482,6 +482,7 @@ struct JSONParserRange(Input)
      */
     void popFront()
     {
+        assert(!empty);
         ensureFrontValid();
         _prevKind = _node.kind;
         _node.kind = JSONParserNodeKind.none;
@@ -671,7 +672,7 @@ struct JSONParserNode(String)
     @property String key(String value) nothrow
     {
         _kind = Kind.key;
-        return _key = value;
+        return () @trusted { return _key = value; } ();
     }
 
     /**
@@ -688,7 +689,7 @@ struct JSONParserNode(String)
     @property ref JSONToken!String literal(JSONToken!String literal) nothrow
     {
         _kind = Kind.literal;
-        return _literal = literal;
+        return *() @trusted { return &(_literal = literal); } ();
     }
 
     @property Location location()

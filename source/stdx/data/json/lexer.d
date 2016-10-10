@@ -271,6 +271,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
      */
     void popFront()
     {
+        assert(!empty);
         ensureFrontValid();
 
         // make sure an error token is the last token in the range
@@ -878,7 +879,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     // ditto
     this(bool value) @trusted { _kind = Kind.boolean; _boolean = value; }
     // ditto
-    this(JSONNumber value) { _kind = Kind.number; _number = value; }
+    this(JSONNumber value) @trusted { _kind = Kind.number; _number = value; }
     // ditto
     this(long value) @trusted { _kind = Kind.number; _number = value; }
     // ditto
@@ -949,7 +950,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     @property JSONNumber number(JSONNumber value) nothrow @nogc
     {
         _kind = Kind.number;
-        _number = value;
+        () @trusted { _number = value; } ();
         return value;
     }
     /// ditto
@@ -967,7 +968,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     @property JSONString!String string(JSONString!String value) pure nothrow @nogc
     {
         _kind = Kind.string;
-        _string = value;
+        () @trusted { _string = value; } ();
         return value;
     }
     /// ditto

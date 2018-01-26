@@ -2,8 +2,20 @@ language: d
 sudo: false
 
 d:
+  - dmd-2.078.0
   - dmd-2.071.2
+  - dmd-2.077.1
+  - dmd-2.076.0
+  - dmd-2.070.2
+  - dmd-2.069.2
+  - ldc-1.7.0
+  - ldc-1.6.0
+  - ldc-1.2.0
   - dmd-beta
-  - ldc-1.1.0-beta3
-  - dmd-2.069.0
-  - dmd-2.070.1
+
+matrix:
+  allow_failures:
+    - d: dmd-beta
+    - d: ldc-1.7.0
+    - d: ldc-1.6.0
+    - d: ldc-1.2.0

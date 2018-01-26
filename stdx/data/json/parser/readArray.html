@@ -5,187 +5,214 @@
 		<title>readArray - multiple declarations</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
 			<h1>readArray - multiple declarations</h1>
-			<ul>
-				<li>Function readArray</li>
-				<li>Function readArray</li>
-			</ul>
-			<section>
-				<h2>Function readArray</h2>
-				<p> Reads an array and issues a callback for each entry.
+			<nav class="page-nav">
+				<ul>
+					<li>
+						<a href="#0">
+							Function <code>readArray</code>
+						</a>
+					</li>
+					<li>
+						<a href="#1">
+							Function <code>readArray</code>
+						</a>
+					</li>
+				</ul>
+			</nav><h2 id="0">Function readArray</h2><p>Reads an array and issues a callback for each entry.
 </p>
-<section>
-</section>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="typ">void</span> <span class="pln">readArray</span>(R)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">ref </span><span class="pln">R</span> <span class="pln">nodes</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope </span><span class="kwd">@safe</span> <span class="typ">void</span> <span class="kwd">delegate</span><span class="pun">(</span><span class="pun">)</span> <span class="pln">del</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONParserNodeInputRange</span><span class="pun">!</span><span class="pln">R</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-void readArray(R)(
-&nbsp;&nbsp;ref R nodes,
-&nbsp;&nbsp;scope @safe void delegate() del
-)
-if (isJSONParserNodeInputRange!R);</pre>
-					</section>
-<section><h3>Parameters</h3>
+			<section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/readArray.html#nodes"><code class="prettyprint lang-d">nodes</code></a></td></tr>
+<tr><td id="nodes">nodes</td><td> An input range of JSON parser nodes</td></tr>
 <tr><td id="del">del</td><td> The callback to invoke for each array entry</td></tr>
 </table>
 </section>
 <section><h3>Example</h3>
 
-<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+<pre class="code"><code class="lang-d"><span class="kwd">auto </span><span class="pln">j </span><span class="pun">= <a href="../../../../stdx/data/json/parser/parseJSONStream.html"></span><span class="pln">parseJSONStream</span></a><span class="pun">(</span><span class="str">q{
         [
             "foo",
             "bar"
         ]
-    });
+    }</span><span class="pun">);
 
-size_t i = 0;
-j.readArray({
-    auto value = j.readString();
-    switch (i++) {
-        default: assert(false);
-        case 0: assert(value == "foo"); break;
-        case 1: assert(value == "bar"); break;
+</span><span class="pln">size_t i </span><span class="pun">= </span><span class="lit">0</span><span class="pun">;
+</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">readArray</span><span class="pun">({
+    </span><span class="kwd">auto </span><span class="pln">value </span><span class="pun">= </span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">readString</span><span class="pun">();
+    </span><span class="kwd">switch </span><span class="pun">(</span><span class="pln">i</span><span class="pun">++) {
+        </span><span class="kwd">default</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="kwd">false</span><span class="pun">);
+        </span><span class="kwd">case </span><span class="lit">0</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">value </span><span class="pun">== </span><span class="str">"foo"</span><span class="pun">); </span><span class="kwd">break</span><span class="pun">;
+        </span><span class="kwd">case </span><span class="lit">1</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">value </span><span class="pun">== </span><span class="str">"bar"</span><span class="pun">); </span><span class="kwd">break</span><span class="pun">;
     }
 });
 
-assert(j.empty);
-</pre>
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+</span></code></pre>
 </section>
-
-			</section>
-			<section>
-				<h2>Function readArray</h2>
-				<p> Reads an array and returns a lazy range of parser node ranges.
+<h2 id="1">Function readArray</h2><p>Reads an array and returns a lazy range of parser node ranges.
 </p>
-<section>
-<p> The given parser node range must point to a node of kind
- <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.arrayStart.html"><code class="prettyprint lang-d">JSONParserNode.Kind.arrayStart</code></a></code>. Each of the returned sub ranges
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">auto </span><span class="kwd">auto</span> <span class="pln">readArray</span>(R)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">ref </span><span class="pln">R</span> <span class="pln">nodes</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">@system</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONParserNodeInputRange</span><span class="pun">!</span><span class="pln">R</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The given parser node range must point to a node of kind
+ <code class="lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html#arrayStart"><span class="typ">JSONParserNodeKind<wbr/></span><span class="pun">.</span><span class="pln">arrayStart</span></a></code>. Each of the returned sub ranges
  corresponds to the contents of a single array entry.
 </p>
-
 </section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto readArray(R)(
-&nbsp;&nbsp;ref R nodes
-) @system
-if (isJSONParserNodeInputRange!R);</pre>
-					</section>
-<section><h3>Parameters</h3>
+			<section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/readArray.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
-</td></tr>
+<tr><td id="nodes">nodes</td><td> An input range of JSON parser nodes</td></tr>
 </table>
 </section>
 <section><h3>Throws</h3>
-<p>   A <code class="prettyprint lang-d">JSONException</code> is thrown if the input range does not point to the
+<p>A <code class="lang-d"><span class="typ">JSONException</span></code> is thrown if the input range does not point to the
    start of an array.
 </p>
 </section>
 <section><h3>Example</h3>
 
-<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+<pre class="code"><code class="lang-d"><span class="kwd">auto </span><span class="pln">j </span><span class="pun">= <a href="../../../../stdx/data/json/parser/parseJSONStream.html"></span><span class="pln">parseJSONStream</span></a><span class="pun">(</span><span class="str">q{
         [
             "foo",
             "bar"
         ]
-    });
+    }</span><span class="pun">);
 
-size_t i = 0;
-foreach (ref entry; j.readArray) {
-    auto value = entry.readString;
-    assert(entry.empty);
-    switch (i++) {
-        default: assert(false);
-        case 0: assert(value == "foo"); break;
-        case 1: assert(value == "bar"); break;
+</span><span class="pln">size_t i </span><span class="pun">= </span><span class="lit">0</span><span class="pun">;
+</span><span class="kwd">foreach </span><span class="pun">(</span><span class="kwd">ref </span><span class="pln">entry</span><span class="pun">; </span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">readArray</span><span class="pun">) {
+    </span><span class="kwd">auto </span><span class="pln">value </span><span class="pun">= </span><span class="pln">entry<wbr/></span><span class="pun">.</span><span class="pln">readString</span><span class="pun">;
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">entry<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+    </span><span class="kwd">switch </span><span class="pun">(</span><span class="pln">i</span><span class="pun">++) {
+        </span><span class="kwd">default</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="kwd">false</span><span class="pun">);
+        </span><span class="kwd">case </span><span class="lit">0</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">value </span><span class="pun">== </span><span class="str">"foo"</span><span class="pun">); </span><span class="kwd">break</span><span class="pun">;
+        </span><span class="kwd">case </span><span class="lit">1</span><span class="pun">: </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">value </span><span class="pun">== </span><span class="str">"bar"</span><span class="pun">); </span><span class="kwd">break</span><span class="pun">;
     }
 }
-assert(i == 2);
-</pre>
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">i </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

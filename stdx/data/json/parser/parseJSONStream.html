@@ -5,69 +5,97 @@
 		<title>Function parseJSONStream</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function parseJSONStream</h1>
-			<section>
-				<p> Parses a JSON document using a lazy parser node range.
+			<h1>Function parseJSONStream</h1><p>Parses a JSON document using a lazy parser node range.
 </p>
-<section>
-<p> This mode parsing mode is similar to a streaming XML (StAX) parser. It can
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<a href="../../../../stdx/data/json/parser/JSONParserRange.html"><span class="typ">JSONParserRange</span></a>!(JSONLexerRange!(Input,options,String)) <span class="pln">parseJSONStream</span>(<a href="../../../../stdx/data/json/lexer/LexOptions.html"><span class="typ">LexOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, String, Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Input</span> <span class="pln">input</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">filename</span> <span class="pun">=</span> <span class="kwd">null</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isInputRange</span><span class="pun">!</span><span class="typ">Input </span><span class="pun">&amp;&amp; (</span><span class="pln">isSomeChar</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">) || </span><span class="pln">isIntegral</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">))</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<a href="../../../../stdx/data/json/parser/JSONParserRange.html"><span class="typ">JSONParserRange</span></a>!Input <span class="pln">parseJSONStream</span>(Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Input</span> <span class="pln">tokens</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONTokenInputRange</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>This mode parsing mode is similar to a streaming XML (StAX) parser. It can
  be used to parse JSON documents of unlimited size. The memory consumption
  grows linearly with the nesting level (about 4 bytes per level), but is
  independent of the number of values in the JSON document.
@@ -75,10 +103,10 @@ $('#symbolSearchPane').show();
 
 <p> The resulting range of nodes is guaranteed to be ordered according to the
  following grammar, where uppercase terminals correspond to the node kind
- (See <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html"><code class="prettyprint lang-d">JSONParserNode.Kind</code></a>).
+ (See <code class="lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html"><span class="typ">JSONParserNodeKind</span></a></code>).
 </p>
 
-<p> <ul><li>list → value*</li>
+<p> <ul>   <li>list → value*</li>
    <li>value → LITERAL | array | object</li>
    <li>array → ARRAYSTART (value)* ARRAYEND</li>
    <li>object → OBJECTSTART (KEY value)* OBJECTEND</li>
@@ -86,60 +114,56 @@ $('#symbolSearchPane').show();
 </p>
 </section>
 
-					<section>
-						<h3>Prototypes</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/parser/JSONParserRange.html">JSONParserRange</a>!(JSONLexerRange!(Input,options,appenderFactory)) parseJSONStream(stdx.data.json.lexer.LexOptions options, alias appenderFactory, Input)(
-&nbsp;&nbsp;Input input,
-&nbsp;&nbsp;string filename = null
-)
-if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));
+			<section><h2>Example</h2>
 
-<a href="../../../../stdx/data/json/parser/JSONParserRange.html">JSONParserRange</a>!Input parseJSONStream(Input)(
-&nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);</pre>
-					</section>
-<section><h3>Example</h3>
+<pre class="code"><code class="lang-d"><span class="kwd">import </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">algorithm</span><span class="pun">;
 
-<pre class="code prettyprint lang-d">import std.algorithm;
-
-auto rng1 = parseJSONStream(`{ "a": 1, "b": [null] }`);
-with (<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONParserNode.Kind</a>)
+</span><span class="kwd">auto </span><span class="pln">rng1 </span><span class="pun">= </span><span class="pln">parseJSONStream</span><span class="pun">(</span><span class="str">`{ "a": 1, "b": [null] }`</span><span class="pun">);
+</span><span class="kwd">with </span><span class="pun">(<a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html"></span><span class="typ">JSONParserNodeKind</span></a><span class="pun">)
 {
-    assert(rng1.map!(n => n.kind).equal(
-        [objectStart, key, literal, key, arrayStart, literal, arrayEnd,
-        objectEnd]));
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng1<wbr/></span><span class="pun">.</span><span class="pln">map</span><span class="pun">!(</span><span class="pln">n </span><span class="pun">=&gt; </span><span class="pln">n<wbr/></span><span class="pun">.</span><span class="pln">kind</span><span class="pun">)<wbr/>.</span><span class="pln">equal</span><span class="pun">(
+        [</span><span class="pln">objectStart</span><span class="pun">, </span><span class="pln">key</span><span class="pun">, </span><span class="pln">literal</span><span class="pun">, </span><span class="pln">key</span><span class="pun">, </span><span class="pln">arrayStart</span><span class="pun">, </span><span class="pln">literal</span><span class="pun">, </span><span class="pln">arrayEnd</span><span class="pun">,
+        </span><span class="pln">objectEnd</span><span class="pun">]));
 }
 
-auto rng2 = parseJSONStream(`1 {"a": 2} null`);
-with (<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONParserNode.Kind</a>)
+</span><span class="kwd">auto </span><span class="pln">rng2 </span><span class="pun">= </span><span class="pln">parseJSONStream</span><span class="pun">(</span><span class="str">`1 {"a": 2} null`</span><span class="pun">);
+</span><span class="kwd">with </span><span class="pun">(<a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html"></span><span class="typ">JSONParserNodeKind</span></a><span class="pun">)
 {
-    assert(rng2.map!(n => n.kind).equal(
-        [literal, objectStart, key, literal, objectEnd, literal]));
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng2<wbr/></span><span class="pun">.</span><span class="pln">map</span><span class="pun">!(</span><span class="pln">n </span><span class="pun">=&gt; </span><span class="pln">n<wbr/></span><span class="pun">.</span><span class="pln">kind</span><span class="pun">)<wbr/>.</span><span class="pln">equal</span><span class="pun">(
+        [</span><span class="pln">literal</span><span class="pun">, </span><span class="pln">objectStart</span><span class="pun">, </span><span class="pln">key</span><span class="pun">, </span><span class="pln">literal</span><span class="pun">, </span><span class="pln">objectEnd</span><span class="pun">, </span><span class="pln">literal</span><span class="pun">]));
 }
-</pre>
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

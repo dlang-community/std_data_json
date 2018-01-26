@@ -5,128 +5,146 @@
 		<title>Function toJSON</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class="selected module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function toJSON</h1>
-			<section>
-				<p> Converts the given JSON document(s) to its string representation.
+			<h1>Function toJSON</h1><p>Converts the given JSON document(s) to its string representation.
 </p>
-<section>
-<p> The input can be a JSONValue, or an input range of either JSONToken
- or JSONParserNode elements. By default, the generator will use newlines
- and tabs to pretty-print the result. Use the <code class="prettyprint lang-d">options</code> template parameter
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="typ">string</span> <span class="pln">toJSON</span>(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">string</span> <span class="pln">toJSON</span>(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Input</span> <span class="pln">nodes</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONParserNodeInputRange</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="typ">string</span> <span class="pln">toJSON</span>(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Input</span> <span class="pln">tokens</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONTokenInputRange</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="typ">string</span> <span class="pln">toJSON</span>(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, String)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.html"><span class="typ">JSONToken</span></a>!String <span class="pln">token</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The input can be a <code class="lang-d"><span class="typ">JSONValue</span></code>, or an input range of either <code class="lang-d"><span class="typ">JSONToken</span></code>
+ or <code class="lang-d"><span class="typ">JSONParserNode</span></code> elements. By default, the generator will use newlines
+ and tabs to pretty-print the result. Use the <code class="lang-d"><span class="pln">options</span></code> template parameter
  to customize this.
 </p>
-
 </section>
 
-					<section>
-						<h3>Prototypes</h3>
-						<pre class="code prettyprint lang-d prototype">
-string toJSON(stdx.data.json.generator.GeneratorOptions options)(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> value
-);
-
-string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
-&nbsp;&nbsp;Input nodes
-)
-if (isJSONParserNodeInputRange!Input);
-
-string toJSON(stdx.data.json.generator.GeneratorOptions options, Input)(
-&nbsp;&nbsp;Input tokens
-)
-if (isJSONTokenInputRange!Input);
-
-string toJSON(stdx.data.json.generator.GeneratorOptions options)(
-&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a> token
-);</pre>
-					</section>
-<section><h3>Parameters</h3>
+			<section><h2>Parameters</h2>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
 <tr><td id="value">value</td><td> A single JSON document</td></tr>
-<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser <a href="../../../../stdx/data/json/generator/toJSON.html#nodes"><code class="prettyprint lang-d">nodes</code></a>. The <a href="../../../../stdx/data/json/generator/toJSON.html#nodes"><code class="prettyprint lang-d">nodes</code></a>
+<tr><td id="nodes">nodes</td><td> A set of JSON documents encoded as single parser nodes. The nodes
      must be in valid document order, or the parser result will be undefined.</td></tr>
-<tr><td id="tokens">tokens</td><td> List of JSON <a href="../../../../stdx/data/json/generator/toJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to be converted to strings. The <a href="../../../../stdx/data/json/generator/toJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> may
+<tr><td id="tokens">tokens</td><td> List of JSON tokens to be converted to strings. The tokens may
      occur in any order and are simply appended in order to the final string.</td></tr>
-<tr><td id="token">token</td><td> A single <a href="../../../../stdx/data/json/generator/toJSON.html#token"><code class="prettyprint lang-d">token</code></a> to convert to a string
-</td></tr>
+<tr><td id="token">token</td><td> A single token to convert to a string</td></tr>
 </table>
 </section>
-<section><h3>Returns</h3>
-<p>   Returns a JSON formatted string.
-</p>
-
-</section>
-<section><h3>See also</h3>
-<p><a href="../../../../stdx/data/json/generator/writeJSON.html"><code class="prettyprint lang-d">writeJSON</code></a>, toPrettyJSON
+<section><h2>Returns</h2>
+<p>Returns a JSON formatted string.
 </p>
 </section>
-<section><h3>Example</h3>
-
-<pre class="code prettyprint lang-d">JSONValue <a href="../../../../stdx/data/json/generator/toJSON.html#value">value</a> = true;
-assert(value.toJSON() == "true");
-</pre>
+<section><h2>See also</h2>
+<p><code class="lang-d"><a href="../../../../stdx/data/json/generator/writeJSON.html"><span class="pln">writeJSON</span></a></code>, <code class="lang-d"><span class="pln">toPrettyJSON</span></code>
+</p>
 </section>
-<section><h3>Example</h3>
+<section><h2>Example</h2>
 
-<pre class="code prettyprint lang-d">auto a = toJSONValue(`{"a": [], "b": [1, {}]}`);
+<pre class="code"><code class="lang-d"><span class="typ">JSONValue </span><span class="pln">value </span><span class="pun">= </span><span class="kwd">true</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">value<wbr/></span><span class="pun">.</span><span class="pln">toJSON</span><span class="pun">() == </span><span class="str">"true"</span><span class="pun">);
+</span></code></pre>
+</section>
+<section><h2>Example</h2>
 
-// pretty print:
+<pre class="code"><code class="lang-d"><span class="kwd">auto </span><span class="pln">a </span><span class="pun">= </span><span class="pln">toJSONValue</span><span class="pun">(</span><span class="str">`{"a": [], "b": [1, {}]}`</span><span class="pun">);
+
+</span><span class="com">// pretty print:
 // {
 //     "a": [],
 //     "b": [
@@ -134,38 +152,48 @@ assert(value.toJSON() == "true");
 //         {},
 //     ]
 // }
-assert(
-    a.toJSON() == "{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" ||
-    a.toJSON() == "{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
-);
+</span><span class="kwd">assert</span><span class="pun">(
+    </span><span class="pln">a<wbr/></span><span class="pun">.</span><span class="pln">toJSON</span><span class="pun">() == </span><span class="str">"{\n\t\"a\": [],\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t]\n}" </span><span class="pun">||
+    </span><span class="pln">a<wbr/></span><span class="pun">.</span><span class="pln">toJSON</span><span class="pun">() == </span><span class="str">"{\n\t\"b\": [\n\t\t1,\n\t\t{}\n\t],\n\t\"a\": []\n}"
+</span><span class="pun">);
 
-// write compact JSON (order of object fields is undefined)
-assert(
-    a.toJSON!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.compact.html">GeneratorOptions.compact</a>)() == `{"a":[],"b":[1,{}]}` ||
-    a.toJSON!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.compact.html">GeneratorOptions.compact</a>)() == `{"b":[1,{}],"a":[]}`
-);
-</pre>
+</span><span class="com">// write compact JSON (order of object fields is undefined)
+</span><span class="kwd">assert</span><span class="pun">(
+    </span><span class="pln">a<wbr/></span><span class="pun">.</span><span class="pln">toJSON</span><span class="pun">!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html#compact"></span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">compact</span></a><span class="pun">)() == </span><span class="str">`{"a":[],"b":[1,{}]}` </span><span class="pun">||
+    </span><span class="pln">a<wbr/></span><span class="pun">.</span><span class="pln">toJSON</span><span class="pun">!(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html#compact"></span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">compact</span></a><span class="pun">)() == </span><span class="str">`{"b":[1,{}],"a":[]}`
+</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

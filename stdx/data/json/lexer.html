@@ -5,97 +5,96 @@
 		<title>Module stdx.data.json.lexer</title>
 		<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Module stdx.data.json.lexer</h1>
-			<p> Provides JSON lexing facilities.
-</p>
-<section>
-</section>
+			<h1>Module stdx.data.json.lexer</h1><p>Provides JSON lexing facilities.
+</p><section></section>
 
 			<section><section><h2>Synopsis</h2>
-<pre class="code prettyprint lang-d">// Lex a JSON string into a lazy range of tokens
-auto tokens = <a href="../../../stdx/data/json/lexer/lexJSON.html">lexJSON</a>(`{"name": "Peter", "age": 42}`);
+<pre class="code"><code class="lang-d"><span class="com">// Lex a JSON string into a lazy range of tokens
+</span><span class="kwd">auto </span><span class="pln">tokens </span><span class="pun">= <a href="../../../stdx/data/json/lexer/lexJSON.html"></span><span class="pln">lexJSON</span></a><span class="pun">(</span><span class="str">`{"name": "Peter", "age": 42}`</span><span class="pun">);
 
-with (<a href="../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>) {
-    assert(tokens.map!(t => t.kind).equal(
-        [Kind.objectStart, Kind.string, Kind.colon, Kind.string, Kind.comma,
-        Kind.string, Kind.colon, Kind.number, Kind.objectEnd]));
+</span><span class="kwd">with </span><span class="pun">(<a href="../../../stdx/data/json/lexer/JSONToken.html"></span><span class="typ">JSONToken</span></a><span class="pun">) {
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">map</span><span class="pun">!(</span><span class="pln">t </span><span class="pun">=&gt; </span><span class="pln">t<wbr/></span><span class="pun">.</span><span class="pln">kind</span><span class="pun">)<wbr/>.</span><span class="pln">equal</span><span class="pun">(
+        [</span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">objectStart</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="typ">string</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">colon</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="typ">string</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">comma</span><span class="pun">,
+        </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="typ">string</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">colon</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">number</span><span class="pun">, </span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">objectEnd</span><span class="pun">]));
 }
 
-// Get detailed information
-tokens.popFront(); // skip the '{'
-assert(tokens.front.string == "name");
-tokens.popFront(); // skip "name"
-tokens.popFront(); // skip the ':'
-assert(tokens.front.string == "Peter");
-assert(tokens.front.location.line == 0);
-assert(tokens.front.location.column == 9);
-</pre>
-
+</span><span class="com">// Get detailed information
+</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">(); </span><span class="com">// skip the '{'
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="typ">string </span><span class="pun">== </span><span class="str">"name"</span><span class="pun">);
+</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">(); </span><span class="com">// skip "name"
+</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">(); </span><span class="com">// skip the ':'
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="typ">string </span><span class="pun">== </span><span class="str">"Peter"</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">line </span><span class="pun">== </span><span class="lit">0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">tokens<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">column </span><span class="pun">== </span><span class="lit">9</span><span class="pun">);</span></code></pre>
 </section>
 <section><h2>Credits</h2>
-<p>   Support for escaped UTF-16 surrogates was contributed to the original
+<p>Support for escaped UTF-16 surrogates was contributed to the original
    vibe.d JSON module by Etienne Cimon. The number parsing code is based
    on the version contained in Andrei Alexandrescu's "std.jgrandson"
    module draft.
 </p>
-
 </section>
 </section>
 			<section>
@@ -103,16 +102,15 @@ assert(tokens.front.location.column == 9);
 				<table>
 					<col class="caption"/>
 					<tr>
-						<th>Name</th>
-						<th>Description</th>
+						<th>Name</th><th>Description</th>
 					</tr>
 					<tr>
 						<td>
-							<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lexJSON.html">
-								<code>lexJSON</code>
-							</a>
+							<code>
+								<a id="lexJSON" class="public" href="../../../stdx/data/json/lexer/lexJSON.html">lexJSON</a><span class="decoration">(input, filename)</span>
+							</code>
 						</td>
-						<td> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> string.
+						<td>Returns a lazy range of tokens corresponding to the given JSON input string.
 </td>
 					</tr>
 				</table>
@@ -122,43 +120,42 @@ assert(tokens.front.location.column == 9);
 				<table>
 					<col class="caption"/>
 					<tr>
-						<th>Name</th>
-						<th>Description</th>
+						<th>Name</th><th>Description</th>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/JSONLexerRange.html">
-								<code>JSONLexerRange</code>
-							</a>
+							<code>
+								<a id="JSONLexerRange" class="public" href="../../../stdx/data/json/lexer/JSONLexerRange.html">JSONLexerRange</a>
+							</code>
 						</td>
-						<td> A lazy <a href="../../../stdx/data/json/lexer/JSONLexerRange.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
+						<td>A lazy input range of JSON tokens.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/JSONNumber.html">
-								<code>JSONNumber</code>
-							</a>
+							<code>
+								<a id="JSONNumber" class="public" href="../../../stdx/data/json/lexer/JSONNumber.html">JSONNumber</a>
+							</code>
 						</td>
-						<td> Represents a JSON number literal with lazy conversion.
+						<td>Represents a JSON number literal with lazy conversion.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/JSONString.html">
-								<code>JSONString</code>
-							</a>
+							<code>
+								<a id="JSONString" class="public" href="../../../stdx/data/json/lexer/JSONString.html">JSONString</a>
+							</code>
 						</td>
-						<td> Represents a JSON string literal with lazy (un)escaping.
+						<td>Represents a JSON string literal with lazy (un)escaping.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/JSONToken.html">
-								<code>JSONToken</code>
-							</a>
+							<code>
+								<a id="JSONToken" class="public" href="../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>
+							</code>
 						</td>
-						<td> A low-level JSON token as returned by JSONLexer.
+						<td>A low-level JSON token as returned by <code class="lang-d"><span class="typ">JSONLexer</span></code>.
 </td>
 					</tr>
 				</table>
@@ -168,38 +165,57 @@ assert(tokens.front.location.column == 9);
 				<table>
 					<col class="caption"/>
 					<tr>
-						<th>Name</th>
-						<th>Description</th>
+						<th>Name</th><th>Description</th>
 					</tr>
 					<tr>
 						<td>
-							<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/LexOptions.html">
-								<code>LexOptions</code>
-							</a>
+							<code>
+								<a id="JSONTokenKind" class="public" href="../../../stdx/data/json/lexer/JSONTokenKind.html">JSONTokenKind</a>
+							</code>
 						</td>
-						<td> Flags for configuring the JSON lexer.
+						<td>Identifies the kind of a JSON token.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<code>
+								<a id="LexOptions" class="public" href="../../../stdx/data/json/lexer/LexOptions.html">LexOptions</a>
+							</code>
+						</td>
+						<td>Flags for configuring the JSON lexer.
 </td>
 					</tr>
 				</table>
 			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

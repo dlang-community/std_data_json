@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable Location.file</title>
+		<title>Function jsonOutputRange</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -34,12 +34,12 @@ $('#symbolSearchPane').show();</script>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/generator.html">generator</a>
 					</div>
 				</li>
@@ -67,25 +67,19 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable Location.file</h1><p>Optional file name.
+			<h1>Function jsonOutputRange</h1><p>Convenience function for creating a <code class="lang-d"><a href="../../../stdx/data/json/generator/JSONOutputRange.html"><span class="typ"><a href="../../../../stdx/data/json/generator/JSONOutputRange.html"><span class="typ">JSONOutputRange</span></a></span></a></code> instance using IFTI.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">struct</span> <a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a>
+			<a href="../../../../stdx/data/json/generator/JSONOutputRange.html"><span class="typ">JSONOutputRange</span></a>!(R,options) <span class="pln">jsonOutputRange</span>(<a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, R)
+			<span class="pun">(</span>
 			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
+			&nbsp;&nbsp;<span class="pln">R</span> <span class="pln">output</span>
 			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">file</span>
-			<span class="pun">;</span>
+			<span class="pun">)</span>
 			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			<span class="pun">}</span>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isOutputRange</span><span class="pun">!(</span><span class="pln">R</span><span class="pun">, </span><span class="typ">char</span><span class="pun">)</span><span class="pun">);</span>
 					</div>
 				</code>
 			</div>
@@ -104,7 +98,7 @@ $('#symbolSearchPane').show();</script>
 					<tr>
 						<th>Copyright</th>
 						<td>
-							<p>Copyright 2012 - 2014, Sönke Ludwig.
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 						</td>

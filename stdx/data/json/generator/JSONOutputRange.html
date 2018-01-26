@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable Location.file</title>
+		<title>Struct JSONOutputRange</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -34,12 +34,12 @@ $('#symbolSearchPane').show();</script>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/generator.html">generator</a>
 					</div>
 				</li>
@@ -67,29 +67,63 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable Location.file</h1><p>Optional file name.
+			<h1>Struct JSONOutputRange</h1><p>Output range that takes JSON primitives and outputs to a character output
+    range.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">struct</span> <a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a>
+			<span class="kwd">struct</span> <span class="typ">JSONOutputRange</span>(R, <a href="../../../../stdx/data/json/generator/GeneratorOptions.html"><span class="typ">GeneratorOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>)
 			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
+			&nbsp;&nbsp;
 			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">file</span>
-			<span class="pun">;</span>
-			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			<span class="pun">}</span>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isOutputRange</span><span class="pun">!(</span><span class="pln">R</span><span class="pun">, </span><span class="typ">char</span><span class="pun">)</span><span class="pun">);</span>
 					</div>
 				</code>
 			</div>
-			
+			<section><p>This range provides the underlying functinality for <code class="lang-d"><a href="../../../../stdx/data/json/generator/writeJSON.html"><span class="pln">writeJSON</span></a></code> and
+    <code class="lang-d"><a href="../../../../stdx/data/json/generator/toJSON.html"><span class="pln">toJSON</span></a></code> and is well suited as a target for serialization frameworks.
+</p>
+
+<p>    Note that pretty-printing (<code class="lang-d"><a href="../../../../stdx/data/json/generator/GeneratorOptions.html#compact"><span class="typ">GeneratorOptions<wbr/></span><span class="pun">.</span><span class="pln">compact</span></a></code> not set) is currently
+    only supported for primitives of type <code class="lang-d"><span class="typ">JSONParserNode</span></code>.
+</p>
+</section>
+
+			<section><h2>Constructors</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/generator/JSONOutputRange.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td>Constructs the range for a given character output range.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/generator/JSONOutputRange.put.html" class="public">
+								<code>put</code>
+							</a>
+						</td>
+						<td>Writes a single JSON primitive to the destination character range.
+</td>
+					</tr>
+				</table>
+			</section>
 			
 			<footer>
 				<table class="license-info">
@@ -104,7 +138,7 @@ $('#symbolSearchPane').show();</script>
 					<tr>
 						<th>Copyright</th>
 						<td>
-							<p>Copyright 2012 - 2014, Sönke Ludwig.
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 						</td>

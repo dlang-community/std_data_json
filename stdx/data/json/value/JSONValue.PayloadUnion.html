@@ -5,163 +5,173 @@
 		<title>Union JSONValue.PayloadUnion</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class="selected module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Union JSONValue.PayloadUnion</h1>
-			<section>
-				<p> Defines the possible types contained in a <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a></code>
+			<h1>Union JSONValue.PayloadUnion</h1><p>Defines the possible types contained in a <code class="lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a></code>
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">union</span> <span class="typ">PayloadUnion</span>
+			<span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			
+			<section><h2>Fields</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.array.html" class="public"><code>array</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a><span class="pun">[]</span></code></td><td>Array or JSON values
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.bigInt.html" class="public"><code>bigInt</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/WrappedBigInt.html"><span class="typ">WrappedBigInt</span></a></code></td><td>Only used if <code class="lang-d"><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">useBigInt</span></code> was set for parsing
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.boolean.html" class="public"><code>boolean</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">bool</span></code></td><td>JSON <code class="lang-d"><span class="kwd">true</span></code> or <code class="lang-d"><span class="kwd">false</span></code> values
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.double_.html" class="public"><code>double_</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">double</span></code></td><td>The default field for storing numbers
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.integer.html" class="public"><code>integer</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">long</span></code></td><td>Only used if <code class="lang-d"><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">useLong</span></code> was set for parsing
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.null_.html" class="public"><code>null_</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span></code></td><td>A JSON <code class="lang-d"><span class="kwd">null</span></code> value
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.object.html" class="public"><code>object</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a><span class="pun">[</span><span class="typ">string</span><span class="pun">]</span></code></td><td>Dictionary of JSON values (object)
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.string.html" class="public"><code>string</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">string</span></code></td><td>String value
+</td>
+					</tr>
+				</table>
+			</section>
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-					<section>
-						<h3>Fields</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.array.html" class="public"><code>array</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[]</code></td>
-								<td>Array or JSON values
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.bigInt.html" class="public"><code>bigInt</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/WrappedBigInt.html">WrappedBigInt</a></code></td>
-								<td>Only used if <code class="prettyprint lang-d">LexOptions.useBigInt</code> was set for parsing
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.boolean.html" class="public"><code>boolean</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
-								<td>JSON <code class="prettyprint lang-d">true</code> or <code class="prettyprint lang-d">false</code> values
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.double_.html" class="public"><code>double_</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">double</code></td>
-								<td>The default field for storing numbers
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.integer.html" class="public"><code>integer</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">long</code></td>
-								<td>Only used if <code class="prettyprint lang-d">LexOptions.useLong</code> was set for parsing
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.null_.html" class="public"><code>null_</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">typeof(null)</code></td>
-								<td>A JSON <code class="prettyprint lang-d">null</code> value
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.object.html" class="public"><code>object</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a>[string]</code></td>
-								<td>Dictionary of JSON values (<code class="prettyprint lang-d">object</code>)
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.string.html" class="public"><code>string</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
-								<td>String value
-</td>
-							</tr>
-						</table>
-					</section>
-
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
-</p>
-
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

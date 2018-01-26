@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function JSONToken.kind</title>
+		<title>Function JSONOutputRange.put</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -39,12 +39,12 @@ $('#symbolSearchPane').show();</script>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/generator.html">generator</a>
 					</div>
 				</li>
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
 					</div>
 				</li>
@@ -67,29 +67,85 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function JSONToken.kind</h1><p>Gets/sets the kind of the represented token.
+			<h1>Function JSONOutputRange.put</h1><p>Writes a single JSON primitive to the destination character range.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="typ">Kind</span> <span class="pln">kind
-			<span class="pun">()</span><span class="pln"> </span><span class="kwd">const pure nothrow @nogc @property</span><span class="pun">;</span>
-			<br/>
-			<br/>
-			<span class="typ">Kind</span> <span class="pln">kind</span>
+			<span class="typ">void</span> <span class="pln">put</span>(String)
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="typ">Kind</span> <span class="pln">value</span>
+			&nbsp;&nbsp;<a href="../../../../stdx/data/json/parser/JSONParserNode.html"><span class="typ">JSONParserNode</span></a>!String <span class="pln">node</span>
 			<br/>
-			<span class="pun">)</span><span class="pln"> </span><span class="kwd">nothrow @nogc @property</span><span class="pun">;</span>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>(String)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONToken.html"><span class="typ">JSONToken</span></a>!String <span class="pln">token</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln"></span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">bool</span> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">long</span> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">BigInt</span> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">double</span> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>(String)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../../../../stdx/data/json/lexer/JSONString.html"><span class="typ">JSONString</span></a>!String <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="typ">void</span> <span class="pln">put</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">value</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>
-			<section><p>Setting the token kind is not allowed for any of the kinds that have
- additional data associated (boolean, number and string).
-</p>
-</section>
-
+			
 			
 			<footer>
 				<table class="license-info">

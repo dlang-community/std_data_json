@@ -5,147 +5,159 @@
 		<title>Struct Location</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class="selected module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct Location</h1>
-			<section>
-				<p> Represents a location in an input range/<a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
+			<h1>Struct Location</h1><p>Represents a location in an input range/file.
 </p>
-<section>
-<p> The indices are zero based and the <a href="../../../../stdx/data/json/foundation/Location.column.html"><code class="prettyprint lang-d">column</code></a> is represented in code units of
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">struct</span> <span class="typ">Location</span>
+			<span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The indices are zero based and the column is represented in code units of
  the input (i.e. in bytes in case of a UTF-8 input string).
 </p>
 </section>
 
-					<section>
-						<h3>Fields</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.column.html" class="public"><code>column</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">ulong</code></td>
-								<td>The zero based code unit index of the referenced <a href="../../../../stdx/data/json/foundation/Location.line.html"><code class="prettyprint lang-d">line</code></a>.
+			<section><h2>Fields</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/foundation/Location.column.html" class="public"><code>column</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">ulong</span></code></td><td>The zero based code unit index of the referenced line.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.file.html" class="public"><code>file</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
-								<td>Optional <code class="prettyprint lang-d">file</code> name.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/foundation/Location.file.html" class="public"><code>file</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">string</span></code></td><td>Optional file name.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.line.html" class="public"><code>line</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">ulong</code></td>
-								<td>The zero based <code class="prettyprint lang-d">line</code> of the input <a href="../../../../stdx/data/json/foundation/Location.file.html"><code class="prettyprint lang-d">file</code></a>.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/foundation/Location.line.html" class="public"><code>line</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">ulong</span></code></td><td>The zero based line of the input file.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/foundation/Location.toString.html" class="public">
-										<code>toString</code>
-									</a>
-								</td>
-								<td>Returns a string representation of the location.
-</td>
-							</tr>
-						</table>
-					</section>
-
+					</tr>
+				</table>
 			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/foundation/Location.toString.html" class="public">
+								<code>toString</code>
+							</a>
+						</td>
+						<td>Returns a string representation of the location.
+</td>
+					</tr>
+				</table>
+			</section>
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2014, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2014, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

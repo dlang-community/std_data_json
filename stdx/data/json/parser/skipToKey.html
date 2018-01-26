@@ -5,146 +5,162 @@
 		<title>Function skipToKey</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function skipToKey</h1>
-			<section>
-				<p> Skips all entries in an object until a certain <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> is reached.
+			<h1>Function skipToKey</h1><p>Skips all entries in an object until a certain key is reached.
 </p>
-<section>
-<p> The node range must either point to the start of an object
- (<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectStart.html"><code class="prettyprint lang-d">JSONParserNode.Kind.objectStart</code></a></code>), or to a <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> within an object
- (<code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.key.html"><code class="prettyprint lang-d">JSONParserNode.Kind.key</code></a></code>).
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="typ">bool</span> <span class="pln">skipToKey</span>(R)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">ref </span><span class="pln">R</span> <span class="pln">nodes</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">key</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONParserNodeInputRange</span><span class="pun">!</span><span class="pln">R</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The node range must either point to the start of an object
+ (<code class="lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html#objectStart"><span class="typ">JSONParserNodeKind<wbr/></span><span class="pun">.</span><span class="pln">objectStart</span></a></code>), or to a key within an object
+ (<code class="lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html#key"><span class="typ">JSONParserNodeKind<wbr/></span><span class="pun">.</span><span class="pln">key</span></a></code>).
 </p>
-
 </section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-bool skipToKey(R)(
-&nbsp;&nbsp;ref R nodes,
-&nbsp;&nbsp;string key
-)
-if (isJSONParserNodeInputRange!R);</pre>
-					</section>
-<section><h3>Parameters</h3>
+			<section><h2>Parameters</h2>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/skipToKey.html#nodes"><code class="prettyprint lang-d">nodes</code></a></td></tr>
-<tr><td id="key">key</td><td> Name of the <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> to find
-</td></tr>
+<tr><td id="nodes">nodes</td><td> An input range of JSON parser nodes</td></tr>
+<tr><td id="key">key</td><td> Name of the key to find</td></tr>
 </table>
 </section>
-<section><h3>Returns</h3>
-<p>   <code class="prettyprint lang-d">true</code> is returned if and only if the specified <a href="../../../../stdx/data/json/parser/skipToKey.html#key"><code class="prettyprint lang-d">key</code></a> has been found.
+<section><h2>Returns</h2>
+<p><code class="lang-d"><span class="kwd">true</span></code> is returned if and only if the specified key has been found.
 </p>
-
 </section>
-<section><h3>Parameters</h3>
+<section><h2>Parameters</h2>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="nodes">nodes</td><td> An input range of JSON parser <a href="../../../../stdx/data/json/parser/skipToKey.html#nodes"><code class="prettyprint lang-d">nodes</code></a></td></tr>
+<tr><td id="nodes">nodes</td><td> An input range of JSON parser nodes</td></tr>
 </table>
 </section>
-<section><h3>Example</h3>
+<section><h2>Example</h2>
 
-<pre class="code prettyprint lang-d">auto j = <a href="../../../../stdx/data/json/parser/parseJSONStream.html">parseJSONStream</a>(q{
+<pre class="code"><code class="lang-d"><span class="kwd">auto </span><span class="pln">j </span><span class="pun">= <a href="../../../../stdx/data/json/parser/parseJSONStream.html"></span><span class="pln">parseJSONStream</span></a><span class="pun">(</span><span class="str">q{
         {
             "foo": 2,
             "bar": 3,
             "baz": false,
             "qux": "str"
         }
-    });
+    }</span><span class="pun">);
 
-j.skipToKey("bar");
-double v1 = j.readDouble;
-assert(v1 == 3);
+</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">skipToKey</span><span class="pun">(</span><span class="str">"bar"</span><span class="pun">);
+</span><span class="typ">double </span><span class="pln">v1 </span><span class="pun">= </span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">readDouble</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">v1 </span><span class="pun">== </span><span class="lit">3</span><span class="pun">);
 
-j.skipToKey("qux");
-string v2 = j.readString;
-assert(v2 == "str");
+</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">skipToKey</span><span class="pun">(</span><span class="str">"qux"</span><span class="pun">);
+</span><span class="typ">string </span><span class="pln">v2 </span><span class="pun">= </span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">readString</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">v2 </span><span class="pun">== </span><span class="str">"str"</span><span class="pun">);
 
-assert(j.front.kind == <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.objectEnd.html">JSONParserNode.Kind.objectEnd</a>);
-j.popFront();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">kind </span><span class="pun">== <a href="../../../../stdx/data/json/parser/JSONParserNodeKind.html#objectEnd"></span><span class="typ">JSONParserNodeKind<wbr/></span><span class="pun">.</span><span class="pln">objectEnd</span></a><span class="pun">);
+</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
 
-assert(j.empty);
-</pre>
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">j<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

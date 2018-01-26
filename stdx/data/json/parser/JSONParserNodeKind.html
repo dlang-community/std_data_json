@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable Location.file</title>
+		<title>Enum JSONParserNodeKind</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -34,7 +34,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
 					</div>
 				</li>
@@ -49,7 +49,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/parser.html">parser</a>
 					</div>
 				</li>
@@ -67,29 +67,74 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable Location.file</h1><p>Optional file name.
+			<h1>Enum JSONParserNodeKind</h1><p>Identifies the kind of a parser node.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">struct</span> <a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a>
-			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">file</span>
-			<span class="pun">;</span>
-			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			<span class="pun">}</span>
+			<span class="kwd">enum</span> <span class="typ">JSONParserNodeKind</span>
+			 <span class="pun">:</span> <span class="typ">int</span> <span class="pun">{ ... }</span>
 					</div>
 				</code>
 			</div>
 			
+			<section><h2>Enum members</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td id="arrayEnd">
+							<code>arrayEnd</code>
+						</td>
+						<td>The end of an array value
+</td>
+					</tr>
+					<tr>
+						<td id="arrayStart">
+							<code>arrayStart</code>
+						</td>
+						<td>The start of an array value
+</td>
+					</tr>
+					<tr>
+						<td id="key">
+							<code>key</code>
+						</td>
+						<td>An object key
+</td>
+					</tr>
+					<tr>
+						<td id="literal">
+							<code>literal</code>
+						</td>
+						<td>A literal value (<code class="lang-d"><span class="kwd">null</span></code>, <code class="lang-d"><span class="pln">boolean</span></code>, <code class="lang-d"><span class="pln">number</span></code> or <code class="lang-d"><span class="typ">string</span></code>)
+</td>
+					</tr>
+					<tr>
+						<td id="none">
+							<code>none</code>
+						</td>
+						<td>Used internally, never occurs in a node stream
+</td>
+					</tr>
+					<tr>
+						<td id="objectEnd">
+							<code>objectEnd</code>
+						</td>
+						<td>The end of an object value
+</td>
+					</tr>
+					<tr>
+						<td id="objectStart">
+							<code>objectStart</code>
+						</td>
+						<td>The start of an object value
+</td>
+					</tr>
+				</table>
+			</section>
 			
 			<footer>
 				<table class="license-info">
@@ -104,7 +149,7 @@ $('#symbolSearchPane').show();</script>
 					<tr>
 						<th>Copyright</th>
 						<td>
-							<p>Copyright 2012 - 2014, Sönke Ludwig.
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 						</td>

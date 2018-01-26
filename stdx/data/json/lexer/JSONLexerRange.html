@@ -5,181 +5,189 @@
 		<title>Struct JSONLexerRange</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct JSONLexerRange</h1>
-			<section>
-				<p> A lazy <a href="../../../../stdx/data/json/lexer/JSONLexerRange.input.html"><code class="prettyprint lang-d">input</code></a> range of JSON tokens.
+			<h1>Struct JSONLexerRange</h1><p>A lazy input range of JSON tokens.
 </p>
-<section>
-<p> This range type takes an <a href="../../../../stdx/data/json/lexer/JSONLexerRange.input.html"><code class="prettyprint lang-d">input</code></a> string range and converts it into a range of
- <a href="../../../../stdx/data/json/lexer/JSONToken.html"><code class="prettyprint lang-d">JSONToken</code></a> values.
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">struct</span> <span class="typ">JSONLexerRange</span>(Input, <a href="../../../../stdx/data/json/lexer/LexOptions.html"><span class="typ">LexOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, String)
+			<br/>
+			&nbsp;&nbsp;
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isInputRange</span><span class="pun">!</span><span class="typ">Input </span><span class="pun">&amp;&amp; (</span><span class="pln">isSomeChar</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">) || </span><span class="pln">isIntegral</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">))</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>This range type takes an input string range and converts it into a range of
+ <code class="lang-d"><a href="../../../../stdx/data/json/lexer/JSONToken.html"><span class="typ">JSONToken</span></a></code> values.
 </p>
 
-<p> See <a href="../../../../stdx/data/json/lexer/lexJSON.html"><code class="prettyprint lang-d">lexJSON</code></a> for more information.
+<p> See <code class="lang-d"><a href="../../../../stdx/data/json/lexer/lexJSON.html"><span class="pln">lexJSON</span></a></code> for more information.
 </p>
 </section>
 
-					<section>
-						<h3>Constructors</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.this.html" class="public">
-										<code>this</code>
-									</a>
-								</td>
-								<td> Constructs a new token stream.
+			<section><h2>Constructors</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td>Constructs a new token stream.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Properties</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.empty.html" class="public property"><code>empty</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
-								<td> Determines if the token stream has been exhausted.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.front.html" class="public property"><code>front</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">const(<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>)</code></td>
-								<td> Returns the current token in the stream.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.input.html" class="public property"><code>input</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">Input</code></td>
-								<td> Returns a copy of the underlying <code class="prettyprint lang-d">input</code> range.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.location.html" class="public property"><code>location</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/foundation/Location.html">Location</a></code></td>
-								<td> The current <code class="prettyprint lang-d">location</code> of the lexer.
-</td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONLexerRange.popFront.html" class="public">
-										<code>popFront</code>
-									</a>
-								</td>
-								<td> Skips to the next token.
-</td>
-							</tr>
-						</table>
-					</section>
-
+					</tr>
+				</table>
 			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<section><h2>Properties</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.empty.html" class="public property"><code>empty</code></a><span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">bool</span></code></td><td>Determines if the token stream has been exhausted.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.front.html" class="public property"><code>front</code></a><span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">const</span><span class="pun">(</span><a href="../../../../stdx/data/json/lexer/JSONToken.html"><span class="typ">JSONToken</span></a>!String<span class="pun">)</span></code></td><td>Returns the current token in the stream.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.input.html" class="public property"><code>input</code></a><span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">Input</span></code></td><td>Returns a copy of the underlying input range.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.location.html" class="public property"><code>location</code></a><span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a></code></td><td>The current location of the lexer.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONLexerRange.popFront.html" class="public">
+								<code>popFront</code>
+							</a>
+						</td>
+						<td>Skips to the next token.
+</td>
+					</tr>
+				</table>
+			</section>
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

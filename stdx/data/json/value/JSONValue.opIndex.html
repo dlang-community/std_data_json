@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable Location.file</title>
+		<title>Function JSONValue.opIndex</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -34,7 +34,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
 					</div>
 				</li>
@@ -54,7 +54,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/value.html">value</a>
 					</div>
 				</li>
@@ -67,29 +67,34 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable Location.file</h1><p>Optional file name.
+			<h1>Function JSONValue.opIndex</h1><p>Temporary index operations until std.variant is fixed in 2.067
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">struct</span> <a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a>
+			<span class="kwd">ref </span><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a> <span class="pln">opIndex</span>
+			<span class="pun">(</span>
 			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
+			&nbsp;&nbsp;<span class="pln">size_t</span> <span class="pln">idx</span>
 			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">file</span>
-			<span class="pun">;</span>
+			<span class="pun">)</span><span class="pun">;</span>
 			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
 			<br/>
-			<span class="pun">}</span>
+			<span class="kwd">ref </span><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a> <span class="pln">opIndex</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">key</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>
-			
+			<section><p>These exist only to overcome current shortcomings in the index
+ op for std.variant, which should be fixed in 2.067 and above.
+ See https://github.com/s-ludwig/std_data_json/pull/3#issuecomment-73127624
+</p>
+</section>
+
 			
 			<footer>
 				<table class="license-info">
@@ -104,7 +109,7 @@ $('#symbolSearchPane').show();</script>
 					<tr>
 						<th>Copyright</th>
 						<td>
-							<p>Copyright 2012 - 2014, Sönke Ludwig.
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 						</td>

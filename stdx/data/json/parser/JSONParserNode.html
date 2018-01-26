@@ -5,186 +5,176 @@
 		<title>Struct JSONParserNode</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct JSONParserNode</h1>
-			<section>
-				<p> Represents a single node of a JSON parse tree.
+			<h1>Struct JSONParserNode</h1><p>Represents a single node of a JSON parse tree.
 </p>
-<section>
-<p> See <a href="../../../../stdx/data/json/parser/parseJSONStream.html"><code class="prettyprint lang-d">parseJSONStream</code></a> and <a href="../../../../stdx/data/json/parser/JSONParserRange.html"><code class="prettyprint lang-d">JSONParserRange</code></a> more information.
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">struct</span> <span class="typ">JSONParserNode</span>(String)
+			<span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>See <code class="lang-d"><a href="../../../../stdx/data/json/parser/parseJSONStream.html"><span class="pln">parseJSONStream</span></a></code> and <code class="lang-d"><a href="../../../../stdx/data/json/parser/JSONParserRange.html"><span class="typ">JSONParserRange</span></a></code> more information.
 </p>
 </section>
 
-					<section>
-						<h3>Properties</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.key.html" class="public property"><code>key</code></a>
-									<span class="tableEntryAnnotation">[get, set]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
-								<td> The <code class="prettyprint lang-d">key</code> identifier for <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.key.html"><code class="prettyprint lang-d">Kind.key</code></a> nodes.
+			<section><h2>Properties</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.key.html" class="public property"><code>key</code></a><span class="tableEntryAnnotation">[get, set]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">String</span></code></td><td>The key identifier for <code class="lang-d"><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">key</span></code> nodes.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.kind.html" class="public property"><code>kind</code></a>
-									<span class="tableEntryAnnotation">[get, set]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html">JSONParserNode.<wbr/>Kind</a></code></td>
-								<td> The <code class="prettyprint lang-d">kind</code> of this node.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.kind.html" class="public property"><code>kind</code></a><span class="tableEntryAnnotation">[get, set]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">Kind</span></code></td><td>The kind of this node.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.literal.html" class="public property"><code>literal</code></a>
-									<span class="tableEntryAnnotation">[get, set]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">inout(<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>)</code></td>
-								<td> The <code class="prettyprint lang-d">literal</code> token for <a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.literal.html"><code class="prettyprint lang-d">Kind.literal</code></a> nodes.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.literal.html" class="public property"><code>literal</code></a><span class="tableEntryAnnotation">[get, set]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">inout</span><span class="pun">(</span><a href="../../../../stdx/data/json/lexer/JSONToken.html"><span class="typ">JSONToken</span></a>!String<span class="pun">)</span></code></td><td>The literal token for <code class="lang-d"><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">literal</span></code> nodes.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.opEquals.html" class="public">
-										<code>opEquals</code>
-									</a>
-								</td>
-								<td> Enables equality comparisons.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.toHash.html" class="public">
-										<code>toHash</code>
-									</a>
-								</td>
-								<td> Enables usage of JSONToken as an associative array <a href="../../../../stdx/data/json/parser/JSONParserNode.key.html"><code class="prettyprint lang-d">key</code></a>.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.toString.html" class="public">
-										<code>toString</code>
-									</a>
-								</td>
-								<td> Converts the node to a string representation.
-</td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Enums</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/parser/JSONParserNode.Kind.html" class="public">
-										<code>Kind</code>
-									</a>
-								</td>
-								<td> Determines the <a href="../../../../stdx/data/json/parser/JSONParserNode.kind.html"><code class="prettyprint lang-d">kind</code></a> of a parser node.
-</td>
-							</tr>
-						</table>
-					</section>
-
+					</tr>
+				</table>
 			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.opEquals.html" class="public">
+								<code>opEquals</code>
+							</a>
+						</td>
+						<td>Enables equality comparisons.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.toHash.html" class="public">
+								<code>toHash</code>
+							</a>
+						</td>
+						<td>Enables usage of <code class="lang-d"><span class="typ">JSONToken</span></code> as an associative array key.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/parser/JSONParserNode.toString.html" class="public">
+								<code>toString</code>
+							</a>
+						</td>
+						<td>Converts the node to a string representation.
+</td>
+					</tr>
+				</table>
+			</section>
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

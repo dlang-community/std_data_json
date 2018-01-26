@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable Location.file</title>
+		<title>JSONToken.this - multiple declarations</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
@@ -34,7 +34,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
+					<div class="module ">
 						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
 					</div>
 				</li>
@@ -44,7 +44,7 @@ $('#symbolSearchPane').show();</script>
 					</div>
 				</li>
 				<li>
-					<div class="module ">
+					<div class="module selected">
 						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
 					</div>
 				</li>
@@ -67,29 +67,53 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable Location.file</h1><p>Optional file name.
+			<h1>JSONToken.this - multiple declarations</h1>
+			<nav class="page-nav">
+				<ul>
+					<li>
+						<a href="#0">
+							Function <code>JSONToken.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#1">
+							Function <code>JSONToken.this</code>
+						</a>
+					</li>
+				</ul>
+			</nav><h2 id="0">Function JSONToken.this</h2><p>Constructs a token from a primitive data value
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">struct</span> <a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a>
+			<span class="pln">this</span>
+			<span class="pun">(</span>
 			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
+			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln"></span>
 			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">file</span>
-			<span class="pun">;</span>
-			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			<span class="pun">}</span>
+			<span class="pun">)</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>
 			
+			<h2 id="1">Function JSONToken.this</h2><p>Constructs a token with a specific kind.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Kind</span> <span class="pln">kind</span>
+			<br/>
+			<span class="pun">)</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>Note that only kinds that don't imply additional data are allowed.
+</p>
+</section>
+
 			
 			<footer>
 				<table class="license-info">
@@ -104,7 +128,7 @@ $('#symbolSearchPane').show();</script>
 					<tr>
 						<th>Copyright</th>
 						<td>
-							<p>Copyright 2012 - 2014, Sönke Ludwig.
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
 						</td>

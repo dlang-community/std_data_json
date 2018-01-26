@@ -5,182 +5,190 @@
 		<title>Struct JSONString</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct JSONString</h1>
-			<section>
-				<p> Represents a JSON string literal with lazy (un)escaping.
+			<h1>Struct JSONString</h1><p>Represents a JSON string literal with lazy (un)escaping.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">struct</span> <span class="typ">JSONString</span>(String)
+			<span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			
+			<section><h2>Constructors</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td>Constructs a JSONString from the given string value (unescaped).
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Properties</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.anyValue.html" class="public property"><code>anyValue</code></a><span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">Tuple</span>!(const(String),bool)</code></td><td>Returns the string value in the form that is available without allocating memory.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.rawValue.html" class="public property"><code>rawValue</code></a><span class="tableEntryAnnotation">[get, set]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">String</span></code></td><td>The raw (escaped) string literal, including the enclosing quotation marks.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.value.html" class="public property"><code>value</code></a><span class="tableEntryAnnotation">[get, set]</span>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="typ">String</span></code></td><td>The decoded (unescaped) string value.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.opCmp.html" class="public">
+								<code>opCmp</code>
+							</a>
+						</td>
+						<td>Support relational comparisons
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.opEquals.html" class="public">
+								<code>opEquals</code>
+							</a>
+						</td>
+						<td>Support equality comparisons
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/lexer/JSONString.toHash.html" class="public">
+								<code>toHash</code>
+							</a>
+						</td>
+						<td>Support use as hash key
+</td>
+					</tr>
+				</table>
+			</section>
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-					<section>
-						<h3>Constructors</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.this.html" class="public">
-										<code>this</code>
-									</a>
-								</td>
-								<td> Constructs a <a href="../../../../stdx/data/json/lexer/JSONString.html"><code class="prettyprint lang-d">JSONString</code></a> from the given string <a href="../../../../stdx/data/json/lexer/JSONString.this.html#value"><code class="prettyprint lang-d">value</code></a> (unescaped).
-</td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Properties</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.anyValue.html" class="public property"><code>anyValue</code></a>
-									<span class="tableEntryAnnotation">[get]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">std.<wbr/>typecons.<wbr/>Tuple!(string,bool)</code></td>
-								<td> Returns the string <a href="../../../../stdx/data/json/lexer/JSONString.value.html"><code class="prettyprint lang-d">value</code></a> in the form that is available without allocating memory.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.rawValue.html" class="public property"><code>rawValue</code></a>
-									<span class="tableEntryAnnotation">[get, set]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
-								<td> The raw (escaped) string literal, including the enclosing quotation marks.
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.value.html" class="public property"><code>value</code></a>
-									<span class="tableEntryAnnotation">[get, set]</span>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">string</code></td>
-								<td> The decoded (unescaped) string <code class="prettyprint lang-d">value</code>.
-</td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.opCmp.html" class="public">
-										<code>opCmp</code>
-									</a>
-								</td>
-								<td>Support relational comparisons
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.opEquals.html" class="public">
-										<code>opEquals</code>
-									</a>
-								</td>
-								<td>Support equality comparisons
-</td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/lexer/JSONString.toHash.html" class="public">
-										<code>toHash</code>
-									</a>
-								</td>
-								<td>Support use as hash key
-</td>
-							</tr>
-						</table>
-					</section>
-
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
-</p>
-
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

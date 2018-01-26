@@ -5,177 +5,205 @@
 		<title>parseJSONValue - multiple declarations</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class="selected module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
 			<h1>parseJSONValue - multiple declarations</h1>
-			<ul>
-				<li>Function parseJSONValue</li>
-				<li>Function parseJSONValue</li>
-			</ul>
-			<section>
-				<h2>Function parseJSONValue</h2>
-				<p> Consumes a single JSON value from the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> range and returns the result as a
- <code class="prettyprint lang-d">JSONValue</code>.
+			<nav class="page-nav">
+				<ul>
+					<li>
+						<a href="#0">
+							Function <code>parseJSONValue</code>
+						</a>
+					</li>
+					<li>
+						<a href="#1">
+							Function <code>parseJSONValue</code>
+						</a>
+					</li>
+				</ul>
+			</nav><h2 id="0">Function parseJSONValue</h2><p>Consumes a single JSON value from the input range and returns the result as a
+ <code class="lang-d"><span class="typ">JSONValue</span></code>.
 </p>
-<section>
-<p> The <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> string must start with a valid JSON document. Any characters
- occurring after this document will be left in the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input"><code class="prettyprint lang-d">input</code></a> range. Use
- <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><code class="prettyprint lang-d">toJSONValue</code></a></code> instead if you wish to perform a normal string to <code class="prettyprint lang-d">JSONValue</code>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a> <span class="pln">parseJSONValue</span>(<a href="../../../../stdx/data/json/lexer/LexOptions.html"><span class="typ">LexOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">ref </span><span class="typ">Input</span> <span class="pln">input</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">filename</span> <span class="pun">=</span> <span class="str">""</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isInputRange</span><span class="pun">!</span><span class="typ">Input </span><span class="pun">&amp;&amp; (</span><span class="pln">isSomeChar</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">) || </span><span class="pln">isIntegral</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">))</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The input string must start with a valid JSON document. Any characters
+ occurring after this document will be left in the input range. Use
+ <code class="lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><span class="pln">toJSONValue</span></a></code> instead if you wish to perform a normal string to <code class="lang-d"><span class="typ">JSONValue</span></code>
  conversion.
 </p>
-
 </section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> parseJSONValue(stdx.data.json.lexer.LexOptions options, Input)(
-&nbsp;&nbsp;ref Input input,
-&nbsp;&nbsp;string filename = ""
-)
-if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));</pre>
-					</section>
-<section><h3>See also</h3>
-<p><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><code class="prettyprint lang-d">toJSONValue</code></a></code>
+			<section><h3>See also</h3>
+<p><code class="lang-d"><a href="../../../../stdx/data/json/parser/toJSONValue.html"><span class="pln">toJSONValue</span></a></code>
 </p>
 </section>
 <section><h3>Example</h3>
 <p>Parse an object
 </p>
-<pre class="code prettyprint lang-d">// parse an object
-string str = `{"a": true, "b": "test"}`;
-JSONValue v = parseJSONValue(str);
-assert(!str.length); // the <a href="../../../../stdx/data/json/parser/parseJSONValue.html#input">input</a> has been consumed
+<pre class="code"><code class="lang-d"><span class="com">// parse an object
+</span><span class="typ">string </span><span class="pln">str </span><span class="pun">= </span><span class="str">`{"a": true, "b": "test"}`</span><span class="pun">;
+</span><span class="typ">JSONValue </span><span class="pln">v </span><span class="pun">= </span><span class="pln">parseJSONValue</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(!</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length</span><span class="pun">); </span><span class="com">// the input has been consumed
 
-auto obj = v.get!(JSONValue[string]);
-assert(obj.length == 2);
-assert(obj["a"] == true);
-assert(obj["b"] == "test");
-</pre>
+</span><span class="kwd">auto </span><span class="pln">obj </span><span class="pun">= </span><span class="pln">v<wbr/></span><span class="pun">.</span><span class="pln">get</span><span class="pun">!(</span><span class="typ">JSONValue</span><span class="pun">[</span><span class="typ">string</span><span class="pun">]);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">obj<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">[</span><span class="str">"a"</span><span class="pun">] == </span><span class="kwd">true</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">[</span><span class="str">"b"</span><span class="pun">] == </span><span class="str">"test"</span><span class="pun">);
+</span></code></pre>
 </section>
 <section><h3>Example</h3>
 <p>Parse multiple consecutive values
 </p>
-<pre class="code prettyprint lang-d">string str = `1.0 2.0`;
-JSONValue v1 = parseJSONValue(str);
-assert(v1 == 1.0);
-assert(str == `2.0`);
-JSONValue v2 = parseJSONValue(str);
-assert(v2 == 2.0);
-assert(str == ``);
-</pre>
+<pre class="code"><code class="lang-d"><span class="typ">string </span><span class="pln">str </span><span class="pun">= </span><span class="str">`1.0 2.0`</span><span class="pun">;
+</span><span class="typ">JSONValue </span><span class="pln">v1 </span><span class="pun">= </span><span class="pln">parseJSONValue</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">v1 </span><span class="pun">== </span><span class="lit">1.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">`2.0`</span><span class="pun">);
+</span><span class="typ">JSONValue </span><span class="pln">v2 </span><span class="pun">= </span><span class="pln">parseJSONValue</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">v2 </span><span class="pun">== </span><span class="lit">2.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">``</span><span class="pun">);
+</span></code></pre>
 </section>
-
-			</section>
-			<section>
-				<h2>Function parseJSONValue</h2>
-				<p> Parses a stream of JSON <a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens"><code class="prettyprint lang-d">tokens</code></a> and returns the result as a JSONValue.
+<h2 id="1">Function parseJSONValue</h2><p>Parses a stream of JSON tokens and returns the result as a <code class="lang-d"><span class="typ">JSONValue</span></code>.
 </p>
-<section>
-<p> All <a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens"><code class="prettyprint lang-d">tokens</code></a> belonging to the document will be consumed from the input range.
- Any <a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens"><code class="prettyprint lang-d">tokens</code></a> after the end of the first JSON document will be left in the
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a> <span class="pln">parseJSONValue</span>(Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">ref </span><span class="typ">Input</span> <span class="pln">tokens</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">@safe</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isJSONTokenInputRange</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>All tokens belonging to the document will be consumed from the input range.
+ Any tokens after the end of the first JSON document will be left in the
  input token range for possible later consumption.
 </p>
 </section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/value/JSONValue.html">JSONValue</a> parseJSONValue(Input)(
-&nbsp;&nbsp;ref Input tokens
-) @safe
-if (isJSONTokenInputRange!Input);</pre>
-					</section>
-<section><h3>Example</h3>
+			<section><h3>Example</h3>
 
-<pre class="code prettyprint lang-d">// lex
-auto <a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens">tokens</a> = lexJSON(`[1, 2, 3]`);
+<pre class="code"><code class="lang-d"><span class="com">// lex
+</span><span class="kwd">auto <a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens"></span><span class="pln">tokens</span></a><span class="pln"> </span><span class="pun">= </span><span class="pln">lexJSON</span><span class="pun">(</span><span class="str">`[1, 2, 3]`</span><span class="pun">);
 
-// parse
-auto doc = <a href="../../../../stdx/data/json/parser/parseJSONValue.html">parseJSONValue</a>(<a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens">tokens</a>);
+</span><span class="com">// parse
+</span><span class="kwd">auto </span><span class="pln">doc </span><span class="pun">= <a href="../../../../stdx/data/json/parser/parseJSONValue.html"></span><span class="pln">parseJSONValue</span></a><span class="pun">(<a href="../../../../stdx/data/json/parser/parseJSONValue.html#tokens"></span><span class="pln">tokens</span></a><span class="pun">);
 
-auto arr = doc.get!(JSONValue[]);
-assert(arr.length == 3);
-assert(arr[0] == 1.0);
-assert(arr[1] == 2.0);
-assert(arr[2] == 3.0);
-</pre>
+</span><span class="kwd">auto </span><span class="pln">arr </span><span class="pun">= </span><span class="pln">doc<wbr/></span><span class="pun">.</span><span class="pln">get</span><span class="pun">!(</span><span class="typ">JSONValue</span><span class="pun">[]);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">arr<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">3</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">arr</span><span class="pun">[</span><span class="lit">0</span><span class="pun">] == </span><span class="lit">1.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">arr</span><span class="pun">[</span><span class="lit">1</span><span class="pun">] == </span><span class="lit">2.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">arr</span><span class="pun">[</span><span class="lit">2</span><span class="pun">] == </span><span class="lit">3.0</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

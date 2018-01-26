@@ -5,244 +5,269 @@
 		<title>Struct JSONValue</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class="selected module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Struct JSONValue</h1>
-			<section>
-				<p> Represents a generic JSON value.
+			<h1>Struct JSONValue</h1><p>Represents a generic JSON value.
 </p>
-<section>
-<p> The <code class="prettyprint lang-d">JSONValue</code> type is based on std.variant.Algebraic and as such
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">struct</span> <span class="typ">JSONValue</span>
+			<span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The <code class="lang-d"><span class="typ">JSONValue</span></code> type is based on <code class="lang-d"><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">variant<wbr/></span><span class="pun">.</span><span class="typ">Algebraic</span></code> and as such
  provides the usual binary and unary operators for handling the contained
  raw value.
 </p>
 
-<p> Raw values can be either null, bool, double, string,
- <code class="prettyprint lang-d">JSONValue</code>[] or <code class="prettyprint lang-d">JSONValue</code>[string].
+<p> Raw values can be either <code class="lang-d"><span class="kwd">null</span></code>, <code class="lang-d"><span class="typ">bool</span></code>, <code class="lang-d"><span class="typ">double</span></code>, <code class="lang-d"><span class="typ">string</span></code>,
+ <code class="lang-d"><span class="typ">JSONValue</span><span class="pun">[]</span></code> or <code class="lang-d"><span class="typ">JSONValue</span><span class="pun">[</span><span class="typ">string</span><span class="pun">]</span></code>.
 </p>
 </section>
 
-					<section>
-						<h3>Constructors</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.this.html" class="public">
-										<code>this</code>
-									</a>
-								</td>
-								<td> Constructs a <a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a> from the given raw <a href="../../../../stdx/data/json/value/JSONValue.this.html#value"><code class="prettyprint lang-d">value</code></a>.
+			<section><h2>Constructors</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td>Constructs a JSONValue from the given raw value.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Fields</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.location.html" class="public"><code>location</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/foundation/Location.html">Location</a></code></td>
-								<td> Optional <code class="prettyprint lang-d">location</code> of the corresponding token in the source document.
+					</tr>
+				</table>
+			</section>
+			<section><h2>Fields</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Type</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.location.html" class="public"><code>location</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../../../../stdx/data/json/foundation/Location.html"><span class="typ">Location</span></a></code></td><td>Optional location of the corresponding token in the source document.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.payload.html" class="public"><code>payload</code></a>
-								</td>
-								<td class="typecol"><code class="prettyprint lang-d">taggedalgebraic.<wbr/>TaggedAlgebraic!(stdx.data.json.value.JSONValue.PayloadUnion)</code></td>
-								<td> Holds the data contained in this value.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.payload.html" class="public"><code>payload</code></a>
+						</td>
+						<td class="typecol"><code class="prettyprint lang-d"><span class="pln">taggedalgebraic<wbr/></span><span class="pun">.</span><span class="typ">TaggedAlgebraic</span>!(stdx.data.json.value.JSONValue.PayloadUnion)</code></td><td>Holds the data contained in this value.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.get.html" class="public">
-										<code>get</code>
-									</a>
-								</td>
-								<td> Returns the raw contained value.
+					</tr>
+				</table>
+			</section>
+			<section><h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.get.html" class="public">
+								<code>get</code>
+							</a>
+						</td>
+						<td>Returns the raw contained value.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.hasType.html" class="public">
-										<code>hasType</code>
-									</a>
-								</td>
-								<td>Tests if the stored value is of a given type.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.hasType.html" class="public">
+								<code>hasType</code>
+							</a>
+						</td>
+						<td>Tests if the stored value is of a given type.
 </td>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.opAssign.html" class="public">
-										<code>opAssign</code>
-									</a>
-								</td>
-								<td> Constructs a <a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a> from the given raw <a href="../../../../stdx/data/json/value/JSONValue.opAssign.html#value"><code class="prettyprint lang-d">value</code></a>.
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.isNull.html" class="public">
+								<code>isNull</code>
+							</a>
+						</td>
+						<td>Tests if the stored value is of kind <code class="lang-d"><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">null_</span></code>.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Unions</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.html" class="public">
-										<code>PayloadUnion</code>
-									</a>
-								</td>
-								<td> Defines the possible types contained in a <code class="prettyprint lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><code class="prettyprint lang-d">JSONValue</code></a></code>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.opAssign.html" class="public">
+								<code>opAssign</code>
+							</a>
+						</td>
+						<td>Constructs a JSONValue from the given raw value.
 </td>
-							</tr>
-						</table>
-					</section>
-					<section>
-						<h3>Aliases</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../../../stdx/data/json/value/JSONValue.Payload.html" class="public">
-										<code>Payload</code>
-									</a>
-								</td>
-								<td> Alias for a TaggedAlgebraic able to hold all possible JSON
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.opIndex.html" class="public">
+								<code>opIndex</code>
+							</a>
+						</td>
+						<td>Temporary index operations until std.variant is fixed in 2.067
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Unions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.PayloadUnion.html" class="public">
+								<code>PayloadUnion</code>
+							</a>
+						</td>
+						<td>Defines the possible types contained in a <code class="lang-d"><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ"><a href="../../../../stdx/data/json/value/JSONValue.html"><span class="typ">JSONValue</span></a></span></a></code>
+</td>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../../../stdx/data/json/value/JSONValue.Payload.html" class="public">
+								<code>Payload</code>
+							</a>
+						</td>
+						<td>Alias for a <code class="lang-d"><span class="typ">TaggedAlgebraic</span></code> able to hold all possible JSON
  value types.
 </td>
-							</tr>
-						</table>
-					</section>
-<section><h3>Example</h3>
+					</tr>
+				</table>
+			</section>
+			<section><h2>Example</h2>
 <p>Shows the basic construction and operations on JSON values.
 </p>
-<pre class="code prettyprint lang-d">JSONValue a = 12;
-JSONValue b = 13;
+<pre class="code"><code class="lang-d"><span class="typ">JSONValue </span><span class="pln">a </span><span class="pun">= </span><span class="lit">12</span><span class="pun">;
+</span><span class="typ">JSONValue </span><span class="pln">b </span><span class="pun">= </span><span class="lit">13</span><span class="pun">;
 
-assert(a == 12.0);
-assert(b == 13.0);
-static if (__VERSION__ >= 2067)
-    assert(a + b == 25.0);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">a </span><span class="pun">== </span><span class="lit">12.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">b </span><span class="pun">== </span><span class="lit">13.0</span><span class="pun">);
+</span><span class="kwd">static if </span><span class="pun">(</span><span class="kwd">__VERSION__ </span><span class="pun">&gt;= </span><span class="lit">2067</span><span class="pun">)
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">a </span><span class="pun">+ </span><span class="pln">b </span><span class="pun">== </span><span class="lit">25.0</span><span class="pun">);
 
-auto c = JSONValue([a, b]);
-assert(c[0] == 12.0);
-assert(c[1] == 13.0);
-assert(c[0] == a);
-assert(c[1] == b);
+</span><span class="kwd">auto </span><span class="pln">c </span><span class="pun">= </span><span class="typ">JSONValue</span><span class="pun">([</span><span class="pln">a</span><span class="pun">, </span><span class="pln">b</span><span class="pun">]);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">c</span><span class="pun">[</span><span class="lit">0</span><span class="pun">] == </span><span class="lit">12.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">c</span><span class="pun">[</span><span class="lit">1</span><span class="pun">] == </span><span class="lit">13.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">c</span><span class="pun">[</span><span class="lit">0</span><span class="pun">] == </span><span class="pln">a</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">c</span><span class="pun">[</span><span class="lit">1</span><span class="pun">] == </span><span class="pln">b</span><span class="pun">);
 
-auto d = JSONValue(["a": a, "b": b]);
-assert(d["a"] == 12.0);
-assert(d["b"] == 13.0);
-assert(d["a"] == a);
-assert(d["b"] == b);
-</pre>
+</span><span class="kwd">auto </span><span class="pln">d </span><span class="pun">= </span><span class="typ">JSONValue</span><span class="pun">([</span><span class="str">"a"</span><span class="pun">: </span><span class="pln">a</span><span class="pun">, </span><span class="str">"b"</span><span class="pun">: </span><span class="pln">b</span><span class="pun">]);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">d</span><span class="pun">[</span><span class="str">"a"</span><span class="pun">] == </span><span class="lit">12.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">d</span><span class="pun">[</span><span class="str">"b"</span><span class="pun">] == </span><span class="lit">13.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">d</span><span class="pun">[</span><span class="str">"a"</span><span class="pun">] == </span><span class="pln">a</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">d</span><span class="pun">[</span><span class="str">"b"</span><span class="pun">] == </span><span class="pln">b</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

@@ -5,73 +5,73 @@
 		<title>Module stdx.data.json.generator</title>
 		<link rel="stylesheet" type="text/css" href="../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/generator.html" class="selected module">generator</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/lexer.html" class=" module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Module stdx.data.json.generator</h1>
-			<p> Contains routines for converting JSON values to their string represencation.
-</p>
-<section>
-</section>
+			<h1>Module stdx.data.json.generator</h1><p>Contains routines for converting JSON values to their string represencation.
+</p><section></section>
 
 			<section><section><h2>Synopsis</h2>
-<pre class="code prettyprint lang-d">...
-</pre>
-
+<pre class="code"><code class="lang-d"><span class="pun">...</span></code></pre>
 </section>
 </section>
 			<section>
@@ -79,26 +79,53 @@ $('#symbolSearchPane').show();
 				<table>
 					<col class="caption"/>
 					<tr>
-						<th>Name</th>
-						<th>Description</th>
+						<th>Name</th><th>Description</th>
 					</tr>
 					<tr>
 						<td>
-							<a id="toJSON" class="public" href="../../../stdx/data/json/generator/toJSON.html">
-								<code>toJSON</code>
-							</a>
+							<code>
+								<a id="jsonOutputRange" class="public" href="../../../stdx/data/json/generator/jsonOutputRange.html">jsonOutputRange</a><span class="decoration">(output)</span>
+							</code>
 						</td>
-						<td> Converts the given JSON document(s) to its string representation.
+						<td>Convenience function for creating a <code class="lang-d"><a href="../../../stdx/data/json/generator/JSONOutputRange.html"><span class="typ">JSONOutputRange</span></a></code> instance using IFTI.
 </td>
 					</tr>
 					<tr>
 						<td>
-							<a id="writeJSON" class="public" href="../../../stdx/data/json/generator/writeJSON.html">
-								<code>writeJSON</code>
-							</a>
+							<code>
+								<a id="toJSON" class="public" href="../../../stdx/data/json/generator/toJSON.html">toJSON</a><span class="decoration">(value)</span>
+							</code>
 						</td>
-						<td> Writes the string representation of the given JSON document(s)/<a href="../../../stdx/data/json/generator/writeJSON.html#tokens"><code class="prettyprint lang-d">tokens</code></a> to an
- <a href="../../../stdx/data/json/generator/writeJSON.html#output"><code class="prettyprint lang-d">output</code></a> range.
+						<td>Converts the given JSON document(s) to its string representation.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<code>
+								<a id="writeJSON" class="public" href="../../../stdx/data/json/generator/writeJSON.html">writeJSON</a><span class="decoration">(value, output)</span>
+							</code>
+						</td>
+						<td>Writes the string representation of the given JSON document(s)/tokens to an
+ output range.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Structs</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<code>
+								<a id="JSONOutputRange" class="public" href="../../../stdx/data/json/generator/JSONOutputRange.html">JSONOutputRange</a>
+							</code>
+						</td>
+						<td>Output range that takes JSON primitives and outputs to a character output
+    range.
 </td>
 					</tr>
 				</table>
@@ -108,38 +135,48 @@ $('#symbolSearchPane').show();
 				<table>
 					<col class="caption"/>
 					<tr>
-						<th>Name</th>
-						<th>Description</th>
+						<th>Name</th><th>Description</th>
 					</tr>
 					<tr>
 						<td>
-							<a id="GeneratorOptions" class="public" href="../../../stdx/data/json/generator/GeneratorOptions.html">
-								<code>GeneratorOptions</code>
-							</a>
+							<code>
+								<a id="GeneratorOptions" class="public" href="../../../stdx/data/json/generator/GeneratorOptions.html">GeneratorOptions</a>
+							</code>
 						</td>
-						<td> Flags for configuring the JSON generator.
+						<td>Flags for configuring the JSON generator.
 </td>
 					</tr>
 				</table>
 			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

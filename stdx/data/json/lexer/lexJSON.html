@@ -5,155 +5,173 @@
 		<title>Function lexJSON</title>
 		<link rel="stylesheet" type="text/css" href="../../../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../../../prettify/prettify.js">/**/</script>
-		<script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
+		<script type="text/javascript" src="../../../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">stdx</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">data</a>
-						<ul class="tree-view">
-							<li class=" tree-view">
-								<a href="#" class="package">json</a>
-						<ul class="tree-view">
-							<li>
-								<a href="../../../../stdx/data/json/foundation.html" class=" module">foundation</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/generator.html" class=" module">generator</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/lexer.html" class="selected module">lexer</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/parser.html" class=" module">parser</a>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json/value.html" class=" module">value</a>
-							</li>
-						</ul>
-							</li>
-							<li>
-								<a href="../../../../stdx/data/json.html" class=" module">json</a>
-							</li>
-						</ul>
-							</li>
-						</ul>
-							</li>
-						</ul>
-				<noscript>
-					<p style="color: red">The search functionality needs JavaScript enabled</p>
-				</noscript>
-				<div id="symbolSearchPane" style="display: none">
-					<p>
-						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
-					</p>
-	<ul id="symbolSearchResults" style="display: none"></ul>
-	<script type="application/javascript" src="../../../../symbols.js"></script>
-	<script type="application/javascript">
-var symbolSearchRootDir = "../../../../";
-$('#symbolSearchPane').show();
-	</script>
-				</div>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../../../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">stdx
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">data
+					</div>
+			<ul class="tree-view">
+				<li class="tree-view ">
+					<div class="package ">
+						<a href="../../../../stdx/data/json.html">json</a>
+					</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/foundation.html">foundation</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/generator.html">generator</a>
+					</div>
+				</li>
+				<li>
+					<div class="module selected">
+						<a href="../../../../stdx/data/json/lexer.html">lexer</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/parser.html">parser</a>
+					</div>
+				</li>
+				<li>
+					<div class="module ">
+						<a href="../../../../stdx/data/json/value.html">value</a>
+					</div>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
+				</li>
+			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function lexJSON</h1>
-			<section>
-				<p> Returns a lazy range of tokens corresponding to the given JSON <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> string.
+			<h1>Function lexJSON</h1><p>Returns a lazy range of tokens corresponding to the given JSON input string.
 </p>
-<section>
-<p> The <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> must be a valid JSON string, given as an <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> range of either
- characters, or of integral values. In case of integral types, the <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<a href="../../../../stdx/data/json/lexer/JSONLexerRange.html"><span class="typ">JSONLexerRange</span></a>!(Input,options,String) <span class="pln">lexJSON</span>(<a href="../../../../stdx/data/json/lexer/LexOptions.html"><span class="typ">LexOptions</span></a> options<span class="pln"> </span><span class="pun">= </span><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">init</span>, String, Input)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Input</span> <span class="pln">input</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">filename</span> <span class="pun">=</span> <span class="kwd">null</span>
+			<br/>
+			<span class="pun">)</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isInputRange</span><span class="pun">!</span><span class="typ">Input </span><span class="pun">&amp;&amp; (</span><span class="pln">isSomeChar</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">) || </span><span class="pln">isIntegral</span><span class="pun">!(</span><span class="typ">ElementType</span><span class="pun">!</span><span class="typ">Input</span><span class="pun">))</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section><p>The input must be a valid JSON string, given as an input range of either
+ characters, or of integral values. In case of integral types, the input
  ecoding is assumed to be a superset of ASCII that is parsed unit by unit.
 </p>
 
-<p> For inputs of type string and of type immutable(ubyte)[], all
+<p> For inputs of type <code class="lang-d"><span class="typ">string</span></code> and of type <code class="lang-d"><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">ubyte</span><span class="pun">)[]</span></code>, all
  string literals will be stored as slices into the original string. String
  literals containung escape sequences will be unescaped on demand when
- <a href="../../../../stdx/data/json/lexer/JSONString.value.html"><code class="prettyprint lang-d">JSONString.value</code></a> is accessed.
+ <code class="lang-d"><a href="../../../../stdx/data/json/lexer/JSONString.value.html"><span class="typ">JSONString<wbr/></span><span class="pun">.</span><span class="pln">value</span></a></code> is accessed.
 </p>
-
 </section>
 
-					<section>
-						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../../../stdx/data/json/lexer/JSONLexerRange.html">JSONLexerRange</a>!(Input,options,appenderFactory) lexJSON(stdx.data.json.lexer.LexOptions options, alias appenderFactory, Input)(
-&nbsp;&nbsp;Input input,
-&nbsp;&nbsp;string filename = null
-)
-if (isInputRange!Input &amp;&amp; (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)));</pre>
-					</section>
-<section><h3>Throws</h3>
-<p>   Without <a href="../../../../stdx/data/json/lexer/LexOptions.noThrow.html"><code class="prettyprint lang-d">LexOptions.noThrow</code></a>, a JSONException is thrown as soon as
+			<section><h2>Throws</h2>
+<p>Without <code class="lang-d"><a href="../../../../stdx/data/json/lexer/LexOptions.html#noThrow"><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">noThrow</span></a></code>, a <code class="lang-d"><span class="typ">JSONException</span></code> is thrown as soon as
    an invalid token is encountered.
 </p>
 
-<p>   If <a href="../../../../stdx/data/json/lexer/LexOptions.noThrow.html"><code class="prettyprint lang-d">LexOptions.noThrow</code></a> is given, <code class="prettyprint lang-d">lexJSON</code> does not throw any exceptions,
-   apart from letting through any exceptins thrown by the <a href="../../../../stdx/data/json/lexer/lexJSON.html#input"><code class="prettyprint lang-d">input</code></a> range.
-   Instead, a token with kind <a href="../../../../stdx/data/json/lexer/JSONToken.Kind.error.html"><code class="prettyprint lang-d">JSONToken.Kind.error</code></a> is generated as the
+<p>   If <code class="lang-d"><a href="../../../../stdx/data/json/lexer/LexOptions.html#noThrow"><span class="typ">LexOptions<wbr/></span><span class="pun">.</span><span class="pln">noThrow</span></a></code> is given, lexJSON does not throw any exceptions,
+   apart from letting through any exceptins thrown by the input range.
+   Instead, a token with kind <code class="lang-d"><span class="typ">JSONToken<wbr/></span><span class="pun">.</span><span class="typ">Kind<wbr/></span><span class="pun">.</span><span class="pln">error</span></code> is generated as the
    last token in the range.
 </p>
 </section>
-<section><h3>Example</h3>
+<section><h2>Example</h2>
 
-<pre class="code prettyprint lang-d">import std.algorithm : equal, map;
+<pre class="code"><code class="lang-d"><span class="kwd">import </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">algorithm </span><span class="pun">: </span><span class="pln">equal</span><span class="pun">, </span><span class="pln">map</span><span class="pun">;
 
-auto rng = lexJSON(`{"hello": 1.2, "world": [1, true, null]}`);
-with (<a href="../../../../stdx/data/json/lexer/JSONToken.html">JSONToken</a>)
+</span><span class="kwd">auto </span><span class="pln">rng </span><span class="pun">= </span><span class="pln">lexJSON</span><span class="pun">(</span><span class="str">`{"hello": 1.2, "world": [1, true, null]}`</span><span class="pun">);
+</span><span class="kwd">with </span><span class="pun">(<a href="../../../../stdx/data/json/lexer/JSONTokenKind.html"></span><span class="typ">JSONTokenKind</span></a><span class="pun">)
 {
-    assert(rng.map!(t => t.kind).equal(
-        [Kind.objectStart, Kind.string, Kind.colon, Kind.number, Kind.comma,
-        Kind.string, Kind.colon, Kind.arrayStart, Kind.number, Kind.comma,
-        Kind.boolean, Kind.comma, Kind.null_, Kind.arrayEnd,
-        Kind.objectEnd]));
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">map</span><span class="pun">!(</span><span class="pln">t </span><span class="pun">=&gt; </span><span class="pln">t<wbr/></span><span class="pun">.</span><span class="pln">kind</span><span class="pun">)<wbr/>.</span><span class="pln">equal</span><span class="pun">(
+        [</span><span class="pln">objectStart</span><span class="pun">, </span><span class="typ">string</span><span class="pun">, </span><span class="pln">colon</span><span class="pun">, </span><span class="pln">number</span><span class="pun">, </span><span class="pln">comma</span><span class="pun">,
+        </span><span class="typ">string</span><span class="pun">, </span><span class="pln">colon</span><span class="pun">, </span><span class="pln">arrayStart</span><span class="pun">, </span><span class="pln">number</span><span class="pun">, </span><span class="pln">comma</span><span class="pun">,
+        </span><span class="pln">boolean</span><span class="pun">, </span><span class="pln">comma</span><span class="pun">, </span><span class="pln">null_</span><span class="pun">, </span><span class="pln">arrayEnd</span><span class="pun">,
+        </span><span class="pln">objectEnd</span><span class="pun">]));
 }
-</pre>
+</span></code></pre>
 </section>
-<section><h3>Example</h3>
+<section><h2>Example</h2>
 
-<pre class="code prettyprint lang-d">auto rng = lexJSON("true\n   false null\r\n  1.0\r \"test\"");
-rng.popFront();
-assert(rng.front.boolean == false);
-assert(rng.front.location.line == 1 && rng.front.location.column == 3);
-rng.popFront();
-assert(rng.front.kind == <a href="../../../../stdx/data/json/lexer/JSONToken.Kind.null_.html">JSONToken.Kind.null_</a>);
-assert(rng.front.location.line == 1 && rng.front.location.column == 9);
-rng.popFront();
-assert(rng.front.number == 1.0);
-assert(rng.front.location.line == 2 && rng.front.location.column == 2);
-rng.popFront();
-assert(rng.front.string == "test");
-assert(rng.front.location.line == 3 && rng.front.location.column == 1);
-rng.popFront();
-assert(rng.empty);
-</pre>
+<pre class="code"><code class="lang-d"><span class="kwd">auto </span><span class="pln">rng </span><span class="pun">= </span><span class="pln">lexJSON</span><span class="pun">(</span><span class="str">"true\n   false null\r\n  1.0\r \"test\""</span><span class="pun">);
+</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">boolean </span><span class="pun">== </span><span class="kwd">false</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">line </span><span class="pun">== </span><span class="lit">1 </span><span class="pun">&amp;&amp; </span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">column </span><span class="pun">== </span><span class="lit">3</span><span class="pun">);
+</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">kind </span><span class="pun">== <a href="../../../../stdx/data/json/lexer/JSONTokenKind.html#null_"></span><span class="typ">JSONTokenKind<wbr/></span><span class="pun">.</span><span class="pln">null_</span></a><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">line </span><span class="pun">== </span><span class="lit">1 </span><span class="pun">&amp;&amp; </span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">column </span><span class="pun">== </span><span class="lit">9</span><span class="pun">);
+</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">number </span><span class="pun">== </span><span class="lit">1.0</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">line </span><span class="pun">== </span><span class="lit">2 </span><span class="pun">&amp;&amp; </span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">column </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="typ">string </span><span class="pun">== </span><span class="str">"test"</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">line </span><span class="pun">== </span><span class="lit">3 </span><span class="pun">&amp;&amp; </span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">front<wbr/></span><span class="pun">.</span><span class="pln">location<wbr/></span><span class="pun">.</span><span class="pln">column </span><span class="pun">== </span><span class="lit">1</span><span class="pun">);
+</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">popFront</span><span class="pun">();
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">rng<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+</span></code></pre>
 </section>
 
-			</section>
-			<section>
-				<h2>Authors</h2>
-<p>Sönke Ludwig
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>Sönke Ludwig
 </p>
 
-			</section>
-			<section>
-				<h2>Copyright</h2>
-<p>Copyright 2012 - 2015, Sönke Ludwig.
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							<p>Copyright 2012 - 2015, Sönke Ludwig.
 </p>
 
-			</section>
-			<section>
-				<h2>License</h2>
-<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
 </p>
 
-			</section>
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
 		</div>
 	</body>
 </html>

@@ -12,3 +12,10 @@ d:
   - ldc-1.6.0
   - ldc-1.2.0
   - dmd-beta
+
+matrix:
+  allow_failures:
+    - d: dmd-beta
+    - d: ldc-1.7.0
+    - d: ldc-1.6.0
+    - d: ldc-1.2.0

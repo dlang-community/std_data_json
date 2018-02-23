@@ -54,7 +54,7 @@ public import stdx.data.json.value;
 
 version (unittest)
 {
-    private enum testString1 =`{
+    private immutable testString1 =`{
         "cols": [
             "name",
             "num",
@@ -665,7 +665,7 @@ version (unittest)
         ]
     }`;
 
-    private enum testString2 = `[
+    private immutable testString2 = `[
       {
         "id": 0,
         "guid": "9f9b6edf-2386-4681-bdac-1797f5e5e397",

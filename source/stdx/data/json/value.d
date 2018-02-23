@@ -99,31 +99,6 @@ struct JSONValue
       * Use `.hasType!T` or `.typeID` for that purpose.
       */
     ref inout(T) get(T)() inout { return .get!T(payload); }
-
-    static if (__VERSION__ < 2067)
-    {
-        /**
-         * Temporary index operations until std.variant is fixed in 2.067
-         *
-         * These exist only to overcome current shortcomings in the index
-         * op for std.variant, which should be fixed in 2.067 and above.
-         * See https://github.com/s-ludwig/std_data_json/pull/3#issuecomment-73127624
-         */
-        ref JSONValue opIndex(size_t idx)
-        {
-            auto asArray = payload.peek!(JSONValue[]);
-            enforce(asArray != null, "JSONValue is not an array");
-            return (*asArray)[idx];
-        }
-
-        /// Ditto
-        ref JSONValue opIndex(string key)
-        {
-            auto asObject = payload.peek!(JSONValue[string]);
-            enforce(asObject != null, "JSONValue is not an object");
-            return (*asObject)[key];
-        }
-    }
 }
 
 /// Shows the basic construction and operations on JSON values.
@@ -134,8 +109,7 @@ unittest
 
     assert(a == 12.0);
     assert(b == 13.0);
-    static if (__VERSION__ >= 2067)
-        assert(a + b == 25.0);
+    assert(a + b == 25.0);
 
     auto c = JSONValue([a, b]);
     assert(c[0] == 12.0);

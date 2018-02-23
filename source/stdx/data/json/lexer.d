@@ -183,8 +183,7 @@ unittest { // test built-in UTF validation
             auto f = rng.front;
             rng.popFront();
             cast(void)f.boolean;
-            static if (__VERSION__ >= 2067)
-                f.number.longValue;
+            f.number.longValue;
             cast(void)f.string;
             cast(void)f.string.anyValue;
         }
@@ -325,7 +324,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
                 case 'N', 'I': parseNumber(); break;
             }
         }
-    
+
         skipWhitespace();
     }
 
@@ -1278,40 +1277,19 @@ enum JSONTokenKind
      * yield a value converted to $(D double). Setting this property will
      * automatically update the number type to $(D Type.double_).
      */
-    static if(__VERSION__ < 2067)
+    @property double doubleValue() const nothrow @trusted @nogc
     {
-        @property double doubleValue() const nothrow @trusted
+        final switch (_type)
         {
-            final switch (_type)
+            case Type.double_: return _double;
+            case Type.long_: return cast(double)_long;
+            case Type.bigInt:
             {
-                case Type.double_: return _double;
-                case Type.long_: return cast(double)_long;
-                case Type.bigInt:
-                    {
-                        scope (failure) assert(false);
-                        // FIXME: directly convert to double
-                        return cast(double)_decimal.integer.toLong();
-                    }
-                //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
+                scope (failure) assert(false);
+                // FIXME: directly convert to double
+                return cast(double)_decimal.integer.toLong();
             }
-        }
-    }
-    else
-    {
-        @property double doubleValue() const nothrow @trusted @nogc
-        {
-            final switch (_type)
-            {
-                case Type.double_: return _double;
-                case Type.long_: return cast(double)_long;
-                case Type.bigInt:
-                    {
-                        scope (failure) assert(false);
-                        // FIXME: directly convert to double
-                        return cast(double)_decimal.integer.toLong();
-                    }
-                //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
-            }
+            //case Type.decimal: try return cast(double)_decimal.integer.toLong() * 10.0 ^^ _decimal.exponent; catch(Exception) assert(false); // FIXME: directly convert to double
         }
     }
 
@@ -1329,56 +1307,28 @@ enum JSONTokenKind
      * yield a value converted to $(D long). Setting this property will
      * automatically update the number type to $(D Type.long_).
      */
-    static if(__VERSION__ < 2067)
+    @property long longValue() const nothrow @trusted @nogc
     {
-        @property long longValue() const nothrow @trusted
-        {
-            import std.math;
+        import std.math;
 
-            final switch (_type)
-            {
-                case Type.double_: return rndtol(_double);
-                case Type.long_: return _long;
-                case Type.bigInt:
-                    {
-                        scope (failure) assert(false);
-                        return _decimal.integer.toLong();
-                    }
-                /*case Type.decimal:
-                    try
-                    {
-                        if (_decimal.exponent == 0) return _decimal.integer.toLong();
-                        else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
-                        else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
-                    }
-                    catch(Exception) assert(false);*/
-            }
-        }
-    }
-    else
-    {
-        @property long longValue() const nothrow @trusted @nogc
+        final switch (_type)
         {
-            import std.math;
-
-            final switch (_type)
+            case Type.double_: return rndtol(_double);
+            case Type.long_: return _long;
+            case Type.bigInt:
             {
-                case Type.double_: return rndtol(_double);
-                case Type.long_: return _long;
-                case Type.bigInt: 
-                    {
-                        scope (failure) assert(false);
-                        return _decimal.integer.toLong();
-                    }
-                /*case Type.decimal:
-                    try
-                    {
-                        if (_decimal.exponent == 0) return _decimal.integer.toLong();
-                        else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
-                        else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
-                    }
-                    catch(Exception) assert(false);*/
+                scope (failure) assert(false);
+                return _decimal.integer.toLong();
             }
+            /*
+            case Type.decimal:
+            {
+                scope (failure) assert(0);
+                if (_decimal.exponent == 0) return _decimal.integer.toLong();
+                else if (_decimal.exponent > 0) return (_decimal.integer * BigInt(10) ^^ _decimal.exponent).toLong();
+                else return (_decimal.integer / BigInt(10) ^^ -_decimal.exponent).toLong();
+            }
+            */
         }
     }
 
@@ -2134,12 +2084,12 @@ private ulong skip(bool matching, chars...)(const(ubyte)* p) pure nothrow @safe 
     } else {
         enum constant = ByteCombine!chars;
         enum charsLength = chars.length;
-        
+
         static if (matching)
             enum flags = 0b0001_0000;
         else
             enum flags = 0b0000_0000;
-        
+
         asm pure @nogc nothrow
         {
             naked;

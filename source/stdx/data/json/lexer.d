@@ -587,6 +587,13 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
                     return;
                 }
             }
+
+            if (exponent == 0)
+            {
+                // No digits were read after decimal
+                setError("Missing fractional number part");
+                return;
+            }
         }
 
         // exponent
@@ -813,13 +820,16 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     testFail("-");
     testFail("+1");
     testFail("1.");
+    testFail("1..");
     testFail(".1");
     testFail("01");
     testFail("1e");
     testFail("1e+");
     testFail("1e-");
     testFail("1.e");
+    testFail("1.e1");
     testFail("1.e-");
+    testFail("1.e-1");
     testFail("1.ee");
     testFail("1.e-e");
     testFail("1.e+e");

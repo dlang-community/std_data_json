@@ -42,6 +42,9 @@ import std.traits : isIntegral, isSomeChar;
 import stdx.data.json.lexer;
 import stdx.data.json.value;
 
+/// The default amount of nesting in the input allowed by `toJSONValue` and `parseJSONValue`.
+enum defaultMaxDepth = 512;
+
 /**
  * Parses a JSON string or token range and returns the result as a
  * `JSONValue`.
@@ -52,18 +55,18 @@ import stdx.data.json.value;
  *
  * See_also: `parseJSONValue`
  */
-JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "")
+JSONValue toJSONValue(LexOptions options = LexOptions.init, Input)(Input input, string filename = "", int maxDepth = defaultMaxDepth)
     if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     auto tokens = lexJSON!options(input, filename);
-    return toJSONValue(tokens);
+    return toJSONValue(tokens, maxDepth);
 }
 /// ditto
-JSONValue toJSONValue(Input)(Input tokens)
+JSONValue toJSONValue(Input)(Input tokens, int maxDepth = defaultMaxDepth)
     if (isJSONTokenInputRange!Input)
 {
     import stdx.data.json.foundation;
-    auto ret = parseJSONValue(tokens);
+    auto ret = parseJSONValue(tokens, maxDepth);
     enforceJson(tokens.empty, "Unexpected characters following JSON", tokens.location);
     return ret;
 }
@@ -127,13 +130,13 @@ unittest { // issue #22
  *
  * See_also: `toJSONValue`
  */
-JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "")
+JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input input, string filename = "", int maxDepth = defaultMaxDepth)
     if (isInputRange!Input && (isSomeChar!(ElementType!Input) || isIntegral!(ElementType!Input)))
 {
     import stdx.data.json.foundation;
 
     auto tokens = lexJSON!options(input, filename);
-    auto ret = parseJSONValue(tokens);
+    auto ret = parseJSONValue(tokens, maxDepth);
     input = tokens.input;
     return ret;
 }
@@ -172,11 +175,13 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
  * Any tokens after the end of the first JSON document will be left in the
  * input token range for possible later consumption.
 */
-@safe JSONValue parseJSONValue(Input)(ref Input tokens)
+@safe JSONValue parseJSONValue(Input)(ref Input tokens, int maxDepth = defaultMaxDepth)
     if (isJSONTokenInputRange!Input)
 {
     import std.array;
     import stdx.data.json.foundation;
+
+    enforceJson(maxDepth > 0, "Too much nesting", tokens.location);
 
     enforceJson(!tokens.empty, "Missing JSON value before EOF", tokens.location);
 
@@ -221,7 +226,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
                 enforceJson(!tokens.empty && tokens.front.kind == colon, "Expected ':'",
                     tokens.empty ? tokens.location : tokens.front.location);
                 tokens.popFront();
-                obj[key] = parseJSONValue(tokens);
+                obj[key] = parseJSONValue(tokens, maxDepth - 1);
             }
             ret = JSONValue(obj, loc);
             break;
@@ -242,7 +247,7 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
                 }
                 else first = false;
 
-                () @trusted { array ~= parseJSONValue(tokens); }();
+                () @trusted { array ~= parseJSONValue(tokens, maxDepth - 1); }();
             }
             ret = JSONValue(array.data, loc);
             break;
@@ -289,6 +294,20 @@ JSONValue parseJSONValue(LexOptions options = LexOptions.init, Input)(ref Input 
     assertThrown(toJSONValue(`{"a": 1,}`));
     assertThrown(toJSONValue(`{"a" 1}`));
     assertThrown(toJSONValue(`{"a": 1 "b": 2}`));
+}
+
+@safe unittest
+{
+    import std.exception;
+
+    // Test depth/nesting limitation
+    assertNotThrown(toJSONValue(`[]`, "", 1));
+    // values inside objects/arrays count as a level of nesting
+    assertThrown(toJSONValue(`[1, 2, 3]`, "", 1));
+    assertNotThrown(toJSONValue(`[1, 2, 3]`, "", 2));
+    assertThrown(toJSONValue(`[[]]`, "", 1));
+    assertNotThrown(toJSONValue(`{}`, "", 1));
+    assertThrown(toJSONValue(`{"a": {}}`, "", 1));
 }
 
 /**

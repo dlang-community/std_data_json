@@ -709,7 +709,7 @@ struct JSONParserNode(String)
         return _literal;
     }
     /// ditto
-    @property ref JSONToken!String literal(JSONToken!String literal) nothrow
+    @property ref JSONToken!String literal(JSONToken!String literal) return nothrow
     {
         _kind = Kind.literal;
         return *() @trusted { return &(_literal = literal); } ();

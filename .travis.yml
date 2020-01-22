@@ -21,6 +21,10 @@ d:
   - ldc-1.9.0
   - dmd-beta
 
+script:
+  - dub test --compiler=${DC}
+  - dub upgrade && dub test --compiler=${DC}
+
 matrix:
   allow_failures:
     - d: dmd-beta

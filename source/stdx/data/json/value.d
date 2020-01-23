@@ -99,6 +99,30 @@ struct JSONValue
       * Use `.hasType!T` or `.typeID` for that purpose.
       */
     ref inout(T) get(T)() inout { return .get!T(payload); }
+
+    /**
+      * Enables equality comparisons.
+      *
+      * Note that the location is considered token metadata and thus does not
+      * affect the comparison.
+      */
+    bool opEquals(T)(auto ref inout(T) other) inout
+    {
+        import std.traits : Unqual;
+
+        static if (is(Unqual!T == typeof(null)))
+        {
+            return this.isNull;
+        }
+        else static if (is(Unqual!T == JSONValue))
+        {
+            return this.payload == other.payload;
+        }
+        else
+        {
+            return this.payload == other;
+        }
+    }
 }
 
 /// Shows the basic construction and operations on JSON values.
@@ -149,9 +173,8 @@ unittest
     assert(longval == 56.0);
     assert(longval == longval);
 
-    // FIXME: commented out test fails with taggedalgebraic v0.11.x
     assert(intval + longval == 78);
-    // assert(intval + longval == intval + longval);
+    assert(intval + longval == intval + longval);
 
     JSONValue floatval = 32.0f;
     assert(floatval.hasType!double());
@@ -164,28 +187,26 @@ unittest
     assert(doubleval == 63.5);
     assert(doubleval == doubleval);
 
-    // FIXME: commented out tests fail with taggedalgebraic v0.11.x
     assert(floatval + doubleval == 95.5);
-    // assert(floatval + doubleval == floatval + doubleval);
+    assert(floatval + doubleval == floatval + doubleval);
     assert(intval + longval + floatval + doubleval == 173.5);
-    // assert(intval + longval + floatval + doubleval ==
-    //        intval + longval + floatval + doubleval);
+    assert(intval + longval + floatval + doubleval ==
+           intval + longval + floatval + doubleval);
 
     JSONValue strval = "Hello!";
     assert(strval.hasType!string());
     assert(strval == "Hello!");
     assert(strval == strval);
 
-    // FIXME: commented out tests fail <https://github.com/dlang-community/std_data_json/issues/48>
     auto arrval = JSONValue([floatval, doubleval]);
     assert(arrval.hasType!(JSONValue[])());
-    // assert(arrval == [floatval, doubleval]);
+    assert(arrval == [floatval, doubleval]);
     assert(arrval == [32.0, 63.5]);
     assert(arrval[0] == floatval);
     assert(arrval[0] == 32.0);
     assert(arrval[1] == doubleval);
     assert(arrval[1] == 63.5);
-    // assert(arrval == arrval);
+    assert(arrval == arrval);
 
     auto objval = JSONValue(["f": floatval, "d": doubleval]);
     assert(objval.hasType!(JSONValue[string])());

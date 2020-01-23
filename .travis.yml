@@ -10,6 +10,10 @@ sudo: false
 # LLVM ERROR: Broken function found, compilation aborted!
 
 d:
+  - dmd-2.090.0
+  - dmd-2.088.1
+  - dmd-2.087.1
+  - dmd-2.086.1
   - dmd-2.085.1
   - dmd-2.084.1
   - dmd-2.083.1

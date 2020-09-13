@@ -3,3 +3,6 @@ docs.json
 __dummy.html
 *.[ao]
 *.obj
+
+# Since this is a library, ignore `dub.selections.json`
+dub.selections.json

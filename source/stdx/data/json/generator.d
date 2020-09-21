@@ -377,7 +377,7 @@ enum GeneratorOptions {
 @safe private void writeAsStringImpl(GeneratorOptions options, Output)(JSONValue value, ref Output output, size_t nesting_level = 0)
     if (isOutputRange!(Output, char))
 {
-    import taggedalgebraic : get;
+    import stdx.data.json.taggedalgebraic : get;
 
     enum pretty_print = (options & GeneratorOptions.compact) == 0;
 

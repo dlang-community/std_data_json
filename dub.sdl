@@ -4,6 +4,4 @@ authors "Sönke Ludwig"
 copyright "Copyright © 2014-2015, Sönke Ludwig"
 license "BSL-1.0"
 
-dependency "taggedalgebraic" version=">=0.10.1 <0.12.0"
-
 x:ddoxFilterArgs "--unittest-examples" "--min-protection=Protected" "--only-documented"

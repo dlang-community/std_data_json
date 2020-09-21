@@ -117,11 +117,14 @@ struct TaggedAlgebraic(U) if (is(U == union) || is(U == struct) || is(U == enum)
 
 	/// Enables equality comparison with the stored value.
 	auto ref opEquals(T, this TA)(auto ref T other)
-		if (is(Unqual!T == TaggedAlgebraic) || hasOp!(TA, OpKind.binary, "==", T))
+		if (!is(Unqual!T == TaggedAlgebraic) && hasOp!(TA, OpKind.binary, "==", T))
 	{
-		static if (is(Unqual!T == TaggedAlgebraic)) {
-			return m_union == other.m_union;
-		} else return implementOp!(OpKind.binary, "==")(this, other);
+		return implementOp!(OpKind.binary, "==")(this, other);
+	}
+	// minimal fallback for TypeInfo
+	bool opEquals(inout TaggedAlgebraic other) @safe inout
+	{
+		return this.m_union == other.m_union;
 	}
 	/// Enables relational comparisons with the stored value.
 	auto ref opCmp(T, this TA)(auto ref T other) if (hasOp!(TA, OpKind.binary, "<", T)) { assert(false, "TODO!"); }
@@ -384,91 +387,6 @@ unittest {
 	static assert(!is(typeof(usc.testC())));
 	static assert(!is(typeof(usc.testS())));
 	static assert( is(typeof(usc.testSC())));*/
-}
-
-unittest {
-	// test attributes on contained values
-	import std.typecons : Rebindable, rebindable;
-
-	class C {
-		void test() {}
-		void testC() const {}
-		void testI() immutable {}
-	}
-	union U {
-		Rebindable!(immutable(C)) c;
-	}
-
-	auto ta = TaggedAlgebraic!U(rebindable(new immutable C));
-	static assert(!is(typeof(ta.test())));
-	static assert( is(typeof(ta.testC())));
-	static assert( is(typeof(ta.testI())));
-}
-
-// test recursive definition using a wrapper dummy struct
-// (needed to avoid "no size yet for forward reference" errors)
-unittest {
-	static struct TA {
-		union U {
-			TA[] children;
-			int value;
-		}
-		TaggedAlgebraic!U u;
-		alias u this;
-		this(ARGS...)(ARGS args) { u = TaggedAlgebraic!U(args); }
-	}
-
-	auto ta = TA(null);
-	ta ~= TA(0);
-	ta ~= TA(1);
-	ta ~= TA([TA(2)]);
-	assert(ta[0] == 0);
-	assert(ta[1] == 1);
-	assert(ta[2][0] == 2);
-}
-
-unittest { // postblit/destructor test
-	static struct S {
-		static int i = 0;
-		bool initialized = false;
-		this(bool) { initialized = true; i++; }
-		this(this) { if (initialized) i++; }
-		~this() { if (initialized) i--; }
-	}
-
-	static struct U {
-		S s;
-		int t;
-	}
-	alias TA = TaggedAlgebraic!U;
-	{
-		assert(S.i == 0);
-		auto ta = TA(S(true));
-		assert(S.i == 1);
-		{
-			auto tb = ta;
-			assert(S.i == 2);
-			ta = tb;
-			assert(S.i == 2);
-			ta = 1;
-			assert(S.i == 1);
-			ta = S(true);
-			assert(S.i == 2);
-		}
-		assert(S.i == 1);
-	}
-	assert(S.i == 0);
-
-	static struct U2 {
-		S a;
-		S b;
-	}
-	alias TA2 = TaggedAlgebraic!U2;
-	{
-		auto ta2 = TA2(S(true), TA2.Kind.a);
-		assert(S.i == 1);
-	}
-	assert(S.i == 0);
 }
 
 unittest {
@@ -861,63 +779,11 @@ private template hasAnyMember(TA, string name)
 	alias hasAnyMember = impl!0;
 }
 
-unittest {
-	import std.range.primitives : isOutputRange;
-	import std.typecons : Rebindable;
-
-	struct S { int a, b; void foo() {}}
-	interface I { void bar() immutable; }
-	static union U { int x; S s; Rebindable!(const(I)) i; int[] a; }
-	alias TA = TaggedAlgebraic!U;
-	static assert(hasAnyMember!(TA, "a"));
-	static assert(hasAnyMember!(TA, "b"));
-	static assert(hasAnyMember!(TA, "foo"));
-	static assert(hasAnyMember!(TA, "bar"));
-	static assert(hasAnyMember!(TA, "length"));
-	static assert(hasAnyMember!(TA, "ptr"));
-	static assert(hasAnyMember!(TA, "capacity"));
-	static assert(hasAnyMember!(TA, "sizeof"));
-	static assert(!hasAnyMember!(TA, "put"));
-	static assert(!isOutputRange!(TA, int));
-}
-
 private template hasOp(TA, OpKind kind, string name, ARGS...)
 {
 	import std.traits : CopyTypeQualifiers;
 	alias UQ = CopyTypeQualifiers!(TA, TA.FieldDefinitionType);
 	enum hasOp = AliasSeq!(OpInfo!(UQ, kind, name, ARGS).fields).length > 0;
-}
-
-unittest {
-	static struct S {
-		void m(int i) {}
-		bool opEquals(int i) { return true; }
-		bool opEquals(S s) { return true; }
-	}
-
-	static union U { int i; string s; S st; }
-	alias TA = TaggedAlgebraic!U;
-
-	static assert(hasOp!(TA, OpKind.binary, "+", int));
-	static assert(hasOp!(TA, OpKind.binary, "~", string));
-	static assert(hasOp!(TA, OpKind.binary, "==", int));
-	static assert(hasOp!(TA, OpKind.binary, "==", string));
-	static assert(hasOp!(TA, OpKind.binary, "==", int));
-	static assert(hasOp!(TA, OpKind.binary, "==", S));
-	static assert(hasOp!(TA, OpKind.method, "m", int));
-	static assert(hasOp!(TA, OpKind.binary, "+=", int));
-	static assert(!hasOp!(TA, OpKind.binary, "~", int));
-	static assert(!hasOp!(TA, OpKind.binary, "~", int));
-	static assert(!hasOp!(TA, OpKind.method, "m", string));
-	static assert(!hasOp!(TA, OpKind.method, "m"));
-	static assert(!hasOp!(const(TA), OpKind.binary, "+=", int));
-	static assert(!hasOp!(const(TA), OpKind.method, "m", int));
-	static assert(!hasOp!(TA, OpKind.method, "put", int));
-
-	static union U2 { int *i; }
-	alias TA2 = TaggedAlgebraic!U2;
-
-	static assert(hasOp!(TA2, OpKind.unary, "*"));
 }
 
 unittest {

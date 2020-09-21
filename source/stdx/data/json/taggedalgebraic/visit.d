@@ -128,22 +128,6 @@ unittest {
 	//static assert(!is(typeof(u.visit!((int) {}, (float) {}, () {}, (_) {})))); // superfluous generic handler
 }
 
-unittest {
-	// make sure that the generic handler is not instantiated with types for
-	// which it doesn't compile
-	class C {}
-	union U { int i; C c; }
-	TaggedUnion!U u;
-	u.visit!(
-		(C c) => c !is null,
-		(v) {
-			static assert(is(typeof(v) == int));
-			return v != 0;
-		}
-	);
-}
-
-
 /** The same as `visit`, except that failure to handle types is checked at runtime.
 
 	Instead of failing to compile, `tryVisit` will throw an `Exception` if none

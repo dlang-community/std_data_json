@@ -190,8 +190,8 @@ align(commonAlignment!(UnionKindTypes!(UnionFieldEnum!U))) struct TaggedUnion
 	}
 
 	/// Enables equality comparison with the stored value.
-	bool opEquals()(auto ref inout(TaggedUnion) other)
-	inout {
+	bool opEquals(inout TaggedUnion other) @safe inout
+	{
 		if (this.kind != other.kind) return false;
 
 		final switch (this.kind) {
@@ -379,7 +379,7 @@ align(commonAlignment!(UnionKindTypes!(UnionFieldEnum!U))) struct TaggedUnion
 }
 
 ///
-@safe nothrow unittest {
+@safe unittest {
 	union Kinds {
 		int count;
 		string text;
@@ -425,31 +425,6 @@ align(commonAlignment!(UnionKindTypes!(UnionFieldEnum!U))) struct TaggedUnion
 	assert(tu.countValue == 12);
 	tu = TU("foo");
 	assert(tu.textValue == "foo");
-}
-
-///
-@safe nothrow unittest {
-	// Enum annotations supported since DMD 2.082.0. The mixin below is
-	// necessary to keep the parser happy on older versions.
-	static if (__VERSION__ >= 2082) {
-		alias myint = int;
-		// tagged unions can be defined in terms of an annotated enum
-		mixin(q{enum E {
-			none,
-			@string text
-		}});
-
-		alias TU = TaggedUnion!E;
-		static assert(is(TU.Kind == E));
-
-		TU tu;
-		assert(tu.isNone);
-		assert(tu.kind == E.none);
-
-		tu.setText("foo");
-		assert(tu.kind == E.text);
-		assert(tu.textValue == "foo");
-	}
 }
 
 unittest { // test for name clashes

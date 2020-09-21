@@ -4,4 +4,6 @@ authors "Sönke Ludwig"
 copyright "Copyright © 2014-2015, Sönke Ludwig"
 license "BSL-1.0"
 
+toolchainRequirements frontend=">=2.081.0"
+
 x:ddoxFilterArgs "--unittest-examples" "--min-protection=Protected" "--only-documented"

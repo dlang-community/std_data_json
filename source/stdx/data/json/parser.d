@@ -1024,8 +1024,6 @@ auto readArray(R)(ref R nodes) @system if (isJSONParserNodeInputRange!R)
         R* nodes;
         size_t depth = 0;
 
-        @disable this(this);
-
         @property bool empty() { return !nodes || nodes.empty; }
 
         @property ref const(typeof(nodes.front)) front() { return nodes.front; }

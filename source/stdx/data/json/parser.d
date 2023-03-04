@@ -727,7 +727,7 @@ struct JSONParserNode(String)
      * Note that the location is considered part of the token and thus is
      * included in the comparison.
      */
-    bool opEquals(in ref JSONParserNode other)
+    bool opEquals(const ref JSONParserNode other)
     const nothrow
     {
         if (this.kind != other.kind) return false;

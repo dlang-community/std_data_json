@@ -989,7 +989,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
      * Note that the location is considered token meta data and thus does not
      * affect the comparison.
      */
-    bool opEquals(in ref JSONToken other) const nothrow @trusted
+    bool opEquals(const ref JSONToken other) const nothrow @trusted
     {
         if (this.kind != other.kind) return false;
 

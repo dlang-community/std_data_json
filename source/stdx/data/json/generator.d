@@ -164,7 +164,7 @@ void writeJSON(GeneratorOptions options = GeneratorOptions.init, Output, Input)(
     }
 }
 /// ditto
-void writeJSON(GeneratorOptions options = GeneratorOptions.init, String, Output)(in ref JSONToken!String token, ref Output output)
+void writeJSON(GeneratorOptions options = GeneratorOptions.init, String, Output)(const ref JSONToken!String token, ref Output output)
     if (isOutputRange!(Output, char))
 {
     final switch (token.kind) with (JSONTokenKind)

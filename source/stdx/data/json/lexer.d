@@ -907,7 +907,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     {
         assert(!kind.among!(Kind.string, Kind.boolean, Kind.number));
     }
-    body
+    do
     {
         _kind = kind;
     }
@@ -937,12 +937,12 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     /// ditto
     @property Kind kind(Kind value) nothrow @nogc
         in { assert(!value.among!(Kind.boolean, Kind.number, Kind.string)); }
-        body { return _kind = value; }
+        do { return _kind = value; }
 
     /// Gets/sets the boolean value of the token.
     @property bool boolean() const pure nothrow @trusted @nogc
         in { assert(_kind == Kind.boolean, "Token is not a boolean."); }
-        body { return _boolean; }
+        do { return _boolean; }
     /// ditto
     @property bool boolean(bool value) pure nothrow @nogc
     {
@@ -954,7 +954,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     /// Gets/sets the numeric value of the token.
     @property JSONNumber number() const pure nothrow @trusted @nogc
         in { assert(_kind == Kind.number, "Token is not a number."); }
-        body { return _number; }
+        do { return _number; }
     /// ditto
     @property JSONNumber number(JSONNumber value) nothrow @nogc
     {
@@ -972,7 +972,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     /// Gets/sets the string value of the token.
     @property const(JSONString!String) string() const pure nothrow @trusted @nogc
         in { assert(_kind == Kind.string, "Token is not a string."); }
-        body { return _kind == Kind.string ? _string : JSONString!String.init; }
+        do { return _kind == Kind.string ? _string : JSONString!String.init; }
     /// ditto
     @property JSONString!String string(JSONString!String value) pure nothrow @nogc
     {

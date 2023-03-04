@@ -679,7 +679,7 @@ struct JSONParserNode(String)
     /// ditto
     @property Kind kind(Kind value) nothrow
         in { assert(!value.among(Kind.key, Kind.literal)); }
-        body { return _kind = value; }
+        do { return _kind = value; }
 
     /**
      * The key identifier for $(D Kind.key) nodes.
@@ -868,7 +868,7 @@ void skipValue(R)(ref R nodes) if (isJSONParserNodeInputRange!R)
 
     assert(j.front.kind == JSONParserNodeKind.arrayStart);
     j.popFront();
-    
+
     // skips the whole [1, 2, 3] array
     j.skipValue();
 

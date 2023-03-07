@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: "[${{ matrix.os }} | ${{ matrix.dc }}]"
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        dc: [dmd-latest, ldc-latest]
+        arch: [x86_64]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install D compiler
+        uses: dlang-community/setup-dlang@v1
+        with:
+          compiler: ${{ matrix.dc }}
+      - name: Run tests
+        env:
+          DC: ${{matrix.dc}}
+          ARCH: ${{matrix.arch}}
+        run: |
+          dub test

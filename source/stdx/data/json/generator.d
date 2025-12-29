@@ -485,12 +485,12 @@ private void writeNumber(R)(ref R dst, BigInt num) @trusted
 
     auto num = toJSONValue("-67.199307");
     auto exp = -67.199307;
-    assert(num.get!double.approxEqual(exp));
+    assert(num.get!double.isClose(exp));
 
     auto snum = appender!string;
     snum.writeNumber!(GeneratorOptions.init)(JSONNumber(num.get!double));
     auto pnum = toJSONValue(snum.data);
-    assert(pnum.get!double.approxEqual(num.get!double));
+    assert(pnum.get!double.isClose(num.get!double));
 }
 
 @safe unittest // special float values

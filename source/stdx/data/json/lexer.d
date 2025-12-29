@@ -607,17 +607,11 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
                 return;
             }
 
-            bool negexp = void;
-            if (_input.front == '-')
-            {
-                negexp = true;
+            bool negexp = (_input.front == '-');
+            if (negexp)
                 skipChar();
-            }
-            else
-            {
-                negexp = false;
-                if (_input.front == '+') skipChar();
-            }
+            else if (_input.front == '+')
+                skipChar();
 
             if (_input.empty || !_input.front.isDigit)
             {
@@ -747,7 +741,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
 @safe unittest
 {
     import std.exception;
-    import std.math : approxEqual, isNaN;
+    import std.math : isClose, isNaN;
 
     static double parseNumberHelper(LexOptions options, R)(ref R input, ref Location loc)
     {
@@ -765,7 +759,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
         Location loc;
         auto strcopy = str;
         auto res = parseNumberHelper!options(strcopy, loc);
-        assert((res.isNaN && expected.isNaN) || approxEqual(res, expected), () @trusted {return res.to!string;}());
+        assert((res.isNaN && expected.isNaN) || isClose(res, expected), () @trusted {return res.to!string;}());
         assert(strcopy == remainder);
         assert(loc.line == 0);
         assert(loc.column == str.length - remainder.length, text(loc.column));
@@ -947,7 +941,7 @@ struct JSONLexerRange(Input, LexOptions options = LexOptions.init, String = stri
     @property bool boolean(bool value) pure nothrow @nogc
     {
         _kind = Kind.boolean;
-        _boolean = value;
+        () @trusted { _boolean = value; } ();
         return value;
     }
 
@@ -1287,7 +1281,7 @@ enum JSONTokenKind
      * yield a value converted to $(D double). Setting this property will
      * automatically update the number type to $(D Type.double_).
      */
-    @property double doubleValue() const nothrow @trusted @nogc
+    @property double doubleValue() const nothrow @trusted @nogc pure
     {
         final switch (_type)
         {

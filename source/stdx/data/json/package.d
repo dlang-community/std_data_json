@@ -948,7 +948,7 @@ unittest
         {
             if (a.kind == b.kind && a.kind == JSONParserNodeKind.literal) {
                 if (a.literal.kind == b.literal.kind && a.literal.kind == JSONTokenKind.number)
-                    return a.literal.number.approxEqual(b.literal.number);
+                    return a.literal.number.isClose(b.literal.number);
             }
             return a == b;
         }

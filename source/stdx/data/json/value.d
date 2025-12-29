@@ -22,7 +22,7 @@ unittest {
 
 import stdx.data.json.foundation;
 import std.typecons : Nullable;
-import taggedalgebraic;
+import stdx.data.json.taggedalgebraic;
 
 
 /**
